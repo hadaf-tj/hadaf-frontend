@@ -31,8 +31,11 @@ const NeedsManagementPage = () => {
                 <h1 className="text-3xl font-bold tracking-tight">Управление нуждами</h1>
                 <p className="text-gray-500">Добавляйте, редактируйте и удаляйте потребности вашего учреждения.</p>
             </div>
-            <Button asChild>
-                <Link href="/dashboard/needs/new">Добавить нужду</Link>
+            <Button 
+              asChild 
+              className="bg-[#763f97] text-white hover:bg-[#763f97]/90"
+            >
+              <Link href="/dashboard/needs/new">Добавить нужду</Link>
             </Button>
         </div>
 
@@ -64,7 +67,7 @@ const NeedsManagementPage = () => {
                     {/* <-- ДОБАВЛЯЕМ ССЫЛКУ НА РЕДАКТИРОВАНИЕ --> */}
                     <Button asChild variant="ghost" size="sm">
                       <Link href={`/dashboard/needs/${need.id}/edit`}>
-                        <Pencil className="h-4 w-4" />
+                        <Pencil className="h-4 w-4 text-[#763f97]" />
                       </Link>
                     </Button>
                   </TableCell>

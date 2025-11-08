@@ -32,9 +32,9 @@ const LoginPage = () => {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <Button className="w-full">Войти</Button>
+          <Button className="w-full bg-[#763f97] text-white hover:bg-[#763f97]/90">Войти</Button>
           <p className="text-xs text-center text-gray-500">
-            <Link href="#" className="underline hover:text-blue-600">
+            <Link href="#" className="underline hover: text-[#763f97]" >
               Забыли пароль?
             </Link>
           </p>

@@ -18,6 +18,7 @@ const steps = [
 ];
 
 const HomePage: React.FC = () => {
+  // throw new Error('Это тестовая ошибка сервера 500!');
   return (
     <div className="space-y-20">
       <section className="text-center py-16 px-4 bg-[#763f97] rounded-xl shadow-sm">

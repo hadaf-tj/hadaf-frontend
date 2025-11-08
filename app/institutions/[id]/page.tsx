@@ -2,9 +2,10 @@ import NeedListItem from '@/components/specific/NeedListItem';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Institution, Need } from '@/types/project';
-import { Mail, MapPin, Phone, Clock } from 'lucide-react';
+// 1. Добавили иконку CalendarClock
+import { Mail, MapPin, Phone, Clock, CalendarClock } from 'lucide-react';
 
-// Мок-данные. Заменил город на Душанбе.
+// 2. Добавили новое поле 'activityHours'
 const MOCK_INSTITUTION_DETAIL: Institution = {
   id: '1',
   name: 'Дом-интернат "Навруз"',
@@ -15,6 +16,7 @@ const MOCK_INSTITUTION_DETAIL: Institution = {
   contactEmail: 'navruz.tj@example.com',
   needsCount: 4,
   lastUpdated: '2025-10-25',
+  activityHours: 'Вторник и Четверг, 14:00 – 17:00 (по предварительной записи)', // <-- НОВОЕ ПОЛЕ
   needs: [
     { id: 'n1', name: 'Подгузники (размер 4)', unit: 'уп.', requiredQuantity: 50, receivedQuantity: 25 },
     { id: 'n2', name: 'Детское питание (смесь)', unit: 'банка', requiredQuantity: 100, receivedQuantity: 90 },
@@ -61,7 +63,7 @@ const InstitutionDetailPage = ({ params }: { params: { id: string } }) => {
 
         {/* Правая колонка: информация */}
         <div className="lg:col-span-1 mt-8 lg:mt-0">
-          <Card className="sticky top-24"> {/* Делаем карточку "липкой" при скролле */}
+          <Card className="sticky top-24">
             <CardHeader>
               <CardTitle>Информация</CardTitle>
             </CardHeader>
@@ -78,6 +80,16 @@ const InstitutionDetailPage = ({ params }: { params: { id: string } }) => {
                 <Mail className="w-5 h-5 text-gray-500 flex-shrink-0" />
                 <a href={`mailto:${institution.contactEmail}`} className="hover:underline truncate">{institution.contactEmail}</a>
               </div>
+
+              {/* 3. НОВЫЙ БЛОК ДЛЯ ВРЕМЕНИ ПОСЕЩЕНИЯ */}
+              <div className="flex items-start gap-3 pt-4 border-t">
+                <CalendarClock className="w-5 h-5 text-gray-500 mt-1 flex-shrink-0" />
+                <div>
+                  <span className="font-semibold text-gray-700">Время для визитов и мастер-классов:</span>
+                  <span className="block text-gray-600">{institution.activityHours}</span>
+                </div>
+              </div>
+
               <div className="flex items-center gap-3 pt-4 border-t">
                 <Clock className="w-5 h-5 text-gray-500 flex-shrink-0" />
                 <span>Обновлено: {institution.lastUpdated}</span>

@@ -1,19 +1,28 @@
+'use client'; // 1. Делаем компонент клиентским
+
 import Link from 'next/link';
 import {
   LayoutDashboard,
   ListPlus,
-  Settings,
   Building,
   LogOut,
 } from 'lucide-react';
+import { usePathname } from 'next/navigation'; // 2. Импортируем хук
+import { cn } from '@/lib/utils'; // 2. Импортируем утилиту для классов
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname(); // 3. Получаем текущий путь
+
+  const baseLinkClass = 'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 transition-colors';
+  const hoverClass = 'hover:bg-[#763f97]/10 hover:text-[#763f97]'; // Легкий фиолетовый фон при наведении
+  const activeClass = 'bg-[#763f97]/10 text-[#763f97] font-semibold'; // Активный стиль
+
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-[#f7f9fe]"> {/* Используем ваш фон */}
       {/* Сайдбар */}
       <aside className="hidden w-64 flex-col bg-white p-4 shadow-lg md:flex">
         <div className="mb-8 text-center">
@@ -22,15 +31,40 @@ export default function DashboardLayout({
           </Link>
         </div>
         <nav className="flex flex-col space-y-2">
-          <Link href="/dashboard" className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 transition-colors hover:bg-[#763f97]50 hover:text-[#763f97]">
+          
+          {/* 4. Применяем условные классы */}
+          <Link
+            href="/dashboard"
+            className={cn(
+              baseLinkClass,
+              hoverClass,
+              pathname === '/dashboard' && activeClass // Активен только если ТОЧНО /dashboard
+            )}
+          >
             <LayoutDashboard className="h-5 w-5" />
             <span>Обзор</span>
           </Link>
-          <Link href="/dashboard/needs" className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 transition-colors hover:bg-blue-50 hover:text-[#763f97]">
+          
+          <Link
+            href="/dashboard/needs"
+            className={cn(
+              baseLinkClass,
+              hoverClass,
+              pathname.startsWith('/dashboard/needs') && activeClass // Активен, если URL начинается с /dashboard/needs
+            )}
+          >
             <ListPlus className="h-5 w-5" />
             <span>Управление нуждами</span>
           </Link>
-          <Link href="/dashboard/institution" className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 transition-colors hover:bg-blue-50 hover:text-[#763f97]">
+          
+          <Link
+            href="/dashboard/institution"
+            className={cn(
+              baseLinkClass,
+              hoverClass,
+              pathname.startsWith('/dashboard/institution') && activeClass // Активен, если URL начинается с /dashboard/institution
+            )}
+          >
             <Building className="h-5 w-5" />
             <span>Мое учреждение</span>
           </Link>

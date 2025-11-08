@@ -1,5 +1,4 @@
 import '../styles/globals.css';
-import MainLayout from '@/components/layout/MainLayout';
 // 1. Импортируем Montserrat с нужными начертаниями
 import { Montserrat } from 'next/font/google';
 
@@ -12,16 +11,25 @@ const montserrat = Montserrat({
 export const metadata = {
   title: 'Пайванд: Адресная Помощь',
   description: 'Платформа для прозрачной помощи социальным учреждениям Таджикистана.',
+  icons: {
+    // 3. ИСПРАВЛЕНЫ ПУТИ: Пути должны быть абсолютными от /public
+    icon: '/favicon.ico', // /public/favicon.ico
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png', // /public/apple-touch-icon.png
+    android: '/android-chrome-512x512.png', // /public/android-chrome-512x512.png
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      {/* 3. Применяем класс нового шрифта */}
+      {/* 4. Применяем класс шрифта */}
       <body className={montserrat.className}>
-        <MainLayout>
-          {children}
-        </MainLayout>
+        {/*
+          БОЛЬШЕ ЗДЕСЬ НЕТ <MainLayout>
+          Он переезжает в app/(public)/layout.tsx
+        */}
+        {children}
       </body>
     </html>
   );

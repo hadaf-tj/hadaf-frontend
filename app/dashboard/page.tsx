@@ -12,7 +12,12 @@ const DashboardHomePage = () => {
           <h1 className="text-3xl font-bold tracking-tight">Обзор</h1>
           <p className="text-gray-500">Сводка по вашему учреждению</p>
         </div>
-        <Button asChild><Link href="/dashboard/needs/new">Добавить нужду</Link></Button>
+        <Button 
+          asChild 
+          className="bg-[#763f97] text-white hover:bg-[#763f97]/90"
+        >
+          <Link href="/dashboard/needs/new">Добавить нужду</Link>
+        </Button>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <StatCard title="Активных нужд" value={stats.activeNeeds} icon={<ListChecks className="h-5 w-5 text-gray-500" />} />

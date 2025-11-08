@@ -16,7 +16,7 @@ const ContactsPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="name">Ваше имя</Label>
-                        <Input id="name" placeholder="Алишер" />
+                        <Input id="name" placeholder='Введите имя...'/>
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="email">Ваш Email</Label>
@@ -27,7 +27,7 @@ const ContactsPage = () => {
                     <Label htmlFor="message">Сообщение</Label>
                     <Textarea id="message" placeholder="Ваше сообщение..." />
                 </div>
-                <Button type="submit" className="w-full bg-violet-500 hover:bg-violet-600">
+                <Button type="submit" className="w-full bg-[#763f97] text-white">
                     Отправить
                 </Button>
             </form>

@@ -73,7 +73,12 @@ const InstitutionProfilePage = () => {
             <Button type="button" variant="ghost" onClick={() => router.back()}>
               Отмена
             </Button>
-            <Button type="submit">Сохранить изменения</Button>
+            <Button 
+              type="submit" 
+              className="bg-[#763f97] text-white hover:bg-[#763f97]/90"
+            >
+              Сохранить изменения
+            </Button>
           </CardFooter>
         </Card>
       </form>
