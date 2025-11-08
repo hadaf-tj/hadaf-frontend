@@ -22,7 +22,7 @@ export default function DashboardLayout({
   const activeClass = 'bg-[#763f97]/10 text-[#763f97] font-semibold'; // Активный стиль
 
   return (
-    <div className="flex min-h-screen bg-[#f7f9fe]"> {/* Используем ваш фон */}
+    <div className="flex bg-[#f7f9fe]"> {/* Используем ваш фон */}
       {/* Сайдбар */}
       <aside className="hidden w-64 flex-col bg-white p-4 shadow-lg md:flex">
         <div className="mb-8 text-center">
@@ -69,12 +69,6 @@ export default function DashboardLayout({
             <span>Мое учреждение</span>
           </Link>
         </nav>
-        <div className="mt-auto">
-          <Link href="/" className="flex items-center gap-3 rounded-lg px-3 py-2 text-red-600 transition-colors hover:bg-red-50">
-            <LogOut className="h-5 w-5" />
-            <span>Выйти</span>
-          </Link>
-        </div>
       </aside>
 
       {/* Основной контент */}
