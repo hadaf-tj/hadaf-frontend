@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-// Основа карточки
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -9,7 +8,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      'rounded-xl border bg-white text-[#763f97] shadow-lg', // Улучшенные стили: тень побольше
+      'rounded-lg border-none bg-white text-text-main shadow-soft transition-all hover:shadow-soft-hover',
       className
     )}
     {...props}
@@ -17,7 +16,6 @@ const Card = React.forwardRef<
 ));
 Card.displayName = 'Card';
 
-// Шапка карточки
 const CardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -30,33 +28,33 @@ const CardHeader = React.forwardRef<
 ));
 CardHeader.displayName = 'CardHeader';
 
-// Заголовок карточки
 const CardTitle = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn('text-xl font-bold leading-none tracking-tight', className)} // Сделал заголовок чуть крупнее
+    className={cn(
+      'text-2xl font-bold leading-none tracking-tight text-primary',
+      className
+    )}
     {...props}
   />
 ));
 CardTitle.displayName = 'CardTitle';
 
-// Описание в шапке
 const CardDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn('text-sm text-gray-500', className)}
+    className={cn('text-sm text-text-light', className)}
     {...props}
   />
 ));
 CardDescription.displayName = 'CardDescription';
 
-// Основной контент карточки
 const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -65,7 +63,6 @@ const CardContent = React.forwardRef<
 ));
 CardContent.displayName = 'CardContent';
 
-// Футер (подвал) карточки
 const CardFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -78,4 +75,4 @@ const CardFooter = React.forwardRef<
 ));
 CardFooter.displayName = 'CardFooter';
 
-export { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription };
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };

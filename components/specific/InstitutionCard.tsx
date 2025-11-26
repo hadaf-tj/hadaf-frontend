@@ -1,36 +1,45 @@
 import Link from 'next/link';
 import { Institution } from '@/types/project';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { MapPin } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'; // Убрал CardDescription, сделаем кастомный
+import { MapPin, ArrowRight } from 'lucide-react';
+import { Badge } from '@/components/ui/Badge';
 
 const InstitutionCard: React.FC<{ institution: Institution }> = ({ institution }) => {
   const typeMap = {
-    Children: { text: 'Детский Дом' },
-    Elderly: { text: 'Дом Престарелых' },
-    Disabled: { text: 'Спец. Учреждение' },
+    Children: { text: 'Детский Дом', variant: 'secondary' as const },
+    Elderly: { text: 'Дом Престарелых', variant: 'secondary' as const },
+    Disabled: { text: 'Спец. Учреждение', variant: 'secondary' as const },
   };
-  const { text } = typeMap[institution.type];
+  
+  const typeInfo = typeMap[institution.type];
 
   return (
-    <Link href={`/institutions/${institution.id}`} className="block group">
-      {/* Убраны все цветные рамки. Простая белая карточка с тенью. */}
-      <Card className="h-full transition duration-300 shadow-md hover:shadow-xl group-hover:-translate-y-1 bg-white">
-        <CardHeader>
-          <CardTitle className="truncate text-lg font-bold text-[#763f97]">{institution.name}</CardTitle>
-          <CardDescription className="font-medium text-primary">{text}</CardDescription>
+    <Link href={`/institutions/${institution.id}`} className="block group h-full">
+      <Card className="h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-white border border-gray-100">
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-start mb-2">
+             <Badge variant={typeInfo.variant}>{typeInfo.text}</Badge>
+          </div>
+          <CardTitle className="text-xl font-extrabold text-gray-900 group-hover:text-[#763f97] transition-colors line-clamp-2">
+            {institution.name}
+          </CardTitle>
         </CardHeader>
+        
         <CardContent>
-          <div className="flex items-center text-sm text-gray-500 mb-4">
-            <MapPin className="w-4 h-4 mr-2 text-gray-400" />
+          <div className="flex items-center text-sm text-gray-500 mb-6">
+            <MapPin className="w-4 h-4 mr-1 text-[#9851c2]" />
             {institution.city}
           </div>
-          <div className="pt-4 border-t border-gray-100">
-            <p className="text-base font-bold text-[#763f97] flex justify-between items-center">
-              <span>Активных нужд:</span>
-              <span className="bg-gray-100 text-[#763f97] px-3 py-1 rounded-full text-sm font-semibold">
-                {institution.needsCount}
-              </span>
-            </p>
+          
+          <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
+            <div className="flex flex-col">
+               <span className="text-xs text-gray-400 uppercase font-bold tracking-wider">Нужды</span>
+               <span className="text-lg font-bold text-[#763f97]">{institution.needsCount}</span>
+            </div>
+            
+            <div className="bg-[#f7f9fe] p-2 rounded-full group-hover:bg-[#763f97] transition-colors">
+               <ArrowRight className="w-5 h-5 text-[#763f97] group-hover:text-white transition-colors" />
+            </div>
           </div>
         </CardContent>
       </Card>

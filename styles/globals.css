@@ -1,19 +1,72 @@
-/* Единственная строка, которая нужна для Tailwind CSS v4 */
 @import "tailwindcss";
 
-body {
-  /* Светлый фон */
-  background-color: #f7f9fe;
-  /* ИСПРАВЛЕНО: Темный цвет текста по умолчанию для читаемости */
-  color: #763f97;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    /* --foreground: 214 35% 29%;  <-- Используем HEX ниже для точности */
+    
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+ 
+    --primary: 277 41% 41%; /* #763f97 */
+    --primary-foreground: 0 0% 100%;
+ 
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+ 
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+ 
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+ 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 277 41% 41%;
+ 
+    --radius: 0.9rem;
+  }
 }
 
-/* Ссылки по умолчанию */
-a {
-  font-weight: 600;
-  transition: opacity 0.2s;
+@layer base {
+  * {
+    /* ИСПРАВЛЕНИЕ: Вместо @apply border-border пишем на чистом CSS */
+    border-color: hsl(var(--border));
+  }
+  body {
+    /* ИСПРАВЛЕНИЕ: Используем точные цвета напрямую, чтобы избежать конфликтов */
+    background-color: #f7f9fe;
+    color: #304663;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    /* Здесь @apply работает хорошо для стандартных утилит */
+    @apply font-bold tracking-tight;
+  }
 }
 
-a:hover {
-  opacity: 0.8;
+/* Плавная прокрутка */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Кастомный скроллбар */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f7f9fe;
+}
+::-webkit-scrollbar-thumb {
+  background: #c8c8c8;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #763f97;
 }

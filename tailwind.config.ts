@@ -6,6 +6,8 @@ const config: Config = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  // ИСПРАВЛЕНИЕ 1: darkMode должен быть строкой, а не массивом
+  darkMode: "class", 
   theme: {
     extend: {
       colors: {
@@ -20,6 +22,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  // ИСПРАВЛЕНИЕ 2: Убрали require("tailwindcss-animate"), так как пакет не установлен
+  plugins: [], 
 };
 export default config;
