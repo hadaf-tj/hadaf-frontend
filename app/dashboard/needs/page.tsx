@@ -1,84 +1,114 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/Table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import { Badge } from '@/components/ui/Badge';
 import { Need } from '@/types/project';
 import Link from 'next/link';
-import { Pencil } from 'lucide-react'; // <-- Заменяем иконку на более подходящую
+import { Pencil, Trash2, Loader2, Plus } from 'lucide-react';
+import { fetchInstitutionById, deleteNeed } from '@/lib/api';
 
-// ... (MOCK_NEEDS остаются без изменений)
-const MOCK_NEEDS: Need[] = [
-    { id: 'n1', name: 'Подгузники (размер 4)', unit: 'уп.', requiredQuantity: 50, receivedQuantity: 25 },
-    { id: 'n2', name: 'Детское питание (смесь)', unit: 'банка', requiredQuantity: 100, receivedQuantity: 90 },
-    { id: 'n3', name: 'Канцелярские товары (наборы)', unit: 'шт.', requiredQuantity: 30, receivedQuantity: 30 },
-    { id: 'n4', name: 'Теплые носки (детские)', unit: 'пар', requiredQuantity: 100, receivedQuantity: 15 },
-    { id: 'n5', name: 'Крупа гречневая', unit: 'кг', requiredQuantity: 20, receivedQuantity: 0 },
-];
+export default function NeedsManagementPage() {
+  const [needs, setNeeds] = useState<Need[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Загружаем данные для учреждения ID=1 (Навруз)
+  const loadNeeds = async () => {
+    setIsLoading(true);
+    // Используем fetchInstitutionById, так как он подтягивает нужды
+    const inst = await fetchInstitutionById('1'); 
+    if (inst) {
+      setNeeds(inst.needs);
+    }
+    setIsLoading(false);
+  };
 
-const NeedsManagementPage = () => {
+  useEffect(() => {
+    loadNeeds();
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Вы уверены, что хотите удалить эту запись?')) {
+      try {
+        await deleteNeed(id);
+        // Обновляем список локально
+        setNeeds(prev => prev.filter(n => n.id !== id));
+      } catch (err) {
+        alert('Ошибка при удалении');
+      }
+    }
+  };
+
   return (
     <div className="space-y-6">
-      {/* ... (шапка страницы остается без изменений) */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Управление нуждами</h1>
-                <p className="text-gray-500">Добавляйте, редактируйте и удаляйте потребности вашего учреждения.</p>
+                <h1 className="text-3xl font-bold tracking-tight text-[#304663]">Управление нуждами</h1>
+                <p className="text-gray-500">Добавляйте и редактируйте потребности.</p>
             </div>
-            <Button 
-              asChild 
-              className="bg-[#763f97] text-white hover:bg-[#763f97]/90"
-            >
-              <Link href="/dashboard/needs/new">Добавить нужду</Link>
+            <Button asChild className="bg-[#763f97] text-white hover:bg-[#763f97]/90 shadow-lg shadow-[#763f97]/20">
+              <Link href="/dashboard/needs/new"><Plus className="mr-2 h-4 w-4"/> Добавить нужду</Link>
             </Button>
         </div>
 
-      <div className="rounded-lg border bg-white shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Название</TableHead>
-              <TableHead>Статус</TableHead>
-              <TableHead className="text-right">Прогресс</TableHead>
-              <TableHead className="w-[100px] text-center">Действия</TableHead> {/* <-- Центрируем заголовок */}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {MOCK_NEEDS.map((need) => {
-              const isCompleted = need.receivedQuantity >= need.requiredQuantity;
-              return (
-                <TableRow key={need.id}>
-                  <TableCell className="font-medium">{need.name}</TableCell>
-                  <TableCell>
-                    <Badge variant={isCompleted ? 'green' : 'yellow'}>
-                      {isCompleted ? 'Выполнено' : 'В процессе'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {need.receivedQuantity} / {need.requiredQuantity} ({need.unit})
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {/* <-- ДОБАВЛЯЕМ ССЫЛКУ НА РЕДАКТИРОВАНИЕ --> */}
-                    <Button asChild variant="ghost" size="sm">
-                      <Link href={`/dashboard/needs/${need.id}/edit`}>
-                        <Pencil className="h-4 w-4 text-[#763f97]" />
-                      </Link>
-                    </Button>
-                  </TableCell>
+      <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
+        {isLoading ? (
+            <div className="p-12 flex justify-center"><Loader2 className="animate-spin text-[#763f97]" /></div>
+        ) : (
+            <Table>
+            <TableHeader className="bg-gray-50/50">
+                <TableRow>
+                <TableHead className="w-[40%]">Название</TableHead>
+                <TableHead>Статус</TableHead>
+                <TableHead className="text-right">Прогресс</TableHead>
+                <TableHead className="text-center w-[120px]">Действия</TableHead> 
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+                {needs.length === 0 ? (
+                    <TableRow>
+                        <TableCell colSpan={4} className="text-center h-24 text-gray-500">Список пуст</TableCell>
+                    </TableRow>
+                ) : (
+                    needs.map((need) => {
+                    const isCompleted = need.receivedQuantity >= need.requiredQuantity;
+                    return (
+                        <TableRow key={need.id}>
+                        <TableCell className="font-bold text-gray-700">{need.name}</TableCell>
+                        <TableCell>
+                            <Badge variant={isCompleted ? 'success' : 'secondary'}>
+                            {isCompleted ? 'Выполнено' : 'Активно'}
+                            </Badge>
+                        </TableCell>
+                        <TableCell className="text-right font-mono text-sm">
+                            {need.receivedQuantity} / {need.requiredQuantity} {need.unit}
+                        </TableCell>
+                        <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-1">
+                                <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[#763f97]">
+                                <Link href={`/dashboard/needs/${need.id}/edit`}>
+                                    <Pencil className="h-4 w-4" />
+                                </Link>
+                                </Button>
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-8 w-8 text-gray-400 hover:text-red-500"
+                                    onClick={() => handleDelete(need.id)}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </TableCell>
+                        </TableRow>
+                    );
+                    })
+                )}
+            </TableBody>
+            </Table>
+        )}
       </div>
     </div>
   );
-};
-
-export default NeedsManagementPage;
+}

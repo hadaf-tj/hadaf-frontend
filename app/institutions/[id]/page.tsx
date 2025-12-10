@@ -1,98 +1,133 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import NeedListItem from '@/components/specific/NeedListItem';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Institution, Need } from '@/types/project';
-// 1. Добавили иконку CalendarClock
-import { Mail, MapPin, Phone, Clock, CalendarClock } from 'lucide-react';
+import { Institution } from '@/types/project';
+import { Mail, MapPin, Phone, Clock, CalendarClock, Loader2, ArrowLeft } from 'lucide-react';
+import { fetchInstitutionById } from '@/lib/api';
+import Link from 'next/link';
+import { useParams } from 'next/navigation'; // Используем хук для получения ID
 
-// 2. Добавили новое поле 'activityHours'
-const MOCK_INSTITUTION_DETAIL: Institution = {
-  id: '1',
-  name: 'Дом-интернат "Навруз"',
-  city: 'Душанбе',
-  address: 'Проспект Рудаки, 100',
-  type: 'Children',
-  contactPhone: '+992 92 777 01 01',
-  contactEmail: 'navruz.tj@example.com',
-  needsCount: 4,
-  lastUpdated: '2025-10-25',
-  activityHours: 'Вторник и Четверг, 14:00 – 17:00 (по предварительной записи)', // <-- НОВОЕ ПОЛЕ
-  needs: [
-    { id: 'n1', name: 'Подгузники (размер 4)', unit: 'уп.', requiredQuantity: 50, receivedQuantity: 25 },
-    { id: 'n2', name: 'Детское питание (смесь)', unit: 'банка', requiredQuantity: 100, receivedQuantity: 90 },
-    { id: 'n3', name: 'Канцелярские товары (наборы)', unit: 'шт.', requiredQuantity: 30, receivedQuantity: 30 },
-    { id: 'n4', name: 'Теплые носки (детские)', unit: 'пар', requiredQuantity: 100, receivedQuantity: 15 },
-  ],
+const typeMap: Record<string, { text: string; variant: "default" | "secondary" | "urgent" | "success" | "destructive" | "outline" }> = {
+    Children: { text: 'Детский Дом', variant: 'urgent' },
+    Elderly: { text: 'Дом Престарелых', variant: 'success' },
+    Disabled: { text: 'Спец. Учреждение', variant: 'default' },
 };
 
-const typeMap = {
-    Children: { text: 'Детский Дом', variant: 'yellow' as const },
-    Elderly: { text: 'Дом Престарелых', variant: 'green' as const },
-    Disabled: { text: 'Спец. Учреждение', variant: 'default' as const },
-};
+export default function InstitutionDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
 
-const InstitutionDetailPage = ({ params }: { params: { id: string } }) => {
-  const institution = MOCK_INSTITUTION_DETAIL;
-  const typeInfo = typeMap[institution.type];
+  const [institution, setInstitution] = useState<Institution | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+    
+    const loadData = async () => {
+      setIsLoading(true);
+      const data = await fetchInstitutionById(id);
+      setInstitution(data);
+      setIsLoading(false);
+    };
+
+    loadData();
+  }, [id]);
+
+  if (isLoading) {
+    return (
+        <div className="flex h-[50vh] items-center justify-center">
+            <Loader2 className="h-10 w-10 animate-spin text-[#763f97]" />
+        </div>
+    );
+  }
+
+  if (!institution) {
+    return (
+        <div className="flex flex-col items-center justify-center h-[50vh] gap-4">
+            <h1 className="text-2xl font-bold">Учреждение не найдено</h1>
+            <Link href="/institutions" className="text-[#763f97] hover:underline flex items-center gap-2">
+                <ArrowLeft size={16}/> Вернуться к списку
+            </Link>
+        </div>
+    );
+  }
+
+  const typeInfo = typeMap[institution.type] || { text: institution.type, variant: 'default' };
 
   return (
-    <div className="mx-auto max-w-7xl">
+    <div className="mx-auto max-w-7xl pb-12">
       {/* Шапка */}
       <div className="mb-8">
+        <div className="mb-4">
+            <Link href="/institutions" className="text-sm text-gray-500 hover:text-[#763f97] transition-colors flex items-center gap-1">
+                <ArrowLeft size={14}/> Назад к списку
+            </Link>
+        </div>
         <Badge variant={typeInfo.variant}>{typeInfo.text}</Badge>
         <h1 className="mt-2 text-4xl sm:text-5xl font-extrabold text-[#763f97] tracking-tight">
           {institution.name}
         </h1>
       </div>
 
-      {/* Основной макет: 2/3 контент, 1/3 сайдбар */}
       <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
         {/* Левая колонка: список нужд */}
         <div className="lg:col-span-2">
           <h2 className="text-3xl font-bold text-[#763f97] mb-4">Актуальные нужды</h2>
           <div className="space-y-4">
-            {institution.needs.length > 0 ? (
+            {institution.needs && institution.needs.length > 0 ? (
               institution.needs.map((need) => (
                 <NeedListItem key={need.id} need={need} />
               ))
             ) : (
-              <p className="text-gray-500">На данный момент все нужды закрыты. Спасибо!</p>
+              <div className="p-6 bg-white rounded-xl border border-dashed border-gray-300 text-center text-gray-500">
+                  <p>На данный момент список нужд пуст или полностью закрыт. Спасибо!</p>
+              </div>
             )}
           </div>
         </div>
 
         {/* Правая колонка: информация */}
         <div className="lg:col-span-1 mt-8 lg:mt-0">
-          <Card className="sticky top-24">
+          <Card className="sticky top-24 shadow-lg border-t-4 border-t-[#763f97]">
             <CardHeader>
-              <CardTitle>Информация</CardTitle>
+              <CardTitle>Контакты и адрес</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 text-sm">
+            <CardContent className="space-y-5 text-sm">
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-gray-500 mt-1 flex-shrink-0" />
+                <MapPin className="w-5 h-5 text-[#763f97] mt-1 flex-shrink-0" />
                 <span>{institution.city}, {institution.address}</span>
               </div>
-              <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                <a href={`tel:${institution.contactPhone}`} className="hover:underline">{institution.contactPhone}</a>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                <a href={`mailto:${institution.contactEmail}`} className="hover:underline truncate">{institution.contactEmail}</a>
-              </div>
+              
+              {institution.contactPhone && (
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-5 h-5 text-[#763f97] flex-shrink-0" />
+                    <a href={`tel:${institution.contactPhone}`} className="hover:underline font-medium">{institution.contactPhone}</a>
+                  </div>
+              )}
+              
+              {institution.contactEmail && (
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-5 h-5 text-[#763f97] flex-shrink-0" />
+                    <a href={`mailto:${institution.contactEmail}`} className="hover:underline truncate">{institution.contactEmail}</a>
+                  </div>
+              )}
 
-              {/* 3. НОВЫЙ БЛОК ДЛЯ ВРЕМЕНИ ПОСЕЩЕНИЯ */}
-              <div className="flex items-start gap-3 pt-4 border-t">
-                <CalendarClock className="w-5 h-5 text-gray-500 mt-1 flex-shrink-0" />
-                <div>
-                  <span className="font-semibold text-gray-700">Время для визитов и мастер-классов:</span>
-                  <span className="block text-gray-600">{institution.activityHours}</span>
-                </div>
-              </div>
+              {institution.activityHours && (
+                  <div className="flex items-start gap-3 pt-4 border-t border-gray-100">
+                    <CalendarClock className="w-5 h-5 text-[#763f97] mt-1 flex-shrink-0" />
+                    <div>
+                      <span className="font-bold text-gray-700 block mb-1">Время для визитов:</span>
+                      <span className="block text-gray-600 leading-relaxed">{institution.activityHours}</span>
+                    </div>
+                  </div>
+              )}
 
-              <div className="flex items-center gap-3 pt-4 border-t">
-                <Clock className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                <span>Обновлено: {institution.lastUpdated}</span>
+              <div className="flex items-center gap-3 pt-4 border-t border-gray-100 text-gray-400 text-xs">
+                <Clock className="w-4 h-4 flex-shrink-0" />
+                <span>Данные обновлены: {institution.lastUpdated}</span>
               </div>
             </CardContent>
           </Card>
@@ -101,5 +136,3 @@ const InstitutionDetailPage = ({ params }: { params: { id: string } }) => {
     </div>
   );
 };
-
-export default InstitutionDetailPage;
