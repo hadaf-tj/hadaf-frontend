@@ -2,9 +2,11 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
+import MainLayout from '@/components/layout/MainLayout';
 
 const ContactsPage = () => {
     return (
+    <MainLayout>  
       <div className="max-w-2xl mx-auto py-16">
         <h1 className="text-4xl font-extrabold text-center text-[#763f97] mb-2">Свяжитесь с нами</h1>
         <p className="text-lg text-center text-gray-600 mb-8">
@@ -33,6 +35,7 @@ const ContactsPage = () => {
             </form>
         </div>
       </div>
+    </MainLayout>
     );
   };
   export default ContactsPage;

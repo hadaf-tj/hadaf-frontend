@@ -1,9 +1,13 @@
 import { Card } from '@/components/ui/Card';
 import { Heart, Shield, Zap, Users, Target, Lightbulb } from 'lucide-react';
+import Image from 'next/image';
+import MainLayout from '@/components/layout/MainLayout';
 
 export default function AboutPage() {
   return (
-    <div className="bg-[#f7f9fe] min-h-screen pb-24 font-sans">
+   <MainLayout>
+
+   <div className="bg-[#f7f9fe] min-h-screen pb-24 font-sans">
        
        {/* Hero Section */}
        <section className="bg-white pt-20 pb-24 rounded-b-[3rem] shadow-sm overflow-hidden relative">
@@ -93,8 +97,14 @@ export default function AboutPage() {
              </div>
              
              {/* Блок с фото/заглушкой */}
-             <div className="flex-1 w-full">
+             <div className="flex-1 w-full relative group">
                  <div className="relative aspect-square bg-[#e9eff5] rounded-[2rem] overflow-hidden border-8 border-white shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                    <Image 
+                     src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?q=80&w=800&auto=format&fit=crop"
+                     alt="Команда волонтеров"
+                     fill
+                     className="object-cover"
+                     />
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
                        <Users size={64} className="text-[#763f97] mb-4 opacity-50" />
                        <span className="text-[#304663] font-bold text-xl">Команда волонтеров</span>
@@ -105,5 +115,6 @@ export default function AboutPage() {
           </div>
        </section>
     </div>
+   </MainLayout>
   );
 }

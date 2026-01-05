@@ -6,12 +6,6 @@ import { Button } from '@/components/ui/Button';
 import { ListChecks, MapPin, XCircle, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const MOCK_INSTITUTIONS_FOR_MAP = [
-  { id: '1', name: 'Дом-интернат "Навруз"', position: [38.5765, 68.7895] as [number, number] },
-  { id: '2', name: 'Дом престарелых "Отрада"', position: [38.5490, 68.7731] as [number, number] },
-  { id: '3', name: 'Центр "Умед"', position: [38.5612, 68.8050] as [number, number] },
-];
-
 const MapPage = () => {
   const MapView = useMemo(() => dynamic(() => import('@/components/specific/MapView'), {
     ssr: false,
@@ -110,7 +104,7 @@ const MapPage = () => {
         {/* Карта */}
         <div className="mt-6 bg-white p-2 rounded-[2rem] shadow-lg border border-[#e2e8f0]">
             <div className="h-[65vh] w-full rounded-[1.5rem] overflow-hidden relative z-0">
-                <MapView institutions={MOCK_INSTITUTIONS_FOR_MAP} />
+                
             </div>
         </div>
 
