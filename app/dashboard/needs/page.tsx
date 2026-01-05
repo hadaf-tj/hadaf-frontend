@@ -47,14 +47,14 @@ export default function NeedsManagementPage() {
                 <h1 className="text-3xl font-bold tracking-tight text-[#304663]">Управление нуждами</h1>
                 <p className="text-gray-500">Добавляйте и редактируйте потребности.</p>
             </div>
-            <Button asChild className="bg-[#763f97] text-white hover:bg-[#763f97]/90 shadow-lg shadow-[#763f97]/20">
+            <Button asChild className="bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/90 shadow-lg shadow-[#1e3a8a]/20">
               <Link href="/dashboard/needs/new"><Plus className="mr-2 h-4 w-4"/> Добавить нужду</Link>
             </Button>
         </div>
 
       <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
         {isLoading ? (
-            <div className="p-12 flex justify-center"><Loader2 className="animate-spin text-[#763f97]" /></div>
+            <div className="p-12 flex justify-center"><Loader2 className="animate-spin text-[#1e3a8a]" /></div>
         ) : (
             <Table>
             <TableHeader className="bg-gray-50/50">
@@ -86,7 +86,7 @@ export default function NeedsManagementPage() {
                         </TableCell>
                         <TableCell className="text-center">
                             <div className="flex items-center justify-center gap-1">
-                                <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[#763f97]">
+                                <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-[#1e3a8a]">
                                 <Link href={`/dashboard/needs/${need.id}/edit`}>
                                     <Pencil className="h-4 w-4" />
                                 </Link>

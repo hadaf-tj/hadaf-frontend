@@ -20,7 +20,7 @@ const InstitutionCard: React.FC<{ institution: Institution }> = ({ institution }
           <div className="flex justify-between items-start mb-2">
              <Badge variant={typeInfo.variant}>{typeInfo.text}</Badge>
           </div>
-          <CardTitle className="text-xl font-extrabold text-gray-900 group-hover:text-[#763f97] transition-colors line-clamp-2">
+          <CardTitle className="text-xl font-extrabold text-gray-900 group-hover:text-[#1e3a8a] transition-colors line-clamp-2">
             {institution.name}
           </CardTitle>
         </CardHeader>
@@ -34,11 +34,11 @@ const InstitutionCard: React.FC<{ institution: Institution }> = ({ institution }
           <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
             <div className="flex flex-col">
                <span className="text-xs text-gray-400 uppercase font-bold tracking-wider">Нужды</span>
-               <span className="text-lg font-bold text-[#763f97]">{institution.needsCount}</span>
+               <span className="text-lg font-bold text-[#1e3a8a]">{institution.needsCount}</span>
             </div>
             
-            <div className="bg-[#f7f9fe] p-2 rounded-full group-hover:bg-[#763f97] transition-colors">
-               <ArrowRight className="w-5 h-5 text-[#763f97] group-hover:text-white transition-colors" />
+            <div className="bg-[#f7f9fe] p-2 rounded-full group-hover:bg-[#1e3a8a] transition-colors">
+               <ArrowRight className="w-5 h-5 text-[#1e3a8a] group-hover:text-white transition-colors" />
             </div>
           </div>
         </CardContent>

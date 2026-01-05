@@ -39,7 +39,7 @@ export default function InstitutionDetailPage() {
   if (isLoading) {
     return (
         <div className="flex h-[50vh] items-center justify-center">
-            <Loader2 className="h-10 w-10 animate-spin text-[#763f97]" />
+            <Loader2 className="h-10 w-10 animate-spin text-[#1e3a8a]" />
         </div>
     );
   }
@@ -48,7 +48,7 @@ export default function InstitutionDetailPage() {
     return (
         <div className="flex flex-col items-center justify-center h-[50vh] gap-4">
             <h1 className="text-2xl font-bold">Учреждение не найдено</h1>
-            <Link href="/institutions" className="text-[#763f97] hover:underline flex items-center gap-2">
+            <Link href="/institutions" className="text-[#1e3a8a] hover:underline flex items-center gap-2">
                 <ArrowLeft size={16}/> Вернуться к списку
             </Link>
         </div>
@@ -62,12 +62,12 @@ export default function InstitutionDetailPage() {
       {/* Шапка */}
       <div className="mb-8">
         <div className="mb-4">
-            <Link href="/institutions" className="text-sm text-gray-500 hover:text-[#763f97] transition-colors flex items-center gap-1">
+            <Link href="/institutions" className="text-sm text-gray-500 hover:text-[#1e3a8a] transition-colors flex items-center gap-1">
                 <ArrowLeft size={14}/> Назад к списку
             </Link>
         </div>
         <Badge variant={typeInfo.variant}>{typeInfo.text}</Badge>
-        <h1 className="mt-2 text-4xl sm:text-5xl font-extrabold text-[#763f97] tracking-tight">
+        <h1 className="mt-2 text-4xl sm:text-5xl font-extrabold text-[#1e3a8a] tracking-tight">
           {institution.name}
         </h1>
       </div>
@@ -75,7 +75,7 @@ export default function InstitutionDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
         {/* Левая колонка: список нужд */}
         <div className="lg:col-span-2">
-          <h2 className="text-3xl font-bold text-[#763f97] mb-4">Актуальные нужды</h2>
+          <h2 className="text-3xl font-bold text-[#1e3a8a] mb-4">Актуальные нужды</h2>
           <div className="space-y-4">
             {institution.needs && institution.needs.length > 0 ? (
               institution.needs.map((need) => (
@@ -91,36 +91,36 @@ export default function InstitutionDetailPage() {
 
         {/* Правая колонка: информация */}
         <div className="lg:col-span-1 mt-8 lg:mt-0">
-          <Card className="sticky top-24 shadow-lg border-t-4 border-t-[#763f97]">
+          <Card className="sticky top-24 shadow-lg border-t-4 border-t-[#1e3a8a]">
             <CardHeader>
               <CardTitle>Контакты и адрес</CardTitle>
             </CardHeader>
             <CardContent className="space-y-5 text-sm">
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#763f97] mt-1 flex-shrink-0" />
+                <MapPin className="w-5 h-5 text-[#1e3a8a] mt-1 flex-shrink-0" />
                 <span>{institution.city}, {institution.address}</span>
               </div>
               
               {institution.contactPhone && (
                   <div className="flex items-center gap-3">
-                    <Phone className="w-5 h-5 text-[#763f97] flex-shrink-0" />
+                    <Phone className="w-5 h-5 text-[#1e3a8a] flex-shrink-0" />
                     <a href={`tel:${institution.contactPhone}`} className="hover:underline font-medium">{institution.contactPhone}</a>
                   </div>
               )}
               
               {institution.contactEmail && (
                   <div className="flex items-center gap-3">
-                    <Mail className="w-5 h-5 text-[#763f97] flex-shrink-0" />
+                    <Mail className="w-5 h-5 text-[#1e3a8a] flex-shrink-0" />
                     <a href={`mailto:${institution.contactEmail}`} className="hover:underline truncate">{institution.contactEmail}</a>
                   </div>
               )}
 
               {institution.activityHours && (
                   <div className="flex items-start gap-3 pt-4 border-t border-gray-100">
-                    <CalendarClock className="w-5 h-5 text-[#763f97] mt-1 flex-shrink-0" />
+                    <CalendarClock className="w-5 h-5 text-[#1e3a8a] mt-1 flex-shrink-0" />
                     <div>
                       <span className="font-bold text-gray-700 block mb-1">Время для визитов:</span>
-                      <span className="block text-gray-600 leading-relaxed">{institution.activityHours}</span>
+                      <span className="block text-gray-800 leading-relaxed">{institution.activityHours}</span>
                     </div>
                   </div>
               )}

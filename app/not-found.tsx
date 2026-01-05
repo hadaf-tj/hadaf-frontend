@@ -18,7 +18,7 @@ export default function NotFound() {
 
       {/* ПРАВАЯ ЧАСТЬ: Текст и кнопка */}
       <div className="flex flex-col items-center lg:items-start">
-        <h1 className="mt-4 lg:mt-0 text-4xl font-extrabold text-[#763f97]">
+        <h1 className="mt-4 lg:mt-0 text-4xl font-extrabold text-[#1e3a8a]">
           404 - Ой-ой...
         </h1>
 
@@ -27,7 +27,7 @@ export default function NotFound() {
             Давайте вернемся на главную страницу?"
         </p>
 
-        <Button asChild size="lg" className="mt-8 bg-[#763f97] text-white hover:bg-[#763f97]/90 shadow-md">
+        <Button asChild size="lg" className="mt-8 bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/90 shadow-md">
           <Link href="/">
             Увести меня отсюда
           </Link>

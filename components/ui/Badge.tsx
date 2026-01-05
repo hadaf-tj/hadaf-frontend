@@ -8,15 +8,15 @@ const badgeVariants = cva(
     variants: {
       variant: {
         // Основной: Фиолетовый фон, белый текст
-        default: 'border-transparent bg-[#763f97] text-white hover:bg-[#763f97]/80',
+        default: 'border-transparent bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/80',
         // Вторичный: Светло-фиолетовый фон, темный текст (для мягких статусов)
-        secondary: 'border-transparent bg-[#f3e8ff] text-[#763f97] hover:bg-[#f3e8ff]/80',
+        secondary: 'border-transparent bg-[#f3e8ff] text-[#1e3a8a] hover:bg-[#f3e8ff]/80',
         // Срочный: Желтый фон, темный текст
         urgent: 'border-transparent bg-[#ffca63] text-gray-900 hover:bg-[#ffca63]/80',
         // Успех (вместо зеленого): Можно использовать темно-фиолетовый или оставить зеленый, но в стиле
         success: 'border-transparent bg-emerald-500 text-white hover:bg-emerald-600',
         destructive: 'border-transparent bg-red-500 text-white hover:bg-red-600',
-        outline: 'text-[#763f97] border border-[#763f97]',
+        outline: 'text-[#1e3a8a] border border-[#1e3a8a]',
       },
     },
     defaultVariants: {

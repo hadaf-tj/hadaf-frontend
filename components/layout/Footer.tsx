@@ -20,13 +20,14 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="relative bg-gradient-to-br from-[#763f97] via-[#8b4fa8] to-[#5a2d7a] text-white mt-20 overflow-hidden">
-      {/* Анимированный фон */}
+    <footer className="relative bg-[#1e3a8a] text-white mt-20 overflow-hidden">
+      {/* Анимированный фон (можно добавить svg или градиенты, если нужно) */}
 
       {/* Блок подписки - премиум дизайн */}
       <div className="relative z-10 border-b border-white/10">
-        <div className="container mx-auto max-w-7xl px-4 py-16">
-          <div className="bg-white/10 backdrop-blur-xl rounded-[3rem] p-10 md:p-16 border border-white/20 shadow-2xl">
+        {/* ИЗМЕНЕНИЕ: max-w-[1440px] и отступы xl:px-28 для выравнивания с контентом страницы */}
+        <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 py-16">
+          <div className="bg-white/10 rounded-[2.5rem] p-10 md:p-16 border border-white/20 shadow-2xl">
             <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
               <div className="text-center lg:text-left flex-1">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#ffca63]/20 backdrop-blur-xl rounded-full text-sm font-bold mb-4">
@@ -56,7 +57,7 @@ const Footer: React.FC = () => {
                 <button 
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-[#ffca63] text-[#763f97] px-8 py-4 rounded-2xl font-black hover:bg-white transition-all shadow-xl hover:shadow-2xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap group"
+                  className="bg-[#ffca63] text-[#1e3a8a] px-8 py-4 rounded-2xl font-black hover:bg-white transition-all shadow-xl hover:shadow-2xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap group"
                 >
                   {isSubmitting ? 'Отправка...' : (
                     <span className="flex items-center gap-2">
@@ -72,19 +73,19 @@ const Footer: React.FC = () => {
       </div>
 
       {/* Основной контент футера */}
-      <div className="container mx-auto max-w-7xl px-4 py-20 relative z-10">
+      {/* ИЗМЕНЕНИЕ: Те же настройки контейнера для вертикального ритма */}
+      <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 py-20 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
           
           {/* Колонка 1: О фонде - выделенная */}
           <div className="space-y-8 lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 text-2xl font-black text-white group">
               <div className="relative">
-                <div className="absolute inset-0 bg-white blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-white text-[#763f97] p-3 rounded-2xl group-hover:scale-110 group-hover:rotate-6 transition-all shadow-xl">
+                <div className="relative bg-white text-[#1e3a8a] p-3 rounded-2xl shadow-xl">
                   <HeartHandshake size={28} />
                 </div>
               </div>
-              <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">Пайванд</span>
+              <span className="bg-white bg-clip-text text-transparent">Пайванд</span>
             </Link>
             
             <p className="text-base text-white/80 leading-relaxed">
@@ -103,7 +104,7 @@ const Footer: React.FC = () => {
                   key={social.label}
                   href={social.href} 
                   aria-label={social.label}
-                  className="group relative w-12 h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center hover:bg-white hover:text-[#763f97] transition-all border border-white/20 hover:scale-110 hover:rotate-6 shadow-lg"
+                  className="group relative w-12 h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center hover:bg-white hover:text-[#1e3a8a] transition-all border border-white/20 hover:scale-110 hover:rotate-6 shadow-lg"
                 >
                   <div className="absolute inset-0 rounded-xl bg-white opacity-0 group-hover:opacity-20 blur-xl transition-opacity"></div>
                   {social.icon}
@@ -112,12 +113,7 @@ const Footer: React.FC = () => {
             </div>
 
             {/* Статистика в футере */}
-            <div className="pt-6 border-t border-white/10">
-              <div className="flex items-center gap-3 text-sm">
-                <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse shadow-lg shadow-green-400/50"></div>
-                <span className="text-white/70 font-medium">Сегодня помогли <span className="font-black text-[#ffca63]">47</span> людям</span>
-              </div>
-            </div>
+           
           </div>
 
           {/* Колонка 2: О фонде */}
@@ -200,8 +196,8 @@ const Footer: React.FC = () => {
                 </div>
                 <div>
                   <div className="text-xs text-white/60 font-bold uppercase tracking-wider mb-1">Телефон</div>
-                  <a href="tel:+992000000000" className="font-black text-xl text-white hover:text-[#ffca63] transition-colors">
-                    +992 00 000 00 00
+                  <a href="tel:+992000000000" className="font-black text-white hover:text-[#ffca63] transition-colors">
+                    +992 901643003
                   </a>
                 </div>
               </div>

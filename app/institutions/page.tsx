@@ -48,8 +48,8 @@ export default function InstitutionsPage() {
       <section className="bg-white pt-12 pb-16 shadow-sm rounded-b-[3rem] mb-12">
         <div className="container mx-auto max-w-7xl px-4">
           <div className="max-w-4xl mx-auto text-center space-y-6">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-[#763f97]">Кому нужна помощь</h1>
-            <p className="text-lg text-gray-600 leading-relaxed">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-[#1e3a8a]">Кому нужна помощь</h1>
+            <p className="text-lg text-gray-800 leading-relaxed">
               Выберите учреждение из списка. Вы можете использовать поиск по названию или городу, чтобы найти тех, кто находится рядом с вами.
             </p>
             
@@ -58,7 +58,7 @@ export default function InstitutionsPage() {
               <div className="relative flex-grow">
                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 <Input 
-                  className="pl-12 h-14 text-lg rounded-full border-gray-200 bg-[#f7f9fe] focus:bg-white shadow-inner focus:ring-2 focus:ring-[#763f97] focus:border-transparent transition-all" 
+                  className="pl-12 h-14 text-lg rounded-full border-gray-200 bg-[#f7f9fe] focus:bg-white shadow-inner focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent transition-all" 
                   placeholder="Найти детский дом, интернат..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -66,7 +66,7 @@ export default function InstitutionsPage() {
               </div>
               <div className="relative shrink-0">
                  <select 
-                   className="h-14 pl-6 pr-12 rounded-full border-gray-200 bg-white text-gray-700 shadow-sm focus:ring-2 focus:ring-[#763f97] focus:border-transparent cursor-pointer appearance-none font-semibold transition-shadow hover:shadow-md outline-none"
+                   className="h-14 pl-6 pr-12 rounded-full border-gray-200 bg-white text-gray-700 shadow-sm focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent cursor-pointer appearance-none font-semibold transition-shadow hover:shadow-md outline-none"
                    value={selectedType}
                    onChange={(e) => setSelectedType(e.target.value)}
                  >
@@ -75,7 +75,7 @@ export default function InstitutionsPage() {
                     <option value="Elderly">Дома престарелых</option>
                     <option value="Disabled">Спец. учреждения</option>
                  </select>
-                 <Filter className="absolute right-5 top-1/2 -translate-y-1/2 text-[#763f97] pointer-events-none" size={18} />
+                 <Filter className="absolute right-5 top-1/2 -translate-y-1/2 text-[#1e3a8a] pointer-events-none" size={18} />
               </div>
             </div>
           </div>
@@ -87,7 +87,7 @@ export default function InstitutionsPage() {
          {/* Состояние загрузки */}
          {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20">
-               <Loader2 className="h-10 w-10 text-[#763f97] animate-spin mb-4" />
+               <Loader2 className="h-10 w-10 text-[#1e3a8a] animate-spin mb-4" />
                <p className="text-gray-500 font-medium">Загружаем список добрых дел...</p>
             </div>
          ) : (

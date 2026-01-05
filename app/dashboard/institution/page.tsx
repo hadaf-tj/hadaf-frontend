@@ -75,7 +75,7 @@ const InstitutionProfilePage = () => {
             </Button>
             <Button 
               type="submit" 
-              className="bg-[#763f97] text-white hover:bg-[#763f97]/90"
+              className="bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/90"
             >
               Сохранить изменения
             </Button>

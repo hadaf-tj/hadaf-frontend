@@ -41,13 +41,13 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#f7f9fe] px-4 py-12 relative">
-       <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-gray-500 hover:text-[#763f97] transition-colors font-bold">
+       <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-gray-500 hover:text-[#1e3a8a] transition-colors font-bold">
           <ArrowLeft size={20} /> На главную
        </Link>
 
        <div className="w-full max-w-md space-y-8">
           <div className="text-center flex flex-col items-center">
-             <div className="w-20 h-20 bg-[#763f97] rounded-3xl flex items-center justify-center text-white mb-6 shadow-xl shadow-[#763f97]/20 transform rotate-3">
+             <div className="w-20 h-20 bg-[#1e3a8a] rounded-3xl flex items-center justify-center text-white mb-6 shadow-xl shadow-[#1e3a8a]/20 transform rotate-3">
                 <HeartHandshake size={40} />
              </div>
              <h1 className="text-3xl font-extrabold text-[#304663]">Вход в систему</h1>
@@ -55,7 +55,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit}>
             <Card className="border-none shadow-2xl rounded-[2rem] overflow-hidden">
-               <div className="h-2 bg-gradient-to-r from-[#763f97] to-[#9851c2]"></div>
+               <div className="h-2 bg-gradient-to-r from-[#1e3a8a] to-[#9851c2]"></div>
                <CardHeader className="space-y-1 pb-2 pt-8 px-8">
                   <CardTitle className="text-xl text-center text-[#304663]">Авторизация</CardTitle>
                </CardHeader>
@@ -89,7 +89,7 @@ export default function LoginPage() {
                   <Button 
                     type="submit" 
                     disabled={isLoading}
-                    className="w-full bg-[#763f97] hover:bg-[#5d317a] h-14 text-lg font-bold rounded-xl"
+                    className="w-full bg-[#1e3a8a] hover:bg-[#5d317a] h-14 text-lg font-bold rounded-xl"
                   >
                     {isLoading ? <Loader2 className="animate-spin" /> : 'Войти'}
                   </Button>

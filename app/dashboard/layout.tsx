@@ -31,15 +31,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   // Компонент навигации (чтобы не дублировать код для мобилки и десктопа)
   const NavContent = () => {
-      const baseLinkClass = 'flex items-center gap-3 rounded-2xl px-4 py-3 text-gray-600 transition-all duration-200 font-medium';
-      const hoverClass = 'hover:bg-[#f7f9fe] hover:text-[#763f97] hover:pl-5'; 
-      const activeClass = 'bg-[#763f97] text-white shadow-md shadow-[#763f97]/20 font-bold'; 
+      const baseLinkClass = 'flex items-center gap-3 rounded-2xl px-4 py-3 text-gray-800 transition-all duration-200 font-medium';
+      const hoverClass = 'hover:bg-[#f7f9fe] hover:text-[#1e3a8a] hover:pl-5'; 
+      const activeClass = 'bg-[#1e3a8a] text-white shadow-md shadow-[#1e3a8a]/20 font-bold'; 
 
       return (
         <div className="flex flex-col h-full">
             <div className="mb-10 px-2 flex items-center gap-2">
-                <Link href="/" className="flex items-center gap-2 text-[#763f97] hover:opacity-80 transition-opacity">
-                    <div className="h-8 w-8 bg-[#763f97] rounded-lg flex items-center justify-center text-white">
+                <Link href="/" className="flex items-center gap-2 text-[#1e3a8a] hover:opacity-80 transition-opacity">
+                    <div className="h-8 w-8 bg-[#1e3a8a] rounded-lg flex items-center justify-center text-white">
                         <ArrowLeft size={18} />
                     </div>
                     <span className="font-extrabold text-xl tracking-tight">На сайт</span>
@@ -84,8 +84,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* 2. MOBILE HEADER (Только Мобильные) */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 z-30 shadow-sm">
-          <span className="font-bold text-[#763f97] text-lg">Кабинет</span>
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-gray-600">
+          <span className="font-bold text-[#1e3a8a] text-lg">Кабинет</span>
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-gray-800">
              {isMobileMenuOpen ? <X /> : <Menu />}
           </button>
       </div>

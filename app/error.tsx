@@ -22,7 +22,7 @@ export default function GlobalError({
       <div className="flex flex-col items-center lg:items-start">
         
         {/* Лаконичный текст */}
-        <h1 className="mt-4 lg:mt-0 text-4xl font-extrabold text-[#763f97]">
+        <h1 className="mt-4 lg:mt-0 text-4xl font-extrabold text-[#1e3a8a]">
           Ой... Что-то пошло не так
         </h1>
 
@@ -34,7 +34,7 @@ export default function GlobalError({
         {/* Кнопка "reset" пытается перезагрузить страницу */}
         <Button
           size="lg"
-          className="mt-8 bg-[#763f97] text-white hover:bg-[#763f97]/90 shadow-md"
+          className="mt-8 bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/90 shadow-md"
           onClick={() => reset()}
         >
           Попробовать снова

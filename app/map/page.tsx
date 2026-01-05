@@ -31,8 +31,8 @@ const MapPage = () => {
       {/* Шапка страницы */}
       <div className="bg-white pt-8 pb-12 shadow-sm rounded-b-[2.5rem]">
          <div className="container mx-auto max-w-7xl px-4">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-[#763f97] mb-4">Карта помощи</h1>
-            <p className="text-lg text-gray-600 max-w-2xl">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-[#1e3a8a] mb-4">Карта помощи</h1>
+            <p className="text-lg text-gray-800 max-w-2xl">
                Найдите ближайшее учреждение, посмотрите его нужды и привезите помощь лично. Это самый прозрачный способ поддержать.
             </p>
          </div>
@@ -40,9 +40,9 @@ const MapPage = () => {
 
       <div className="container mx-auto max-w-7xl px-4 -mt-6">
         {/* Панель фильтров (Карточка) */}
-        <div className="bg-white p-4 md:p-6 rounded-[2rem] shadow-xl shadow-[#763f97]/5 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 border border-[#e2e8f0]">
+        <div className="bg-white p-4 md:p-6 rounded-[2rem] shadow-xl shadow-[#1e3a8a]/5 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 border border-[#e2e8f0]">
             
-            <div className="flex items-center gap-2 text-[#763f97] font-bold uppercase tracking-wider text-sm shrink-0">
+            <div className="flex items-center gap-2 text-[#1e3a8a] font-bold uppercase tracking-wider text-sm shrink-0">
                 <Filter size={18} />
                 Фильтры:
             </div>
@@ -54,7 +54,7 @@ const MapPage = () => {
                 className={cn(
                     "rounded-xl transition-all h-10 font-bold",
                     activeFilter === 'nearest'
-                    ? "bg-[#763f97] text-white shadow-md"
+                    ? "bg-[#1e3a8a] text-white shadow-md"
                     : "bg-[#f7f9fe] text-[#304663] hover:bg-[#e2e8f0]"
                 )}
                 >
@@ -68,7 +68,7 @@ const MapPage = () => {
                 className={cn(
                     "rounded-xl transition-all h-10 font-bold",
                     activeFilter === 'most_needs'
-                    ? "bg-[#763f97] text-white shadow-md"
+                    ? "bg-[#1e3a8a] text-white shadow-md"
                     : "bg-[#f7f9fe] text-[#304663] hover:bg-[#e2e8f0]"
                 )}
                 >
@@ -81,7 +81,7 @@ const MapPage = () => {
                 <select
                     value={selectedType}
                     onChange={(e) => setSelectedType(e.target.value)}
-                    className="h-10 pl-4 pr-10 rounded-xl bg-[#f7f9fe] text-[#304663] font-bold text-sm border-none focus:ring-2 focus:ring-[#763f97] cursor-pointer outline-none hover:bg-[#e2e8f0] transition-colors"
+                    className="h-10 pl-4 pr-10 rounded-xl bg-[#f7f9fe] text-[#304663] font-bold text-sm border-none focus:ring-2 focus:ring-[#1e3a8a] cursor-pointer outline-none hover:bg-[#e2e8f0] transition-colors"
                 >
                     <option value="all">Все учреждения</option>
                     <option value="children">Детские дома</option>

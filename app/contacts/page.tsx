@@ -8,8 +8,8 @@ const ContactsPage = () => {
     return (
     <MainLayout>  
       <div className="max-w-2xl mx-auto py-16">
-        <h1 className="text-4xl font-extrabold text-center text-[#763f97] mb-2">Свяжитесь с нами</h1>
-        <p className="text-lg text-center text-gray-600 mb-8">
+        <h1 className="text-4xl font-extrabold text-center text-[#1e3a8a] mb-2">Свяжитесь с нами</h1>
+        <p className="text-lg text-center text-gray-800 mb-8">
           Есть вопросы, предложения или хотите стать партнером?
         </p>
         {/* Оборачиваем форму в белую карточку */}
@@ -29,7 +29,7 @@ const ContactsPage = () => {
                     <Label htmlFor="message">Сообщение</Label>
                     <Textarea id="message" placeholder="Ваше сообщение..." />
                 </div>
-                <Button type="submit" className="w-full bg-[#763f97] text-white">
+                <Button type="submit" className="w-full bg-[#1e3a8a] text-white">
                     Отправить
                 </Button>
             </form>
