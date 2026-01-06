@@ -1,121 +1,150 @@
+/* FILE: app/map/page.tsx */
 'use client';
 
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/Button';
-import { ListChecks, MapPin, XCircle, Filter } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Search, SlidersHorizontal, List, Map as MapIcon, Loader2 } from 'lucide-react';
+import MainLayout from '@/components/layout/MainLayout';
 
-const MOCK_INSTITUTIONS_FOR_MAP = [
-  { id: '1', name: 'Дом-интернат "Навруз"', position: [38.5765, 68.7895] as [number, number] },
-  { id: '2', name: 'Дом престарелых "Отрада"', position: [38.5490, 68.7731] as [number, number] },
-  { id: '3', name: 'Центр "Умед"', position: [38.5612, 68.8050] as [number, number] },
+// Мок-данные (те же, что и раньше, но с координатами)
+const MOCK_LOCATIONS = [
+  { id: '1', name: 'Дом-интернат "Навруз"', type: 'Children', lat: 38.57, lng: 68.75, needsCount: 42, address: 'Душанбе' },
+  { id: '2', name: 'Дом престарелых "Отрада"', type: 'Elderly', lat: 38.53, lng: 68.80, needsCount: 18, address: 'Худжанд' },
+  { id: '3', name: 'Центр "Умед"', type: 'Disabled', lat: 38.56, lng: 68.79, needsCount: 5, address: 'Вахдат' },
+  { id: '4', name: 'Интернат №1', type: 'Children', lat: 38.59, lng: 68.73, needsCount: 12, address: 'Куляб' },
+  { id: '5', name: 'Центр ветеранов', type: 'Elderly', lat: 38.52, lng: 68.76, needsCount: 25, address: 'Душанбе' },
+];
+
+const CATEGORIES = [
+  { id: 'all', label: 'Все' },
+  { id: 'Children', label: 'Детям' },
+  { id: 'Elderly', label: 'Пожилым' },
+  { id: 'Disabled', label: 'Людям с ОВЗ' },
 ];
 
 const MapPage = () => {
+  // Динамический импорт карты (обязательно для Leaflet в Next.js)
   const MapView = useMemo(() => dynamic(() => import('@/components/specific/MapView'), {
     ssr: false,
     loading: () => (
-        <div className="h-full w-full bg-[#f7f9fe] animate-pulse flex flex-col items-center justify-center text-[#869cb9]">
-            <MapPin size={40} className="mb-2 opacity-50" />
-            <p>Загрузка карты...</p>
+        <div className="h-full w-full bg-[#f7f9fe] flex flex-col items-center justify-center text-[#869cb9]">
+            <Loader2 size={40} className="mb-2 animate-spin text-[#1e3a8a]" />
+            <p className="font-medium animate-pulse">Загрузка карты...</p>
         </div>
     ),
   }), []);
 
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const [selectedType, setSelectedType] = useState('all');
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const resetFilters = () => {
-    setActiveFilter(null);
-    setSelectedType('all');
-  };
+  // Логика фильтрации
+  const filteredLocations = MOCK_LOCATIONS.filter(loc => {
+    const matchesCategory = activeCategory === 'all' || loc.type === activeCategory;
+    const matchesSearch = loc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          loc.address.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesCategory && matchesSearch;
+  });
 
   return (
-    <div className="bg-[#f7f9fe] min-h-screen pb-12">
-      
-      {/* Шапка страницы */}
-      <div className="bg-white pt-8 pb-12 shadow-sm rounded-b-[2.5rem]">
-         <div className="container mx-auto max-w-7xl px-4">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-[#763f97] mb-4">Карта помощи</h1>
-            <p className="text-lg text-gray-600 max-w-2xl">
-               Найдите ближайшее учреждение, посмотрите его нужды и привезите помощь лично. Это самый прозрачный способ поддержать.
-            </p>
-         </div>
-      </div>
-
-      <div className="container mx-auto max-w-7xl px-4 -mt-6">
-        {/* Панель фильтров (Карточка) */}
-        <div className="bg-white p-4 md:p-6 rounded-[2rem] shadow-xl shadow-[#763f97]/5 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 border border-[#e2e8f0]">
-            
-            <div className="flex items-center gap-2 text-[#763f97] font-bold uppercase tracking-wider text-sm shrink-0">
-                <Filter size={18} />
-                Фильтры:
-            </div>
-
-            <div className="flex flex-wrap gap-3 w-full">
-                <Button
-                size="sm"
-                onClick={() => setActiveFilter(prev => prev === 'nearest' ? null : 'nearest')}
-                className={cn(
-                    "rounded-xl transition-all h-10 font-bold",
-                    activeFilter === 'nearest'
-                    ? "bg-[#763f97] text-white shadow-md"
-                    : "bg-[#f7f9fe] text-[#304663] hover:bg-[#e2e8f0]"
-                )}
-                >
-                <MapPin size={16} className="mr-2" />
-                Ближайшие
-                </Button>
-
-                <Button
-                size="sm"
-                onClick={() => setActiveFilter(prev => prev === 'most_needs' ? null : 'most_needs')}
-                className={cn(
-                    "rounded-xl transition-all h-10 font-bold",
-                    activeFilter === 'most_needs'
-                    ? "bg-[#763f97] text-white shadow-md"
-                    : "bg-[#f7f9fe] text-[#304663] hover:bg-[#e2e8f0]"
-                )}
-                >
-                <ListChecks size={16} className="mr-2" />
-                Много нужд
-                </Button>
-
-                <div className="h-8 w-[1px] bg-gray-200 mx-2 hidden md:block"></div>
-
-                <select
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
-                    className="h-10 pl-4 pr-10 rounded-xl bg-[#f7f9fe] text-[#304663] font-bold text-sm border-none focus:ring-2 focus:ring-[#763f97] cursor-pointer outline-none hover:bg-[#e2e8f0] transition-colors"
-                >
-                    <option value="all">Все учреждения</option>
-                    <option value="children">Детские дома</option>
-                    <option value="elderly">Дома престарелых</option>
-                    <option value="disabled">Спец. центры</option>
-                </select>
-
-                {(activeFilter || selectedType !== 'all') && (
-                    <button
-                        onClick={resetFilters}
-                        className="ml-auto text-sm font-bold text-red-400 hover:text-red-600 flex items-center gap-1 transition-colors"
-                    >
-                        <XCircle size={16} />
-                        Сбросить
+    <MainLayout>
+      <div className="min-h-screen bg-[#f8fafc] font-sans">
+        
+        {/* 1. HERO HEADER (Точно такой же, как в Institutions) */}
+        <div className="bg-[#1e3a8a] pt-32 pb-12 rounded-b-[3rem]">
+          <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+              <div>
+                <h1 className="text-3xl md:text-5xl font-black text-white mb-3">
+                  Карта помощи
+                </h1>
+                <p className="text-white/80 text-lg">
+                  Найдите ближайшее учреждение и привезите помощь лично.
+                </p>
+              </div>
+              
+              {/* Переключатель Карта / Список */}
+              <div className="hidden md:flex bg-white/10 p-1 rounded-xl backdrop-blur-sm border border-white/20">
+                 <Link href="/institutions">
+                    <button className="px-4 py-2 text-white/80 hover:text-white rounded-lg font-bold text-sm transition-colors flex items-center gap-2">
+                        <List size={16} />
+                        Список
                     </button>
-                )}
+                 </Link>
+                 <button className="px-4 py-2 bg-white text-[#1e3a8a] rounded-lg font-bold text-sm shadow-sm flex items-center gap-2">
+                    <MapIcon size={16} />
+                    На карте
+                 </button>
+              </div>
             </div>
+
+            {/* Блок поиска и фильтров (Нависает над контентом) */}
+            <div className="bg-white p-2 rounded-2xl shadow-xl flex flex-col md:flex-row gap-2 relative z-20">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <input 
+                  type="text" 
+                  placeholder="Найти по названию или городу..." 
+                  className="w-full h-12 pl-12 pr-4 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 transition-all font-medium"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              
+              {/* Фильтры по категориям */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 px-1 no-scrollbar">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={`
+                      whitespace-nowrap px-6 h-12 rounded-xl font-bold transition-all text-sm
+                      ${activeCategory === cat.id 
+                        ? 'bg-[#1e3a8a] text-white shadow-md' 
+                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}
+                    `}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+                
+                {/* Кнопка доп. фильтров */}
+                <button className="h-12 w-12 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 flex-shrink-0 border border-transparent hover:border-gray-200">
+                   <SlidersHorizontal size={20} />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Карта */}
-        <div className="mt-6 bg-white p-2 rounded-[2rem] shadow-lg border border-[#e2e8f0]">
-            <div className="h-[65vh] w-full rounded-[1.5rem] overflow-hidden relative z-0">
-                <MapView institutions={MOCK_INSTITUTIONS_FOR_MAP} />
-            </div>
-        </div>
+        {/* 2. ОБЛАСТЬ КАРТЫ */}
+        <section className="py-12 -mt-4 relative z-10">
+           <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
+              
+              {/* Счетчик */}
+              <div className="mb-4 text-gray-500 font-medium pl-2">
+                Найдено на карте: <span className="text-gray-900 font-bold">{filteredLocations.length}</span>
+              </div>
+
+              {/* Контейнер карты */}
+              <div className="bg-white p-2 rounded-[2.5rem] shadow-xl border border-gray-100">
+                <div className="h-[65vh] w-full rounded-[2rem] overflow-hidden bg-gray-50 relative z-0">
+                    <MapView locations={filteredLocations} />
+                </div>
+              </div>
+
+              {/* Подсказка */}
+              <div className="mt-6 text-center text-gray-400 text-sm font-medium">
+                 Нажмите на метку, чтобы увидеть подробности и перейти к странице помощи
+              </div>
+              
+           </div>
+        </section>
 
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

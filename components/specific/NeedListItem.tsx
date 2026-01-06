@@ -22,13 +22,13 @@ const NeedListItem: React.FC<NeedListItemProps> = ({ need }) => {
         {/* Progress Bar */}
         <div className="w-full bg-gray-100 rounded-full h-3 mt-2 overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-500 ${isCompleted ? 'bg-emerald-500' : 'bg-[#763f97]'}`}
+            className={`h-full rounded-full transition-all duration-500 ${isCompleted ? 'bg-emerald-500' : 'bg-[#1e3a8a]'}`}
             style={{ width: `${progress}%` }}
           ></div>
         </div>
         
         <div className="flex justify-between text-xs mt-2 font-medium">
-           <span className="text-[#763f97]">{need.receivedQuantity} собрано</span>
+           <span className="text-[#1e3a8a]">{need.receivedQuantity} собрано</span>
            <span className="text-gray-400">из {need.requiredQuantity}</span>
         </div>
       </div>
@@ -36,7 +36,7 @@ const NeedListItem: React.FC<NeedListItemProps> = ({ need }) => {
       <div className="flex-shrink-0 w-full sm:w-auto">
         <Button 
             disabled={isCompleted} 
-            className={`w-full sm:w-auto ${isCompleted ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-[#763f97] hover:bg-[#763f97]/90'}`}
+            className={`w-full sm:w-auto ${isCompleted ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-[#1e3a8a] hover:bg-[#1e3a8a]/90'}`}
         >
           {isCompleted ? 'Готово' : 'Помочь'}
         </Button>

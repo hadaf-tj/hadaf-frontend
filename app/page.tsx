@@ -1,9 +1,13 @@
+'use client';
+
 import { Institution } from '@/types/project';
 import InstitutionCard from '@/components/specific/InstitutionCard';
-import { ArrowRight, Heart, Users, Baby, ShieldCheck, Lightbulb } from 'lucide-react';
+import { ArrowRight, Heart, Users, Baby, ShieldCheck, Sparkles, TrendingUp, Award, Mountain, Bold } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';
+import MainLayout from '@/components/layout/MainLayout';
+import OrnamentDivider from '@/components/ui/OrnamentDivider';
 
 // Мок-данные
 const MOCK_INSTITUTIONS: Institution[] = [
@@ -20,127 +24,150 @@ const DIRECTIONS = [
 
 const HomePage: React.FC = () => {
   return (
-    <div className="font-sans">
-      
-      {/* 1. HERO SECTION (Стиль Хабенского) */}
-      {/* ИСПРАВЛЕНО: rounded-[3rem] (со всех сторон) и mt-4 (отступ от хедера) */}
-      <section className="relative bg-[#763f97] text-white pt-12 pb-20 lg:pb-32 rounded-[3rem] overflow-hidden shadow-xl mx-4 mt-4">
-        
-        {/* Декор фона */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
-        
-        <div className="container mx-auto max-w-7xl px-4 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Текстовая часть */}
-            <div className="lg:col-span-7 space-y-8">
-              <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-md rounded-full text-sm font-bold tracking-wider uppercase mb-4 border border-white/10">
-                 Платформа адресной помощи
-              </div>
-              <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
-                Благотворительность <br/>
-                <span className="text-[#ffca63]">без посредников</span>
+    <MainLayout>
+    <div className="font-sans overflow-hidden">
+      {/* 1. HERO SECTION */}
+        <section className="relative w-full h-[600px] lg:h-[700px]">
+          <Image 
+             src="/hero.png"
+             alt="Hero Banner"
+             fill
+             priority
+          />
+          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="absolute inset-0 flex items-center">
+          {/* ИЗМЕНЕНИЕ: max-w-[1440px] и агрессивные отступы xl:px-28, чтобы сжать контент к центру */}
+          <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
+            <div className="max-w-2xl space-y-6 animate-in slide-in-from-bottom-10 duration-700">
+              
+              {/* ЗАГОЛОВОК */}
+              <h1 className="text-4xl md:text-6xl font-black text-white leading-tight drop-shadow-lg">
+                Пайванд<br />
+                От сердца к сердцу
               </h1>
               
-              <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-xl font-medium">
-                Наша миссия — повышение качества жизни людей в социальных учреждениях Таджикистана через прозрачную и прямую помощь.
+              {/* ПОДЗАГОЛОВОК */}
+              <p className="text-lg md:text-xl text-white/90 font-medium leading-relaxed drop-shadow-md">
+                Платформа адресной помощи, чтобы ваша помощь мгновенно находила тех, кому она нужнее всего.
               </p>
 
-              {/* Статистика */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 py-8 border-y border-white/10">
-                <div>
-                  <div className="text-3xl md:text-4xl font-bold text-[#ffca63] mb-1">1 088+</div>
-                  <div className="text-xs md:text-sm text-white/70 uppercase tracking-wider font-semibold">Закрытых нужд</div>
-                </div>
-                <div>
-                  <div className="text-3xl md:text-4xl font-bold text-white mb-1">29 312</div>
-                  <div className="text-xs md:text-sm text-white/70 uppercase tracking-wider font-semibold">Человек получили помощь</div>
-                </div>
-                <div className="col-span-2 md:col-span-1">
-                  <div className="text-3xl md:text-4xl font-bold text-white mb-1">271</div>
-                  <div className="text-xs md:text-sm text-white/70 uppercase tracking-wider font-semibold">Учреждение в базе</div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-4">
-                <Button asChild size="lg" className="bg-[#ffca63] text-[#763f97] hover:bg-[#ffca63]/90 font-bold h-14 px-8 rounded-full text-lg shadow-lg hover:-translate-y-1 transition-transform">
+              {/* КНОПКА */}
+              <div className="pt-4">
+                <Button asChild size="lg" className="bg-[#ffca63] text-[#1e3a8a] hover:bg-white hover:text-[#1e3a8a] font-bold h-14 px-10 rounded-full shadow-xl transition-all">
                   <Link href="/institutions">Хочу помочь</Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#763f97] font-bold h-14 px-8 rounded-full text-lg">
-                  <Link href="/about">Подробнее о нас</Link>
-                </Button>
               </div>
-            </div>
 
-            {/* Правая часть: Изображение */}
-            <div className="lg:col-span-5 relative hidden lg:block">
-               <div className="relative w-[500px] h-[500px] mx-auto">
-                  {/* Основное фото в круге */}
-                  <div className="absolute inset-0 bg-gray-200 rounded-full border-[8px] border-white/10 overflow-hidden shadow-2xl">
-                    <Image 
-                      src="http://googleusercontent.com/image_generation_content/3" 
-                      alt="Дети и волонтеры" 
-                      fill 
-                      className="object-cover scale-105 hover:scale-110 transition-transform duration-700"
-                    />
-                  </div>
-                  
-                  {/* Плашка "Истории" */}
-                  <div className="absolute bottom-10 -left-6 bg-white p-6 rounded-3xl shadow-xl max-w-xs transform rotate-3 animate-in fade-in slide-in-from-bottom-10 duration-1000 hover:rotate-0 transition-transform">
-                    <p className="text-[#763f97] font-bold text-lg mb-1">История месяца</p>
-                    <p className="text-gray-600 text-sm leading-snug">Как волонтеры починили крышу в доме престарелых за 2 дня.</p>
-                    <Link href="#" className="text-[#ffca63] font-bold text-sm mt-3 inline-flex items-center hover:gap-2 transition-all">Читать <ArrowRight size={16} className="ml-1"/></Link>
-                  </div>
-               </div>
             </div>
           </div>
         </div>
-      </section>
+        </section>
+
+      {/* 2. КАРТОЧКА МИССИИ */}
+        {/* ИЗМЕНЕНИЕ: Те же отступы для контейнера */}
+        <section className="container py-7 mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 -mt-37 relative z-10">
+           <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border-gray-100">
+               <h2 className="text-3xl font-bold text-[#1e3a8a] mb-8 text-center">
+                  Наша миссия — прозрачная и адресная помощь
+               </h2>
+               
+               {/* Статистика */}
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                  <div>
+                    <div className="text-5xl font-black text-[#1e3a8a] mb-2">1004</div>
+                    <p className="text-gray-800 font-medium">Закрытых нужд</p>
+                  </div>
+                  <div>
+                    <div className="text-5xl font-black text-[#1e3a8a] mb-2">121</div>
+                    <p className="text-gray-800 font-medium">Человек получили помощь</p>
+                  </div>
+                  <div>
+                    <div className="text-5xl font-black text-[#1e3a8a] mb-2">21</div>
+                    <p className="text-gray-800 font-medium">Учреждение в базе</p>
+                  </div>
+               </div>
+           </div>
+        </section>
 
       {/* 2. СЕКЦИЯ "КОМУ ПОМОГАЕМ" */}
-      <section className="py-24 bg-[#f7f9fe]">
-        <div className="container mx-auto max-w-7xl px-4">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-[#763f97] mb-4">Кому мы помогаем</h2>
-              <p className="text-lg text-gray-600 max-w-2xl">
-                В нашем реестре только проверенные государственные учреждения. <br/>Вы можете выбрать любое и увидеть их реальные нужды.
-              </p>
-            </div>
-            <Link href="/institutions" className="hidden md:flex items-center font-bold text-[#763f97] hover:opacity-80 transition-colors group">
-              Посмотреть всех <span className="ml-2 bg-[#763f97] text-white rounded-full p-1 group-hover:translate-x-1 transition-transform"><ArrowRight size={16}/></span>
-            </Link>
+      <section className="py-7 relative">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-[#1e3a8a]/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-40 h-40 bg-[#ffca63]/10 rounded-full blur-3xl"></div>
+
+        {/* ИЗМЕНЕНИЕ: Те же отступы для контейнера */}
+        <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 relative z-10">
+          <div className="text-center mb-16 max-w-3xl mx-auto">
+            <h2 className="text-4xl md:text-7xl font-black text-gray-800 mb-6">
+              <span className="text-[#1e3a8a]">Кому помогаем</span>
+            </h2>
+            <p className="text-xl text-gray-800 leading-relaxed">
+              В нашем реестре только проверенные государственные учреждения. 
+              Выберите любое и узнайте их реальные нужды прямо сейчас.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {MOCK_INSTITUTIONS.map((inst) => (
-              <InstitutionCard key={inst.id} institution={inst} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {MOCK_INSTITUTIONS.map((inst, idx) => (
+              <div key={inst.id} className="transform hover:scale-105 transition-all duration-300" style={{animationDelay: `${idx * 100}ms`}}>
+                <InstitutionCard institution={inst} />
+              </div>
             ))}
           </div>
 
-          <div className="mt-12 text-center md:hidden">
-             <Button asChild variant="outline" className="w-full border-[#763f97] text-[#763f97] h-12 font-bold rounded-full">
-                <Link href="/institutions">Посмотреть всех</Link>
-             </Button>
+          <div className="text-center">
+            <Button asChild size="lg" className="bg-[#1e3a8a] text-white font-bold h-14 px-8 rounded-full hover:shadow-2xl transition-all group">
+              <Link href="/institutions" className="flex items-center gap-3">
+                Смотреть все учреждения
+                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform"/>
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
+      {/* 3. НАПРАВЛЕНИЯ */}
+      <OrnamentDivider opacity="opacity-25" height="h-92" />
+      <section className="py-7 relative overflow-hidden -mt-80 z-10">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMTAwIDAgTCAwIDAgMCAxMDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzc2M2Y5NyIgc3Ryb2tlLXdpZHRoPSIwLjUiIG9wYWNpdHk9IjAuMDUiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50"></div>
 
-      {/* 3. НАПРАВЛЕНИЯ (Карточки с иконками) */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto max-w-7xl px-4">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-16 text-center">Наши направления</h2>
+        {/* ИЗМЕНЕНИЕ: Те же отступы для контейнера */}
+        <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 relative z-10">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-7xl font-black text-gray-800 mb-6">
+              <span className="bg-[#1e3a8a] bg-clip-text text-transparent">Наши направления</span>
+            </h2>
+            <p className="text-xl font-black text-gray-800">
+              Мы работаем по трем ключевым направлениям помощи
+            </p>
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {DIRECTIONS.map((dir, idx) => (
-              <div key={idx} className="group bg-white border border-gray-100 rounded-[2rem] p-8 hover:shadow-xl hover:border-[#763f97]/30 transition-all duration-300 cursor-pointer">
-                <div className="w-16 h-16 bg-[#f7f9fe] rounded-2xl flex items-center justify-center text-[#763f97] mb-6 group-hover:bg-[#763f97] group-hover:text-white transition-colors duration-300 shadow-sm">
-                  {dir.icon}
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#763f97] transition-colors">{dir.title}</h3>
-                <p className="text-gray-500 leading-relaxed mb-6">{dir.desc}</p>
-                <div className="flex items-center text-[#763f97] font-bold text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                  Подробнее <ArrowRight size={16} className="ml-2" />
+              <div 
+                key={idx} 
+                className="group relative bg-white rounded-2xl p-10 hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100 hover:border-[#1e3a8a]/30 overflow-hidden"
+                style={{
+                  transform: 'perspective(1000px) rotateX(0deg)',
+                  transition: 'all 0.5s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'perspective(1000px) rotateX(5deg) translateY(-10px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) translateY(0)';
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient[#1e3a8a] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative z-10">
+                  <div className="w-20 h-20 bg-[#1e3a8a] rounded-3xl flex items-center justify-center text-white mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg shadow-[#1e3a8a]/30">
+                    {dir.icon}
+                  </div>
+                  <h3 className="text-2xl font-black text-gray-900 mb-4 group-hover:text-[#1e3a8a] transition-colors">{dir.title}</h3>
+                  <p className="text-gray-800 leading-relaxed mb-6 text-lg">{dir.desc}</p>
+                  <div className="flex items-center text-[#1e3a8a] font-bold text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                    Узнать больше
+                    <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -148,40 +175,69 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. CTA БЛОК (Событие со смыслом) */}
-      <section className="py-20 bg-[#f7f9fe]">
-        <div className="container mx-auto max-w-6xl px-4">
-          <div className="bg-white rounded-[3rem] p-8 md:p-16 shadow-xl flex flex-col lg:flex-row items-center gap-12 relative overflow-hidden">
-            {/* Декор */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-[#ffca63] rounded-bl-full opacity-10 pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#763f97] rounded-tr-full opacity-5 pointer-events-none"></div>
+
+      {/* 4. CTA БЛОК */}
+      <section className="py-12 md:py-20">
+        <div className="container mx-auto max-w-[1440px] px-6 lg:px-12 xl:px-28 relative z-10">
+          <div className="relative bg-[#1e3a8a] rounded-3xl p-8 md:p-16 overflow-hidden shadow-2xl">
             
-            <div className="flex-1 space-y-8 relative z-10">
-              <div className="inline-block px-4 py-1 bg-[#f3e8ff] text-[#763f97] rounded-full text-xs font-bold uppercase tracking-wider">
-                Волонтерам
+            <div className="flex flex-col lg:flex-row items-center gap-12 relative z-10">
+              
+              {/* ЛЕВАЯ ЧАСТЬ: ТЕКСТ */}
+              <div className="flex-1 space-y-8 text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md text-white rounded-full text-xs md:text-sm font-bold uppercase tracking-wider border border-white/10">
+                  <Sparkles size={16} className="text-[#ffca63]"/>
+                  Станьте организатором
+                </div>
+                
+                {/* НОВЫЙ ЗАГОЛОВОК */}
+                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1]">
+                  Создавайте события и <br className="hidden lg:block"/>
+                  <span className="text-[#ffca63]">собирайте команду</span>
+                </h2>
+                
+                {/* НОВЫЙ ТЕКСТ, объясняющий механику */}
+                <p className="text-lg lg:text-xl text-white/80 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                  Хотите провести гончарный мастер-класс, викторину или субботник в конкретном детском доме? Создайте событие на платформе! Другие волонтеры увидят вашу инициативу и смогут присоединиться, нажав кнопку «Я иду». Вместе мы можем больше.
+                </p>
+                
+                <div className="pt-4">
+                  <Button asChild size="lg" className="bg-[#ffca63] text-[#1e3a8a] hover:bg-white font-black h-14 px-10 rounded-full hover:scale-105 transition-all group text-lg w-full sm:w-auto">
+                    {/* Ссылку можно поменять на страницу создания события, например /events/create */}
+                    <Link href="/about" className="flex items-center justify-center gap-3">
+                      Узнать, как создать событие
+                      <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform"/>
+                    </Link>
+                  </Button>
+                </div>
               </div>
-              <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-                Создайте своё <br/> <span className="text-[#763f97]">«Событие со смыслом»</span>
-              </h2>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Любой праздник можно сделать благотворительным. Предложите друзьям вместо подарков сделать пожертвование на нужды детей или стариков. Это просто и вдохновляюще!
-              </p>
-              <Button asChild size="lg" className="bg-[#763f97] text-white hover:bg-[#763f97]/90 h-14 px-10 rounded-full font-bold shadow-lg hover:shadow-xl transition-all">
-                <Link href="/about">Узнать как это работает</Link>
-              </Button>
-            </div>
-            
-            <div className="flex-1 relative w-full max-w-md">
-               {/* Иллюстрация */}
-               <div className="relative w-full aspect-[4/3] bg-[#f7f9fe] rounded-3xl overflow-hidden border-8 border-white shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500 flex items-center justify-center">
-                  <Lightbulb size={80} className="text-[#ffca63] drop-shadow-md" />
-               </div>
+              
+              {/* ПРАВАЯ ЧАСТЬ: ФОТОГРАФИЯ */}
+              <div className="flex-1 relative w-full max-w-sm lg:max-w-md">
+                {/* Контейнер "стеклянный куб" */}
+                <div className="relative w-full aspect-square bg-white/5 backdrop-blur-sm rounded-3xl overflow-hidden border border-white/10 flex items-center justify-center group hover:bg-white/10 transition-colors duration-500">
+                  {/* Градиентный фон внутри куба */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-[#ffca63]/20 via-transparent to-transparent z-0"></div>
+                  
+                  {/* ВНУТРЕННИЙ КОНТЕЙНЕР ДЛЯ ФОТО */}
+                  {/* Мы делаем его чуть меньше (w-[85%]), чтобы сохранить красивые рамки "стекла" вокруг фото */}
+                  <div className="relative w-[85%] h-[85%] rounded-2xl overflow-hidden shadow-2xl z-10 group-hover:scale-105 transition-transform duration-500">
+                    <Image
+                      src="/master_klass.png" // Убедитесь, что файл есть в папке public
+                      alt="Волонтеры проводят мастер-класс с детьми"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
     </div>
+    </MainLayout>
   );
 };
 

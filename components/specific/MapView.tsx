@@ -1,53 +1,76 @@
+/* FILE: components/specific/MapView.tsx */
 'use client';
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { Institution } from '@/types/project'; // Убедитесь, что типы импортированы
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
-// 1. УДАЛЯЕМ все старые импорты иконок (iconRetinaUrl, iconUrl, shadowUrl)
+// Фикс для иконок Leaflet в Next.js (стандартная проблема библиотеки)
+const iconUrl = 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png';
+const iconRetinaUrl = 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png';
+const shadowUrl = 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png';
 
-// 2. СОЗДАЕМ SVG-иконку с вашим фиолетовым цветом
-const iconHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" fill="#763f97">
-  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 7 12 7s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
-</svg>`;
-
-// 3. Создаем DivIcon
-const customIcon = new L.DivIcon({
-  html: iconHtml,
-  className: '', // Убираем рамку по умолчанию у divIcon
-  iconSize: [36, 36], // Размер SVG
-  iconAnchor: [18, 36], // Точка "ножки" маркера (середина-низ)
-  popupAnchor: [0, -36] // Куда "всплывет" попап
+// Создаем кастомный стиль иконки, чтобы она подходила под дизайн (Синяя)
+const customIcon = L.icon({
+  iconUrl: iconUrl,
+  iconRetinaUrl: iconRetinaUrl,
+  shadowUrl: shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
 });
 
-interface InstitutionForMap {
-  id: string;
-  name: string;
-  position: [number, number];
-}
+// Координаты центра Душанбе (по умолчанию)
+const CENTER_POS: [number, number] = [38.5598, 68.7870]; 
 
 interface MapViewProps {
-  institutions: InstitutionForMap[];
+  locations: any[]; // В реальном проекте используйте Institution[]
 }
 
-const MapView: React.FC<MapViewProps> = ({ institutions }) => {
-  const mapCenter: [number, number] = [38.5598, 68.7870];
-
+const MapView: React.FC<MapViewProps> = ({ locations }) => {
   return (
-    <MapContainer center={mapCenter} zoom={13} style={{ height: '100%', width: '100%' }}>
-      {/* Используем красивый скин карты */}
+    <MapContainer 
+      center={CENTER_POS} 
+      zoom={12} 
+      scrollWheelZoom={false} 
+      style={{ height: '100%', width: '100%' }}
+      zoomControl={false} // Отключаем стандартный зум, чтобы переместить его или стилизовать
+    >
+      {/* Слой карты (Бесплатный OpenStreetMap) */}
       <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      
+      {/* Кнопки зума справа внизу */}
+      <ZoomControl position="bottomright" />
 
-      {institutions.map(inst => (
-        // Маркер теперь использует нашу фиолетовую SVG-иконку
-        <Marker key={inst.id} position={inst.position} icon={customIcon}>
-          <Popup>
-            <a href={`/institutions/${inst.id}`} className="font-bold hover:underline">
-              {inst.name}
-            </a>
+      {/* Рендеринг маркеров */}
+      {locations.map((loc) => (
+        <Marker 
+          key={loc.id} 
+          position={[loc.lat, loc.lng]} 
+          icon={customIcon}
+        >
+          <Popup className="custom-popup">
+            <div className="p-1 min-w-[200px]">
+               <div className="text-xs font-bold text-gray-400 uppercase mb-1">
+                 {loc.type === 'children' ? 'Детский дом' : loc.type === 'elderly' ? 'Дом престарелых' : 'Спец. центр'}
+               </div>
+               <h3 className="font-bold text-[#1e3a8a] text-lg mb-1">{loc.name}</h3>
+               <p className="text-sm text-gray-600 mb-3">{loc.needsCount} открытых нужд</p>
+               <Link 
+                 href={`/institutions/${loc.id}`} 
+                 className="flex items-center justify-between text-sm font-bold text-white bg-[#1e3a8a] px-3 py-2 rounded-lg hover:bg-[#2a4ec2] transition-colors"
+               >
+                 Помочь
+                 <ArrowRight size={14} />
+               </Link>
+            </div>
           </Popup>
         </Marker>
       ))}

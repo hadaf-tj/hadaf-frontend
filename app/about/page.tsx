@@ -1,109 +1,183 @@
-import { Card } from '@/components/ui/Card';
-import { Heart, Shield, Zap, Users, Target, Lightbulb } from 'lucide-react';
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import MainLayout from '@/components/layout/MainLayout';
+import { Button } from '@/components/ui/Button';
+import OrnamentDivider from '@/components/ui/OrnamentDivider';
+import { Target, Heart, Shield, Users, CheckCircle2 } from 'lucide-react';
 
 export default function AboutPage() {
   return (
-    <div className="bg-[#f7f9fe] min-h-screen pb-24 font-sans">
-       
-       {/* Hero Section */}
-       <section className="bg-white pt-20 pb-24 rounded-b-[3rem] shadow-sm overflow-hidden relative">
-          {/* Фон */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-[#f3e8ff] to-transparent rounded-full blur-3xl -z-10 opacity-50"></div>
+    <MainLayout>
+      <div className="font-sans overflow-hidden bg-[#f8fafc]">
+        
+        {/* 1. HERO SECTION (Верхний баннер) */}
+        <section className="relative w-full h-[450px] lg:h-[500px]">
+          <Image 
+             src="/hero_about.png" // Основной баннер (можно оставить тот же или поменять)
+             alt="About Hero"
+             fill
+             className="object-cover"
+             priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1e3a8a]/90 to-[#1e3a8a]/40"></div>
           
-          <div className="container mx-auto max-w-4xl text-center px-4 relative z-10">
-             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#f3e8ff] text-[#763f97] rounded-full text-sm font-bold mb-8">
-                <span>✨</span> О проекте Пайванд
-             </div>
-             <h1 className="text-4xl md:text-6xl font-extrabold text-[#763f97] mb-8 leading-tight">
-                Наша миссия — <br/> объединять сердца
-             </h1>
-             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-                «Пайванд» — это цифровой мост между теми, кто хочет помочь, и теми, кто в этом остро нуждается. Мы делаем благотворительность в Таджикистане прозрачной, адресной и эффективной.
-             </p>
-          </div>
-       </section>
-
-       {/* Ценности (Карточки) */}
-       <section className="container mx-auto max-w-6xl px-4 mt-16">
-          <h2 className="text-3xl font-bold text-[#304663] text-center mb-12">Наши ценности</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             {/* Value 1 */}
-             <Card className="border-none shadow-soft hover:shadow-soft-hover hover:-translate-y-1 transition-all bg-white p-8 text-center group h-full">
-                <div className="w-20 h-20 bg-[#f3e8ff] rounded-3xl flex items-center justify-center mx-auto mb-6 text-[#763f97] group-hover:scale-110 transition-transform duration-300">
-                   <Shield size={36} />
+          <div className="absolute inset-0 flex items-center">
+            {/* Контейнер по вашим стандартам */}
+            <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
+              <div className="max-w-3xl space-y-6 animate-in slide-in-from-bottom-10 duration-700">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md text-white rounded-full text-sm font-bold border border-white/20">
+                  <Users size={16} className="text-[#ffca63]"/>
+                  О проекте
                 </div>
-                <h3 className="text-xl font-bold text-[#304663] mb-4">Прозрачность</h3>
-                <p className="text-gray-500 leading-relaxed">
-                   Мы верифицируем каждое учреждение. Вы точно знаете, куда и кому идет ваша помощь, без скрытых процессов.
-                </p>
-             </Card>
-             
-             {/* Value 2 */}
-             <Card className="border-none shadow-soft hover:shadow-soft-hover hover:-translate-y-1 transition-all bg-white p-8 text-center group h-full">
-                <div className="w-20 h-20 bg-[#fffbeb] rounded-3xl flex items-center justify-center mx-auto mb-6 text-[#ffca63] group-hover:scale-110 transition-transform duration-300">
-                   <Heart size={36} />
-                </div>
-                <h3 className="text-xl font-bold text-[#304663] mb-4">Забота</h3>
-                <p className="text-gray-500 leading-relaxed">
-                   Мы фокусируемся на самых уязвимых: детях-сиротах и пожилых людях, обеспечивая их не просто вещами, а вниманием.
-                </p>
-             </Card>
-
-             {/* Value 3 */}
-             <Card className="border-none shadow-soft hover:shadow-soft-hover hover:-translate-y-1 transition-all bg-white p-8 text-center group h-full">
-                <div className="w-20 h-20 bg-[#ffeef2] rounded-3xl flex items-center justify-center mx-auto mb-6 text-[#f16722] group-hover:scale-110 transition-transform duration-300">
-                   <Zap size={36} />
-                </div>
-                <h3 className="text-xl font-bold text-[#304663] mb-4">Эффективность</h3>
-                <p className="text-gray-500 leading-relaxed">
-                   Платформа обновляется в реальном времени. Это помогает избежать дублирования помощи и закрывать самые срочные нужды.
-                </p>
-             </Card>
-          </div>
-       </section>
-
-       {/* История / Текст */}
-       <section className="container mx-auto max-w-6xl px-4 mt-24 mb-20">
-          <div className="bg-white rounded-[3rem] p-8 md:p-16 shadow-xl flex flex-col lg:flex-row items-center gap-16">
-             <div className="flex-1 space-y-8">
-                <div>
-                   <div className="flex items-center gap-3 text-[#763f97] font-bold mb-4">
-                      <Lightbulb size={24} />
-                      <span className="uppercase tracking-wider text-sm">История</span>
-                   </div>
-                   <h2 className="text-3xl md:text-4xl font-extrabold text-[#304663]">Как всё началось</h2>
-                </div>
-                <p className="text-gray-600 text-lg leading-relaxed">
-                   Идея проекта родилась из простого наблюдения: многие люди хотят помочь детским домам, но часто привозят одни и те же вещи (например, конфеты на Новый год), в то время как учреждениям остро не хватает элементарных средств гигиены, одежды или бытовой химии.
-                </p>
-                <p className="text-gray-600 text-lg leading-relaxed">
-                   Мы решили создать инструмент, который покажет реальную картину нужд. Так появился <b>«Пайванд»</b> (Связь) — проект, который соединяет людей, готовых помочь, с теми, кто ждет помощи.
-                </p>
                 
-                <div className="pt-4 grid grid-cols-2 gap-6">
-                   <div>
-                      <div className="text-4xl font-bold text-[#763f97] mb-1">2025</div>
-                      <div className="text-sm text-gray-400 uppercase font-bold">Год основания</div>
-                   </div>
-                   <div>
-                      <div className="text-4xl font-bold text-[#ffca63] mb-1">10+</div>
-                      <div className="text-sm text-gray-400 uppercase font-bold">Волонтеров в команде</div>
-                   </div>
-                </div>
-             </div>
-             
-             {/* Блок с фото/заглушкой */}
-             <div className="flex-1 w-full">
-                 <div className="relative aspect-square bg-[#e9eff5] rounded-[2rem] overflow-hidden border-8 border-white shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500">
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
-                       <Users size={64} className="text-[#763f97] mb-4 opacity-50" />
-                       <span className="text-[#304663] font-bold text-xl">Команда волонтеров</span>
-                       <span className="text-gray-500 mt-2">Мы работаем для вас</span>
-                    </div>
-                 </div>
-             </div>
+                <h1 className="text-4xl md:text-6xl font-black text-white leading-tight">
+                  Мы строим мост <br/>
+                  <span className="text-[#ffca63]">доверия и помощи</span>
+                </h1>
+                
+                <p className="text-lg md:text-xl text-white/90 font-medium leading-relaxed max-w-2xl">
+                  Пайванд — это платформа, объединяющая тех, кто хочет помочь, с теми, кто в этом нуждается: от детских домов до одиноких пенсионеров.
+                </p>
+              </div>
+            </div>
           </div>
-       </section>
-    </div>
+        </section>
+
+        {/* 2. ИСТОРИЯ И ПРОБЛЕМА */}
+        <section className="py-7 bg-white relative z-20">
+          <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
+            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+              
+              {/* Левая часть - Текст */}
+              <div className="flex-1 space-y-6">
+                <h2 className="text-3xl md:text-5xl font-black text-[#1e3a8a] leading-tight">
+                  Почему мы <br/>
+                  появились?
+                </h2>
+                <div className="space-y-4 text-lg text-gray-600 leading-relaxed">
+                  <p>
+                    В Таджикистане тысячи людей хотят помочь не только детским домам, но и <span className="font-bold text-gray-900">одиноким пенсионерам</span> или людям с инвалидностью. Но часто возникают вопросы: «Кому помощь нужнее всего прямо сейчас?» и «Дойдет ли она до адресата?».
+                  </p>
+                  <p>
+                    Мы решили убрать этот барьер. Мы создали единый реестр, который включает как проверенные государственные учреждения, так и списки для <span className="font-bold text-gray-900">адресной точечной поддержки</span>.
+                  </p>
+                  <p>
+                    Больше никаких звонков наугад. Вы видите конкретную нужду — будь то продукты для интерната или лекарства для бабушки по соседству — и закрываете её. Напрямую.
+                  </p>
+                </div>
+                
+                <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[
+                    'Проверенные учреждения',
+                    'Помощь пенсионерам',
+                    'Прямая связь',
+                    '100% прозрачности'
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <CheckCircle2 className="text-[#ffca63] flex-shrink-0" size={24} />
+                      <span className="font-bold text-[#1e3a8a]">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Правая часть - Визуал (hero_about.png) */}
+              <div className="flex-1 relative w-full h-[400px] lg:h-[500px]">
+                <div className="absolute inset-0 bg-[#1e3a8a] rounded-[3rem] rotate-3 transform translate-x-4 translate-y-4 opacity-10"></div>
+                <div className="relative h-full w-full rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white">
+                   <Image 
+                     src="/hero_about_2.png" 
+                     alt="Волонтеры помогают пенсионерам и детям"
+                     fill
+                     className="object-cover"
+                   />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 3. ОРНАМЕНТ + ЦЕННОСТИ (Секция с наложением) */}
+        <section className="py-7 md:py-12">
+          <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
+            <div className="bg-[#1e3a8a] rounded-[3rem] p-8 md:p-16 text-center relative overflow-hidden shadow-2xl">
+              <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                 <div className="absolute inset-0 bg-[url('/ornament.png')] bg-repeat mix-blend-overlay"></div>
+              </div>
+              
+              <div className="relative z-10 max-w-3xl mx-auto space-y-8">
+                <h2 className="text-3xl md:text-5xl font-black text-white">
+                  Хотите стать частью изменений?
+                </h2>
+                <p className="text-lg md:text-xl text-white/90">
+                  Мы всегда ищем волонтеров, партнеров и просто неравнодушных людей, готовых развивать культуру помощи в Таджикистане.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                   <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-white font-bold h-14 px-10 rounded-full text-lg">
+                      <Link href="/institutions">Начать помогать</Link>
+                   </Button>
+                   <Button asChild variant="outline" className="border-2 border-white/30 text-white hover:bg-white hover:text-[#1e3a8a] bg-transparent font-bold h-14 px-10 rounded-full text-lg">
+                      <Link href="mailto:team@payvand.tj">Написать нам</Link>
+                   </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* Орнамент высокий и прозрачный */}
+        {/* Секция наезжает на орнамент (-mt-80) */}
+        <section className="py-7 relative overflow-hidden z-10">
+          <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
+            <div className="text-center mb-16"> {/* pt-20 чтобы компенсировать наезд и текст не прилип к верху */}
+              <h2 className="text-3xl md:text-5xl font-black text-[#1e3a8a] mb-6">
+                Наши принципы
+              </h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">
+                Три кита, на которых строится работа платформы
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: <Shield size={40} />,
+                  title: 'Безопасность',
+                  desc: 'Мы проверяем каждое учреждение и заявку на помощь. Никаких мошенников, только верифицированные нужды.',
+                  color: 'bg-blue-50 text-blue-600'
+                },
+                {
+                  icon: <Target size={40} />,
+                  title: 'Адресность',
+                  desc: 'Помощь работает лучше всего, когда она точечная. Мы помогаем закрывать конкретные нужды конкретных людей.',
+                  color: 'bg-yellow-50 text-yellow-600'
+                },
+                {
+                  icon: <Heart size={40} />,
+                  title: 'Открытость',
+                  desc: 'Мы верим, что добрые дела должны быть видны. Публичные отчеты вдохновляют других присоединиться.',
+                  color: 'bg-green-50 text-green-600'
+                }
+              ].map((item, idx) => (
+                <div key={idx} className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 hover:-translate-y-2 transition-transform duration-300">
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${item.color}`}>
+                    {item.icon}
+                  </div>
+                  <h3 className="text-2xl font-black text-[#1e3a8a] mb-4">{item.title}</h3>
+                  <p className="text-gray-600 leading-relaxed font-medium">
+                    {item.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 4. CTA - JOIN TEAM */}
+        
+
+      </div>
+    </MainLayout>
   );
 }

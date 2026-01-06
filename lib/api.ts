@@ -1,6 +1,6 @@
 import { Institution, Need } from "@/types/project";
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+const API_BASE_URL = "http://localhost:8000/api/v1";
 
 // --- ТИПЫ ---
 interface BackendInstitution {
@@ -45,10 +45,11 @@ interface TokenResponse {
 
 // Получение заголовков с токеном
 const getAuthHeaders = () => {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
   return {
-    'Content-Type': 'application/json',
-    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 };
 
@@ -58,15 +59,15 @@ const mapInstitution = (item: BackendInstitution): Institution => ({
   name: item.name,
   city: item.city,
   address: item.address,
-  type: item.type as 'Children' | 'Elderly' | 'Disabled',
+  type: item.type as "Children" | "Elderly" | "Disabled",
   contactPhone: item.phone,
   contactEmail: item.email,
   activityHours: item.activity_hours,
   needsCount: 0, // Пока 0, так как список берем отдельно
-  lastUpdated: item.updated_at 
-    ? new Date(item.updated_at).toLocaleDateString('ru-RU') 
-    : new Date(item.created_at).toLocaleDateString('ru-RU'),
-  needs: []
+  lastUpdated: item.updated_at
+    ? new Date(item.updated_at).toLocaleDateString("ru-RU")
+    : new Date(item.created_at).toLocaleDateString("ru-RU"),
+  needs: [],
 });
 
 const mapNeed = (item: BackendNeed): Need => ({
@@ -80,16 +81,19 @@ const mapNeed = (item: BackendNeed): Need => ({
 // --- API МЕТОДЫ ---
 
 // 1. Авторизация
-export async function login(phone: string, password: string): Promise<TokenResponse> {
+export async function login(
+  phone: string,
+  password: string
+): Promise<TokenResponse> {
   const res = await fetch(`${API_BASE_URL}/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ login: phone, password: password }),
   });
 
   if (!res.ok) {
     const errorData = await res.json();
-    throw new Error(errorData.message || 'Ошибка входа');
+    throw new Error(errorData.message || "Ошибка входа");
   }
 
   const json: ApiResponse<TokenResponse> = await res.json();
@@ -99,8 +103,10 @@ export async function login(phone: string, password: string): Promise<TokenRespo
 // 2. Учреждения (Публичные)
 export async function fetchInstitutions(): Promise<Institution[]> {
   try {
-    const res = await fetch(`${API_BASE_URL}/institutions`, { cache: 'no-store' });
-    if (!res.ok) throw new Error('Ошибка загрузки');
+    const res = await fetch(`${API_BASE_URL}/institutions`, {
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error("Ошибка загрузки");
     const json: ApiResponse<BackendInstitution[]> = await res.json();
     if (!json.data) return [];
     return json.data.map(mapInstitution);
@@ -110,23 +116,29 @@ export async function fetchInstitutions(): Promise<Institution[]> {
   }
 }
 
-export async function fetchInstitutionById(id: string): Promise<Institution | null> {
+export async function fetchInstitutionById(
+  id: string
+): Promise<Institution | null> {
   try {
-    const resInst = await fetch(`${API_BASE_URL}/institutions/${id}`, { cache: 'no-store' });
+    const resInst = await fetch(`${API_BASE_URL}/institutions/${id}`, {
+      cache: "no-store",
+    });
     if (!resInst.ok) return null;
     const jsonInst = await resInst.json();
     if (!jsonInst.data) return null;
-    
+
     const institution = mapInstitution(jsonInst.data);
 
     // Загружаем нужды
-    const resNeeds = await fetch(`${API_BASE_URL}/institutions/${id}/needs`, { cache: 'no-store' });
+    const resNeeds = await fetch(`${API_BASE_URL}/institutions/${id}/needs`, {
+      cache: "no-store",
+    });
     if (resNeeds.ok) {
-        const jsonNeeds = await resNeeds.json();
-        if (jsonNeeds.data) {
-            institution.needs = jsonNeeds.data.map(mapNeed);
-            institution.needsCount = institution.needs.length;
-        }
+      const jsonNeeds = await resNeeds.json();
+      if (jsonNeeds.data) {
+        institution.needs = jsonNeeds.data.map(mapNeed);
+        institution.needsCount = institution.needs.length;
+      }
     }
     return institution;
   } catch (error) {
@@ -138,19 +150,19 @@ export async function fetchInstitutionById(id: string): Promise<Institution | nu
 // 3. Управление нуждами (Защищено токеном)
 export async function createNeed(data: any) {
   const res = await fetch(`${API_BASE_URL}/needs`, {
-    method: 'POST',
+    method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Ошибка создания нужды');
+  if (!res.ok) throw new Error("Ошибка создания нужды");
   return res.json();
 }
 
 export async function deleteNeed(id: string) {
   const res = await fetch(`${API_BASE_URL}/needs/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: getAuthHeaders(),
   });
-  if (!res.ok) throw new Error('Ошибка удаления');
+  if (!res.ok) throw new Error("Ошибка удаления");
   return res.json();
 }

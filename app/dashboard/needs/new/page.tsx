@@ -37,7 +37,7 @@ const NewNeedPage = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-[#763f97]">Добавить новую потребность</h2>
+      <h2 className="text-2xl font-bold mb-6 text-[#1e3a8a]">Добавить новую потребность</h2>
       {error && <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-lg">{error}</div>}
       <NeedForm onSubmit={handleCreateNeed} />
     </div>

@@ -1,28 +1,28 @@
-import type { Config } from 'tailwindcss';
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   // ИСПРАВЛЕНИЕ 1: darkMode должен быть строкой, а не массивом
-  darkMode: "class", 
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        background: '#f7f9fe',
-        'on-primary': '#ffffff',
+        background: "#f7f9fe",
+        "on-primary": "#ffffff",
         primary: {
-          light: '#9851c2',
-          DEFAULT: '#763f97',
+          light: "#9851c2",
+          DEFAULT: "#1e3a8a",
         },
         // Добавляем ваш желтый цвет для срочных нужд
-        urgent: '#ffca63',
+        urgent: "#ffca63",
       },
     },
   },
   // ИСПРАВЛЕНИЕ 2: Убрали require("tailwindcss-animate"), так как пакет не установлен
-  plugins: [], 
+  plugins: [],
 };
 export default config;
