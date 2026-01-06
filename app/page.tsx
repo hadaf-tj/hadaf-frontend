@@ -2,7 +2,7 @@
 
 import { Institution } from '@/types/project';
 import InstitutionCard from '@/components/specific/InstitutionCard';
-import { ArrowRight, Heart, Users, Baby, ShieldCheck, Sparkles, TrendingUp, Award, Mountain } from 'lucide-react';
+import { ArrowRight, Heart, Users, Baby, ShieldCheck, Sparkles, TrendingUp, Award, Mountain, Bold } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -135,7 +135,7 @@ const HomePage: React.FC = () => {
             <h2 className="text-4xl md:text-7xl font-black text-gray-800 mb-6">
               <span className="bg-[#1e3a8a] bg-clip-text text-transparent">Наши направления</span>
             </h2>
-            <p className="text-xl text-gray-800 max-w-2xl mx-auto">
+            <p className="text-xl font-black text-gray-800">
               Мы работаем по трем ключевым направлениям помощи
             </p>
           </div>

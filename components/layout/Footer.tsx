@@ -20,7 +20,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="relative bg-[#1e3a8a] text-white mt-20 overflow-hidden">
+    <footer className="relative bg-[#1e3a8a] text-white overflow-hidden">
       {/* Анимированный фон (можно добавить svg или градиенты, если нужно) */}
 
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -223,7 +223,7 @@ const Footer: React.FC = () => {
                 &copy; {new Date().getFullYear()} Проект "Пайванд". Все права защищены.
               </p>
               <p className="text-white/40 text-xs">
-                Создано с <Heart size={12} className="inline text-red-400 animate-pulse"/> волонтерами для помощи людям
+                Создано с <Heart size={12} className="inline text-red-400 animate-pulse"/> к Таджикистану
               </p>
             </div>
             

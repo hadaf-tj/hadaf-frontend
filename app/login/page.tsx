@@ -1,102 +1,104 @@
 'use client';
+
 import { useState } from 'react';
-import { Button } from '@/components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/Card';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
 import Link from 'next/link';
-import { HeartHandshake, ArrowLeft, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { login } from '@/lib/api';
+import { Button } from '@/components/ui/Button';
+import { User, Building2, ArrowLeft, HeartHandshake } from 'lucide-react';
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    try {
-      // Бэкенд ждет телефон в поле "login", но у нас в форме Email.
-      // Для теста используем введенное значение как логин.
-      const data = await login(formData.email, formData.password);
-      
-      // Сохраняем токены
-      localStorage.setItem('accessToken', data.access_token);
-      localStorage.setItem('isLoggedIn', 'true');
-      
-      // В реальном проекте тут нужно декодировать JWT, чтобы получить ID учреждения
-      // Пока просто перенаправим
-      router.push('/dashboard/needs'); 
-    } catch (err: any) {
-      setError('Неверный логин или пароль');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [role, setRole] = useState<'volunteer' | 'institution'>('volunteer');
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f7f9fe] px-4 py-12 relative">
-       <Link href="/" className="absolute top-8 left-8 flex items-center gap-2 text-gray-500 hover:text-[#1e3a8a] transition-colors font-bold">
-          <ArrowLeft size={20} /> На главную
-       </Link>
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 relative font-sans">
+      
+      {/* Кнопка назад */}
+      <Link 
+        href="/" 
+        className="absolute top-8 left-8 text-gray-400 hover:text-[#1e3a8a] flex items-center gap-2 font-bold transition-colors"
+      >
+        <ArrowLeft size={20} />
+        На главную
+      </Link>
 
-       <div className="w-full max-w-md space-y-8">
-          <div className="text-center flex flex-col items-center">
-             <div className="w-20 h-20 bg-[#1e3a8a] rounded-3xl flex items-center justify-center text-white mb-6 shadow-xl shadow-[#1e3a8a]/20 transform rotate-3">
-                <HeartHandshake size={40} />
-             </div>
-             <h1 className="text-3xl font-extrabold text-[#304663]">Вход в систему</h1>
-          </div>
+      <div className="mb-8 flex flex-col items-center">
+        <div className="w-12 h-12 bg-[#1e3a8a] rounded-xl flex items-center justify-center text-white mb-3 shadow-lg shadow-blue-900/20">
+           <HeartHandshake size={28} />
+        </div>
+        <h1 className="text-2xl font-black text-gray-900">С возвращением</h1>
+      </div>
 
-          <form onSubmit={handleSubmit}>
-            <Card className="border-none shadow-2xl rounded-[2rem] overflow-hidden">
-               <div className="h-2 bg-gradient-to-r from-[#1e3a8a] to-[#9851c2]"></div>
-               <CardHeader className="space-y-1 pb-2 pt-8 px-8">
-                  <CardTitle className="text-xl text-center text-[#304663]">Авторизация</CardTitle>
-               </CardHeader>
-               <CardContent className="space-y-6 px-8 pb-8">
-                  {error && <div className="text-red-500 text-sm text-center font-bold">{error}</div>}
-                  
-                  <div className="space-y-2">
-                     <Label htmlFor="email">Телефон (Логин)</Label>
-                     <Input 
-                       id="email" 
-                       placeholder="+992..." 
-                       className="h-12 rounded-xl bg-[#f7f9fe]"
-                       value={formData.email}
-                       onChange={(e) => setFormData({...formData, email: e.target.value})}
-                       required
-                     />
-                  </div>
-                  <div className="space-y-2">
-                     <Label htmlFor="password">Пароль</Label>
-                     <Input 
-                       id="password" 
-                       type="password" 
-                       className="h-12 rounded-xl bg-[#f7f9fe]"
-                       value={formData.password}
-                       onChange={(e) => setFormData({...formData, password: e.target.value})}
-                       required
-                     />
-                  </div>
-               </CardContent>
-               <CardFooter className="px-8 pb-8 pt-0">
-                  <Button 
-                    type="submit" 
-                    disabled={isLoading}
-                    className="w-full bg-[#1e3a8a] hover:bg-[#5d317a] h-14 text-lg font-bold rounded-xl"
-                  >
-                    {isLoading ? <Loader2 className="animate-spin" /> : 'Войти'}
-                  </Button>
-               </CardFooter>
-            </Card>
-          </form>
-       </div>
+      <div className="w-full max-w-[420px] bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-8 md:p-10 border border-gray-100">
+        
+        {/* Роль */}
+        <div className="bg-gray-50 p-1.5 rounded-xl flex gap-1 mb-6">
+          <button 
+            onClick={() => setRole('volunteer')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${role === 'volunteer' ? 'bg-white text-[#1e3a8a] shadow-sm ring-1 ring-black/5' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            <User size={16} />
+            Волонтер
+          </button>
+          <button 
+            onClick={() => setRole('institution')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${role === 'institution' ? 'bg-white text-[#1e3a8a] shadow-sm ring-1 ring-black/5' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            <Building2 size={16} />
+            Учреждение
+          </button>
+        </div>
+
+        {/* Форма */}
+        <form className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">Email</label>
+              <input 
+                type="email" 
+                className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center ml-1">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Пароль</label>
+                <Link href="/reset" className="text-xs font-bold text-[#1e3a8a] hover:underline">Забыли?</Link>
+              </div>
+              <input 
+                type="password" 
+                className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900"
+              />
+            </div>
+
+            <Button className="w-full h-12 bg-[#1e3a8a] hover:bg-[#2a4ec2] text-white font-bold text-base rounded-xl mt-2 shadow-lg shadow-[#1e3a8a]/20">
+              Войти
+            </Button>
+        </form>
+
+        {/* --- GOOGLE LOGIN SECTION --- */}
+        <div className="mt-6">
+           <div className="relative flex items-center justify-center mb-6">
+              <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-gray-100"></span></div>
+              <span className="relative bg-white px-3 text-xs font-bold text-gray-400 uppercase">Или</span>
+           </div>
+
+           <button className="w-full h-12 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold rounded-xl flex items-center justify-center gap-3 transition-all">
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              Войти через Google
+           </button>
+        </div>
+        {/* --------------------------- */}
+
+        <div className="mt-8 text-center pt-6 border-t border-gray-100">
+          <p className="text-gray-500 text-sm font-medium">
+            Нет аккаунта? <Link href="/register" className="text-[#1e3a8a] font-black hover:underline">Зарегистрироваться</Link>
+          </p>
+        </div>
+
+      </div>
     </div>
-  )
+  );
 }
