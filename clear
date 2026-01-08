@@ -1,0 +1,15 @@
+[33m8d91e1c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #10 from social-housing/feat-redesign
+[33m6d08485[m[33m ([m[1;31morigin/feat-redesign[m[33m)[m feat: реализована полная структура и UI-дизайн платформы
+[33m981d142[m Сделал дизайнерский лэндин page
+[33m1fda595[m сделал redesign page, header, footer, mainlayout. Теперь можно на их основе делать нормальный фронт.
+[33m8725c4c[m Стараюсь сделать нормальный дизайн и MainLayout
+[33m3246a02[m Revise README with new setup instructions
+[33ma3ff077[m Работа над api.ts
+[33mf6cb020[m Обновил дизайн
+[33m5442aa7[m завершил ошибки из QA
+[33m1bbcc83[m Почти полноценный фронт, сделал 404, 500, QA. Сейчас сделаю группу маршрутов
+[33m5069347[m[33m ([m[1;31morigin/DEV_aziz[m[33m)[m Сделал дизайн и весь фронт. Остались мелкие недочёты
+[33m61d7160[m gitignore, сделал рабочий каркас
+[33mcb43597[m gitignore, сделал рабочий каркас
+[33m78f3eca[m gitignore, сделал рабочий каркас
+[33m30fb609[m Initial commit

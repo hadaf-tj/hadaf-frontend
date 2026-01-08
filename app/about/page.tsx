@@ -15,7 +15,7 @@ export default function AboutPage() {
         {/* 1. HERO SECTION (Верхний баннер) */}
         <section className="relative w-full h-[450px] lg:h-[500px]">
           <Image 
-             src="/hero_about.png" // Основной баннер (можно оставить тот же или поменять)
+             src="/hero_about.webp" // Основной баннер (можно оставить тот же или поменять)
              alt="About Hero"
              fill
              className="object-cover"
@@ -83,12 +83,12 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              {/* Правая часть - Визуал (hero_about.png) */}
+              {/* Правая часть - Визуал (hero_about.webp) */}
               <div className="flex-1 relative w-full h-[400px] lg:h-[500px]">
                 <div className="absolute inset-0 bg-[#1e3a8a] rounded-[3rem] rotate-3 transform translate-x-4 translate-y-4 opacity-10"></div>
                 <div className="relative h-full w-full rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white">
                    <Image 
-                     src="/hero_about_2.png" 
+                     src="/hero_about_2.webp" 
                      alt="Волонтеры помогают пенсионерам и детям"
                      fill
                      className="object-cover"

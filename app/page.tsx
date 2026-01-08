@@ -29,7 +29,7 @@ const HomePage: React.FC = () => {
       {/* 1. HERO SECTION */}
         <section className="relative w-full h-[600px] lg:h-[700px]">
           <Image 
-             src="/hero.png"
+             src="/hero.webp"
              alt="Hero Banner"
              fill
              priority
@@ -223,7 +223,7 @@ const HomePage: React.FC = () => {
                   {/* Мы делаем его чуть меньше (w-[85%]), чтобы сохранить красивые рамки "стекла" вокруг фото */}
                   <div className="relative w-[85%] h-[85%] rounded-2xl overflow-hidden shadow-2xl z-10 group-hover:scale-105 transition-transform duration-500">
                     <Image
-                      src="/master_klass.png" // Убедитесь, что файл есть в папке public
+                      src="/master_klass.webp" // Убедитесь, что файл есть в папке public
                       alt="Волонтеры проводят мастер-класс с детьми"
                       fill
                       className="object-cover"

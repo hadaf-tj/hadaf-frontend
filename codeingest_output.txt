@@ -619,7 +619,7 @@ export default function GlobalError({
       </div>
       <div className="flex-shrink-0 mb-8 lg:mb-0">
         <Image
-          src="/500.jpg" // Ваш файл 500.jpg
+          src="/500.webp" // Ваш файл 500.webp
           alt="Ошибка на сервере"
           width={375}
           height={375}
@@ -829,10 +829,10 @@ export const metadata = {
   title: 'Пайванд: Адресная Помощь',
   description: 'Платформа для прозрачной помощи социальным учреждениям Таджикистана.',
   icons: {
-    icon: 'favicon.ico', // Основная иконка 
-    shortcut: '/favicon.ico', // Для старых браузеров
-    apple: '../public/apple-touch-icon.png', // Для устройств Apple
-    android: '../public/android-chrome-512x512.png',
+    icon: 'favicon.webp', // Основная иконка 
+    shortcut: '/favicon.webp', // Для старых браузеров
+    apple: '../public/apple-touch-icon.webp', // Для устройств Apple
+    android: '../public/android-chrome-512x512.webp',
   },
 };
 
@@ -1024,7 +1024,7 @@ export default function NotFound() {
       {/* ЛЕВАЯ ЧАСТЬ: Изображение*/}
       <div className="flex-shrink-0 mb-8 lg:mb-0">
         <Image
-          src="/404.jpg" // Убедитесь, что путь правильный
+          src="/404.webp" // Убедитесь, что путь правильный
           alt="Озадаченный фиолетовый монстрик"
           width={350} // Увеличим размер для лучшего эффекта
           height={350}
