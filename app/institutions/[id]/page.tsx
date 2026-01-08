@@ -91,7 +91,7 @@ export default function InstitutionDetailPage() {
         <div className="relative h-[300px] lg:h-[350px] w-full bg-[#1e3a8a]">
            {/* Фото учреждения на фоне */}
            <Image 
-             src="/hero_institution_id.png" // В реальности - фото конкретного дома
+             src="/hero_institution_id.webp" // В реальности - фото конкретного дома
              alt={data.name}
              fill
              className="object-cover opacity-40 mix-blend-overlay"
