@@ -8,7 +8,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata = {
-  title: 'Пайванд: Адресная Помощь',
+  title: 'Ҳадаф: Адресная Помощь',
   description: 'Платформа для прозрачной помощи социальным учреждениям Таджикистана.',
 };
 

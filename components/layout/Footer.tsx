@@ -87,7 +87,6 @@ const Footer: React.FC = () => {
       <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 py-20 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
           
-          {/* Колонка 1: О фонде - выделенная */}
           <div className="space-y-8 lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 text-2xl font-black text-white group">
               <div className="relative">
@@ -95,7 +94,7 @@ const Footer: React.FC = () => {
                   <HeartHandshake size={28} />
                 </div>
               </div>
-              <span className="bg-white bg-clip-text text-transparent">Пайванд</span>
+              <span className="bg-white bg-clip-text text-transparent">Ҳадаф</span>
             </Link>
             
             <p className="text-base text-white/80 leading-relaxed">
@@ -126,9 +125,8 @@ const Footer: React.FC = () => {
            
           </div>
 
-          {/* Колонка 2: О фонде */}
           <div>
-            <h3 className="font-black text-xl mb-8 text-white/95">О фонде</h3>
+            <h3 className="font-black text-xl mb-8 text-white/95">О нас</h3>
             <ul className="space-y-4 text-base">
               {[
                 { name: 'Миссия и ценности', href: '/about' },
@@ -194,8 +192,8 @@ const Footer: React.FC = () => {
                 </div>
                 <div>
                   <div className="text-xs text-white/60 font-bold uppercase tracking-wider mb-1">Email</div>
-                  <a href="mailto:info@payvand.tj" className="font-bold text-white hover:text-[#ffca63] transition-colors">
-                    info@payvand.tj
+                  <a href="mailto:info@hadaf.tj" className="font-bold text-white hover:text-[#ffca63] transition-colors">
+                    info@hadaf.tj
                   </a>
                 </div>
               </div>
@@ -220,7 +218,7 @@ const Footer: React.FC = () => {
           <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
             <div className="text-center lg:text-left">
               <p className="text-white/60 text-sm font-medium mb-2">
-                &copy; {new Date().getFullYear()} Проект "Пайванд". Все права защищены.
+                &copy; {new Date().getFullYear()} Проект "Ҳадаф". Все права защищены.
               </p>
               <p className="text-white/40 text-xs">
                 Создано с <Heart size={12} className="inline text-red-400 animate-pulse"/> к Таджикистану

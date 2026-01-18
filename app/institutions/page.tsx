@@ -29,8 +29,13 @@ export default function InstitutionsPage() {
   // 2. Загружаем данные при открытии страницы
   useEffect(() => {
     const loadData = async () => {
+      setIsLoading(true);
+      setError('');
       try {
-        const data = await fetchInstitutions();
+        const data = await fetchInstitutions({
+            search: searchQuery,
+            type: activeCategory
+        });
         setInstitutions(data);
       } catch (err) {
         console.error(err);
@@ -39,9 +44,11 @@ export default function InstitutionsPage() {
         setIsLoading(false);
       }
     };
-
-    loadData();
-  }, []);
+    const timeoutId = setTimeout(() => {
+        loadData();
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [activeCategory, searchQuery]);
 
   // 3. Фильтрация (работает уже с загруженными данными)
   const filteredData = institutions.filter(item => {

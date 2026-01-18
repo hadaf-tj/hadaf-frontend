@@ -1,62 +1,94 @@
-/* FILE: app/dashboard/layout.tsx */
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, 
   HeartHandshake, 
   History, 
   Settings, 
   LogOut, 
-  Menu, 
+  Menu,
   X,
   User,
-  Bell
+  Bell,
+  Building2 // Добавил иконку
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/Button';
+import { getProfile } from '@/lib/api';
 
-// Пункты меню
-const MENU_ITEMS = [
+// Меню для ВОЛОНТЕРА
+const VOLUNTEER_MENU = [
   { name: 'Обзор', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Мои обещания', href: '/dashboard/promises', icon: HeartHandshake },
   { name: 'История помощи', href: '/dashboard/history', icon: History },
   { name: 'Настройки', href: '/dashboard/settings', icon: Settings },
 ];
 
+// Меню для СОТРУДНИКА
+const INSTITUTION_MENU = [
+  { name: 'Обзор', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Управление нуждами', href: '/dashboard/institution', icon: Building2 }, // Ссылка на админку учреждения
+  { name: 'Настройки', href: '/dashboard/settings', icon: Settings },
+];
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  
+  // Состояние пользователя
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+        try {
+            const userData = await getProfile();
+            setUser(userData);
+        } catch (e) {
+            console.error("Не удалось загрузить профиль", e);
+        }
+    };
+    loadUser();
+  }, []);
+
+  const handleLogout = () => {
+      if (confirm('Вы уверены, что хотите выйти?')) {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          router.push('/login');
+      }
+  };
+
+  // Выбираем меню в зависимости от роли
+  // Если роль еще не загрузилась (user === null), показываем пустое или дефолтное меню
+  const menuItems = user?.role === 'institution' ? INSTITUTION_MENU : VOLUNTEER_MENU;
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex">
+    <div className="min-h-screen bg-[#f8fafc] flex font-sans">
       
-      {/* 1. SIDEBAR (Desktop: Fixed, Mobile: Drawer) */}
+      {/* SIDEBAR */}
       <aside 
         className={cn(
           "fixed inset-y-0 left-0 z-50 w-64 bg-[#1e3a8a] text-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Логотип в сайдбаре */}
         <div className="h-20 flex items-center px-6 border-b border-white/10">
            <div className="flex items-center gap-3 font-black text-xl tracking-tight">
               <div className="w-8 h-8 bg-white text-[#1e3a8a] rounded-lg flex items-center justify-center">
                  <HeartHandshake size={18} />
               </div>
-              Пайванд
+              Hadaf
            </div>
-           {/* Кнопка закрытия (Mobile only) */}
            <button onClick={() => setSidebarOpen(false)} className="ml-auto lg:hidden text-white/50 hover:text-white">
              <X size={24} />
            </button>
         </div>
 
-        {/* Навигация */}
         <nav className="p-4 space-y-2">
-           {MENU_ITEMS.map((item) => {
+           {menuItems.map((item) => {
              const isActive = pathname === item.href;
              return (
                <Link 
@@ -77,32 +109,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
            })}
         </nav>
 
-        {/* Футер сайдбара */}
         <div className="absolute bottom-0 left-0 w-full p-4 border-t border-white/10">
-           <button className="flex items-center gap-3 px-4 py-3 w-full text-white/70 hover:text-white hover:bg-white/10 rounded-xl transition-all font-bold text-sm">
+           <button 
+             onClick={handleLogout}
+             className="flex items-center gap-3 px-4 py-3 w-full text-white/70 hover:text-white hover:bg-white/10 rounded-xl transition-all font-bold text-sm"
+           >
               <LogOut size={20} />
               Выйти
            </button>
         </div>
       </aside>
 
-      {/* 2. MAIN CONTENT AREA */}
+      {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col min-w-0">
-        
-        {/* Top Header (Дашборд) */}
         <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30">
-           
-           {/* Бургер (Mobile) */}
            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-500 hover:text-[#1e3a8a]">
               <Menu size={24} />
            </button>
 
-           {/* Заголовок (Desktop) */}
            <h2 className="hidden lg:block text-xl font-black text-gray-800">
              Личный кабинет
            </h2>
 
-           {/* Правая часть (Профиль) */}
            <div className="flex items-center gap-4 ml-auto">
               <button className="relative text-gray-400 hover:text-[#1e3a8a] transition-colors">
                  <Bell size={22} />
@@ -113,8 +141,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               
               <div className="flex items-center gap-3 pl-2">
                  <div className="text-right hidden md:block">
-                    <div className="text-sm font-bold text-gray-900">Алишер В.</div>
-                    <div className="text-xs text-gray-400 font-medium">Волонтер</div>
+                    <div className="text-sm font-bold text-gray-900">
+                        {user ? user.full_name : 'Загрузка...'}
+                    </div>
+                    <div className="text-xs text-gray-400 font-medium capitalize">
+                        {user ? (user.role === 'institution' ? 'Сотрудник' : 'Волонтер') : '...'}
+                    </div>
                  </div>
                  <div className="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500">
                     <User size={20} />
@@ -123,14 +155,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
            </div>
         </header>
 
-        {/* Контент страницы */}
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
            {children}
         </main>
-
       </div>
       
-      {/* Overlay для мобилки */}
       {isSidebarOpen && (
         <div 
           className="fixed inset-0 bg-[#1e3a8a]/50 z-40 lg:hidden backdrop-blur-sm"

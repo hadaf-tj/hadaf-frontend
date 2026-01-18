@@ -6,7 +6,7 @@ import { FileText, Download, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 const DOCUMENTS = [
-  { title: 'Устав благотворительного фонда "Пайванд"', size: '2.4 MB', date: '12.01.2023' },
+  { title: 'Устав благотворительного сообщества "Ҳадаф"', size: '2.4 MB', date: '12.01.2023' },
   { title: 'Свидетельство о регистрации', size: '1.1 MB', date: '10.01.2023' },
   { title: 'Политика обработки персональных данных', size: '0.8 MB', date: '15.01.2023' },
   { title: 'Публичная оферта', size: '0.5 MB', date: '20.01.2023' },

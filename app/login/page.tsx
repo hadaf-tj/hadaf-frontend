@@ -2,11 +2,44 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { User, Building2, ArrowLeft, HeartHandshake } from 'lucide-react';
+import { User, Building2, ArrowLeft, HeartHandshake, Loader2 } from 'lucide-react';
+import { login } from '@/lib/api';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [role, setRole] = useState<'volunteer' | 'institution'>('volunteer');
+  
+  // Состояния
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      // 1. Запрос к API
+      const data = await login(email, password);
+      
+      // 2. Сохраняем токены
+      localStorage.setItem('accessToken', data.access_token);
+      localStorage.setItem('refreshToken', data.refresh_token);
+      
+      // 3. Редирект
+      router.push('/dashboard');
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'Ошибка входа. Проверьте данные.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 relative font-sans">
@@ -20,18 +53,20 @@ export default function LoginPage() {
         На главную
       </Link>
 
+      {/* Логотип и заголовок */}
       <div className="mb-8 flex flex-col items-center">
         <div className="w-12 h-12 bg-[#1e3a8a] rounded-xl flex items-center justify-center text-white mb-3 shadow-lg shadow-blue-900/20">
            <HeartHandshake size={28} />
         </div>
-        <h1 className="text-2xl font-black text-gray-900">С возвращением</h1>
+        <h1 className="text-2xl font-black text-gray-900">С возвращением в Hadaf</h1>
       </div>
 
       <div className="w-full max-w-[420px] bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-8 md:p-10 border border-gray-100">
         
-        {/* Роль */}
+        {/* Переключатель Роли (Визуальный) */}
         <div className="bg-gray-50 p-1.5 rounded-xl flex gap-1 mb-6">
           <button 
+            type="button"
             onClick={() => setRole('volunteer')}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${role === 'volunteer' ? 'bg-white text-[#1e3a8a] shadow-sm ring-1 ring-black/5' : 'text-gray-500 hover:text-gray-700'}`}
           >
@@ -39,6 +74,7 @@ export default function LoginPage() {
             Волонтер
           </button>
           <button 
+            type="button"
             onClick={() => setRole('institution')}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${role === 'institution' ? 'bg-white text-[#1e3a8a] shadow-sm ring-1 ring-black/5' : 'text-gray-500 hover:text-gray-700'}`}
           >
@@ -47,12 +83,24 @@ export default function LoginPage() {
           </button>
         </div>
 
-        {/* Форма */}
-        <form className="space-y-4">
+        {/* Форма входа */}
+        <form onSubmit={handleLogin} className="space-y-4">
+            
+            {/* Блок ошибки */}
+            {error && (
+               <div className="p-3 bg-red-50 text-red-600 text-sm font-bold rounded-xl text-center border border-red-100 animate-in fade-in slide-in-from-top-2">
+                   {error}
+               </div>
+            )}
+
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">Email</label>
+              <label className="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">Почта</label>
               <input 
-                type="email" 
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900"
               />
             </div>
@@ -64,23 +112,31 @@ export default function LoginPage() {
               </div>
               <input 
                 type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
                 className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900"
               />
             </div>
 
-            <Button className="w-full h-12 bg-[#1e3a8a] hover:bg-[#2a4ec2] text-white font-bold text-base rounded-xl mt-2 shadow-lg shadow-[#1e3a8a]/20">
-              Войти
+            <Button 
+                type="submit" 
+                disabled={loading}
+                className="w-full h-12 bg-[#1e3a8a] hover:bg-[#2a4ec2] text-white font-bold text-base rounded-xl mt-2 shadow-lg shadow-[#1e3a8a]/20 disabled:opacity-70"
+            >
+              {loading ? <Loader2 className="animate-spin" /> : 'Войти'}
             </Button>
         </form>
 
-        {/* --- GOOGLE LOGIN SECTION --- */}
+        {/* Разделитель */}
         <div className="mt-6">
            <div className="relative flex items-center justify-center mb-6">
               <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-gray-100"></span></div>
               <span className="relative bg-white px-3 text-xs font-bold text-gray-400 uppercase">Или</span>
            </div>
 
-           <button className="w-full h-12 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold rounded-xl flex items-center justify-center gap-3 transition-all">
+           <button type="button" className="w-full h-12 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold rounded-xl flex items-center justify-center gap-3 transition-all">
+              {/* Google Icon SVG */}
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -90,7 +146,6 @@ export default function LoginPage() {
               Войти через Google
            </button>
         </div>
-        {/* --------------------------- */}
 
         <div className="mt-8 text-center pt-6 border-t border-gray-100">
           <p className="text-gray-500 text-sm font-medium">

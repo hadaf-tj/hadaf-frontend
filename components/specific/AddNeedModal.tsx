@@ -1,26 +1,58 @@
-/* FILE: components/specific/AddNeedModal.tsx */
 'use client';
 
 import { useState } from 'react';
-import { X, PackagePlus, AlertCircle } from 'lucide-react';
+import { X, PackagePlus, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { createNeed } from '@/lib/api';
 
 const CATEGORIES = ['Продукты', 'Одежда', 'Медикаменты', 'Канцелярия', 'Спорт', 'Бытовая химия', 'Другое'];
 
 interface AddNeedModalProps {
   isOpen: boolean;
   onClose: () => void;
+  institutionId: number; // ID учреждения
+  onSuccess: () => void; // Коллбек для обновления списка
 }
 
-export default function AddNeedModal({ isOpen, onClose }: AddNeedModalProps) {
+export default function AddNeedModal({ isOpen, onClose, institutionId, onSuccess }: AddNeedModalProps) {
+  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState('');
+  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [qty, setQty] = useState('');
+  const [unit, setUnit] = useState('шт');
   const [isUrgent, setIsUrgent] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Новая нужда добавлена");
-    onClose();
+    setLoading(true);
+
+    try {
+      await createNeed({
+        institution_id: institutionId,
+        // category_id: пока пропускаем или мапим на бэке, если нужно
+        name: name,
+        description: category, // Временно пишем категорию в описание
+        unit: unit,
+        required_qty: Number(qty),
+        received_qty: 0,
+        urgency: isUrgent ? 'high' : 'medium'
+      });
+      
+      // Сброс формы
+      setName('');
+      setQty('');
+      setIsUrgent(false);
+      
+      onSuccess(); // Обновляем родительский список
+      onClose();   // Закрываем окно
+    } catch (err) {
+      console.error(err);
+      alert('Ошибка при создании нужды');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,7 +61,6 @@ export default function AddNeedModal({ isOpen, onClose }: AddNeedModalProps) {
         
         {/* Header */}
         <div className="relative bg-[#1e3a8a] p-6 text-white">
-           {/* ... (Орнамент и кнопка закрытия как в предыдущей модалке) ... */}
            <button onClick={onClose} className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors p-1"><X size={24} /></button>
            <div className="relative z-10 flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
@@ -42,39 +73,54 @@ export default function AddNeedModal({ isOpen, onClose }: AddNeedModalProps) {
         {/* Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
            
-           {/* Название */}
            <div className="space-y-1.5">
               <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">Что необходимо?</label>
               <input 
                 type="text" 
-                placeholder="Например: Зимние куртки на 10-12 лет" 
+                placeholder="Например: Зимние куртки" 
                 required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="w-full h-14 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900"
               />
            </div>
 
            <div className="grid grid-cols-2 gap-4">
-              {/* Категория */}
               <div className="space-y-1.5">
                  <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">Категория</label>
-                 <select className="w-full h-14 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900 appearance-none">
+                 <select 
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full h-14 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900 appearance-none"
+                 >
                     {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                  </select>
               </div>
-              {/* Количество */}
               <div className="space-y-1.5">
-                 <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">Количество</label>
-                 <input 
-                   type="number" 
-                   min="1"
-                   placeholder="Сколько нужно?"
-                   required
-                   className="w-full h-14 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900"
-                 />
+                 <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">Ед. измерения</label>
+                 <select 
+                    value={unit}
+                    onChange={(e) => setUnit(e.target.value)}
+                    className="w-full h-14 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900 appearance-none"
+                 >
+                    {['шт', 'кг', 'литр', 'упаковка', 'коробка'].map(u => <option key={u} value={u}>{u}</option>)}
+                 </select>
               </div>
            </div>
 
-           {/* Срочность */}
+           <div className="space-y-1.5">
+              <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">Количество</label>
+              <input 
+                type="number" 
+                min="1"
+                placeholder="Сколько нужно?"
+                required
+                value={qty}
+                onChange={(e) => setQty(e.target.value)}
+                className="w-full h-14 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900"
+              />
+           </div>
+
            <div 
              onClick={() => setIsUrgent(!isUrgent)}
              className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer ${isUrgent ? 'border-red-400 bg-red-50' : 'border-gray-100 bg-gray-50 hover:border-gray-200'}`}
@@ -91,13 +137,13 @@ export default function AddNeedModal({ isOpen, onClose }: AddNeedModalProps) {
               </div>
            </div>
 
-           {/* Footer buttons */}
            <div className="pt-4">
               <Button 
                 type="submit" 
+                disabled={loading}
                 className="w-full h-14 rounded-xl bg-[#1e3a8a] hover:bg-[#2a4ec2] text-white font-bold text-lg shadow-xl shadow-[#1e3a8a]/20"
               >
-                 Опубликовать нужду
+                 {loading ? <Loader2 className="animate-spin" /> : 'Опубликовать нужду'}
               </Button>
            </div>
 
