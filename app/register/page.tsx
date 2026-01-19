@@ -4,34 +4,41 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { User, Building2, ArrowLeft, HeartHandshake, Check, Loader2 } from 'lucide-react';
-import { register, fetchInstitutions } from '@/lib/api';
+import { User, Building2, ArrowLeft, HeartHandshake, Check, Loader2, Mail } from 'lucide-react';
+import { register, fetchInstitutions } from '@/lib/api'; // Нужно будет добавить confirmOTP в api.ts
 import { Institution } from '@/types/project';
+
+
+// --- ДОБАВЬ ЭТОТ ИМПОРТ в lib/api.ts ---
+// export async function confirmOTP(receiver: string, otp: string) { ... }
 
 export default function RegisterPage() {
   const router = useRouter();
+  
+  // Steps: 'form' | 'otp'
+  const [step, setStep] = useState<'form' | 'otp'>('form');
+  
+  // Данные формы
   const [role, setRole] = useState<'volunteer' | 'institution'>('volunteer');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  // Поля формы
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [institutions, setInstitutions] = useState<Institution[]>([]);
   const [selectedInstitutionId, setSelectedInstitutionId] = useState<string>(''); 
+  const [institutions, setInstitutions] = useState<Institution[]>([]);
+  
+  // Данные OTP
+  const [otpCode, setOtpCode] = useState('');
 
-  // 1. Загружаем список учреждений при старте
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
   useEffect(() => {
-    const loadInstitutions = async () => {
-        const data = await fetchInstitutions();
-        setInstitutions(data);
-    };
-    loadInstitutions();
+    // ... загрузка учреждений (как было)
   }, []);
 
+  // 1. ОТПРАВКА ФОРМЫ
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -39,32 +46,91 @@ export default function RegisterPage() {
 
     try {
       const fullName = `${firstName} ${lastName}`.trim();
-      
-      // Определяем ID учреждения
-      // Если роль institution - берем из селекта. Если volunteer - null.
       let instId: number | null = null;
       if (role === 'institution') {
-          if (!selectedInstitutionId) {
-              throw new Error("Пожалуйста, выберите ваше учреждение из списка");
-          }
+          if (!selectedInstitutionId) throw new Error("Выберите учреждение");
           instId = parseInt(selectedInstitutionId);
       }
 
+      // Регистрируемся
+      // ВАЖНО: register теперь не возвращает токены, а просто OK
+      await register(email, phone, password, fullName, role, instId);
       
-      const data = await register(email, phone, password, fullName, role, instId);
-      // Сохраняем токены
-      localStorage.setItem('accessToken', data.access_token);
-      localStorage.setItem('refreshToken', data.refresh_token);
-
-      // Редирект
-      router.push('/dashboard');
+      // Переходим к вводу кода
+      setStep('otp');
     } catch (err: any) {
-      console.error(err);
-      setError(err.message || 'Ошибка регистрации. Проверьте данные.');
+      setError(err.message || 'Ошибка регистрации');
     } finally {
       setIsLoading(false);
     }
   };
+
+  // 2. ОТПРАВКА КОДА (НОВОЕ)
+  const handleVerify = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsLoading(true);
+      setError('');
+      
+      try {
+          // Здесь нужно вызвать метод confirmOTP (нужно добавить его в lib/api.ts)
+          // const data = await confirmOTP(email, otpCode);
+          
+          // ВРЕМЕННО для теста, пока ты не обновил api.ts:
+          const res = await fetch('http://localhost:8000/api/v1/confirm_otp', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ receiver: email, otp: otpCode })
+          });
+          const json = await res.json();
+          
+          if (!res.ok) throw new Error(json.message || "Неверный код");
+
+          // Сохраняем токены
+          localStorage.setItem('accessToken', json.data.access_token);
+          localStorage.setItem('refreshToken', json.data.refresh_token);
+
+          router.push('/dashboard');
+      } catch(err: any) {
+          setError(err.message);
+      } finally {
+          setIsLoading(false);
+      }
+  }
+
+  // --- РЕНДЕР: ШАГ 2 (ВВОД КОДА) ---
+  if (step === 'otp') {
+      return (
+        <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 font-sans">
+            <div className="w-full max-w-[420px] bg-white rounded-[2rem] shadow-xl p-10 text-center">
+                <div className="w-16 h-16 bg-blue-50 text-[#1e3a8a] rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <Mail size={32} />
+                </div>
+                <h2 className="text-2xl font-black text-gray-900 mb-2">Проверьте почту</h2>
+                <p className="text-gray-500 mb-8">
+                    Мы отправили код подтверждения на <b>{email}</b>
+                </p>
+
+                <form onSubmit={handleVerify} className="space-y-6">
+                    {error && <div className="p-3 bg-red-50 text-red-600 rounded-xl text-sm font-bold">{error}</div>}
+                    
+                    <input 
+                        type="text" 
+                        placeholder="0000" 
+                        className="w-full h-16 text-center text-3xl font-black tracking-[0.5em] rounded-xl border-2 border-gray-200 focus:border-[#1e3a8a] focus:outline-none transition-all"
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value)}
+                        maxLength={4}
+                        autoFocus
+                    />
+                    
+                    <Button type="submit" disabled={isLoading} className="w-full h-14 bg-[#1e3a8a] text-white font-bold rounded-xl text-lg">
+                        {isLoading ? <Loader2 className="animate-spin"/> : 'Подтвердить'}
+                    </Button>
+                </form>
+            </div>
+        </div>
+      )
+  }
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 relative font-sans">

@@ -176,7 +176,6 @@ export async function fetchInstitutionById(
     if (resNeeds.ok) {
       const jsonNeeds = await resNeeds.json();
       if (jsonNeeds.data) {
-        // @ts-ignore
         institution.needs = jsonNeeds.data.map(mapNeed);
         institution.needsCount = institution.needs.length;
       }
