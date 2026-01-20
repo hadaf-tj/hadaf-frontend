@@ -38,7 +38,7 @@ export default function AboutPage() {
                 </h1>
                 
                 <p className="text-lg md:text-xl text-white/90 font-medium leading-relaxed max-w-2xl">
-                  Пайванд — это платформа, объединяющая тех, кто хочет помочь, с теми, кто в этом нуждается: от детских домов до одиноких пенсионеров.
+                  Ҳадаф — это платформа, объединяющая тех, кто хочет помочь, с теми, кто в этом нуждается: от детских домов до одиноких пенсионеров.
                 </p>
               </div>
             </div>
@@ -119,7 +119,7 @@ export default function AboutPage() {
                       <Link href="/institutions">Начать помогать</Link>
                    </Button>
                    <Button asChild variant="outline" className="border-2 border-white/30 text-white hover:bg-white hover:text-[#1e3a8a] bg-transparent font-bold h-14 px-10 rounded-full text-lg">
-                      <Link href="mailto:team@payvand.tj">Написать нам</Link>
+                      <Link href="mailto:team@hadaf.tj">Написать нам</Link>
                    </Button>
                 </div>
               </div>

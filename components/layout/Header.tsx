@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/Button';
 // --- ДАННЫЕ МЕНЮ С ВЛОЖЕННОСТЬЮ ---
 const NAV_ITEMS = [
   { 
-    name: 'О фонде', 
+    name: 'О нас', 
     href: '/about',
     subItems: [
         { name: 'Миссия и ценности', href: '/about' },
@@ -121,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
                 "text-xl md:text-2xl font-black tracking-tight transition-colors",
                 logoTextColorClass
               )}>
-                Пайванд
+                Ҳадаф
               </span>
             </div>
           </div>

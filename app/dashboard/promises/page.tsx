@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/Badge'; // Предполагаем, чт
 
 export default function PromisesPage() {
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl space-y-8">
       
       <div>
         <h1 className="text-3xl font-black text-[#1e3a8a]">Мои обещания</h1>

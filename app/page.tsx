@@ -42,7 +42,7 @@ const HomePage: React.FC = () => {
               
               {/* ЗАГОЛОВОК */}
               <h1 className="text-4xl md:text-6xl font-black text-white leading-tight drop-shadow-lg">
-                Пайванд<br />
+                Ҳадаф<br />
                 От сердца к сердцу
               </h1>
               
@@ -125,8 +125,8 @@ const HomePage: React.FC = () => {
         </div>
       </section>
       {/* 3. НАПРАВЛЕНИЯ */}
-      <OrnamentDivider opacity="opacity-25" height="h-92" />
-      <section className="py-7 relative overflow-hidden -mt-80 z-10">
+      <OrnamentDivider opacity="opacity-16" height="h-62" />
+      <section className="py-7 relative overflow-hidden -mt-54 z-10">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMTAwIDAgTCAwIDAgMCAxMDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzc2M2Y5NyIgc3Ryb2tlLXdpZHRoPSIwLjUiIG9wYWNpdHk9IjAuMDUiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50"></div>
 
         {/* ИЗМЕНЕНИЕ: Те же отступы для контейнера */}

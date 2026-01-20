@@ -43,7 +43,7 @@ export default function ContactsPage() {
                           <Mail size={20} />
                        </div>
                        <h3 className="font-bold text-gray-900 mb-1">Email</h3>
-                       <p className="text-[#1e3a8a] font-black text-lg">hello@payvand.tj</p>
+                       <p className="text-[#1e3a8a] font-black text-lg">hello@hadaf.tj</p>
                        <p className="text-sm text-gray-400 mt-1">Отвечаем в течение суток</p>
                     </div>
                  </div>

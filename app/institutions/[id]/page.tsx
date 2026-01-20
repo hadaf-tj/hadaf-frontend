@@ -209,7 +209,7 @@ export default function InstitutionDetailPage() {
                <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
                   <h3 className="text-xl font-black text-gray-900 mb-4">О нас</h3>
                   <p className="text-gray-600 leading-relaxed text-lg">
-                    {`Учреждение "${data.name}" находится в городе ${data.city}. Мы будем рады любой помощи.`}
+                    {`Учреждение "${data.name}" находится в городе ${data.city}.`}
                   </p>
                </div>
 
