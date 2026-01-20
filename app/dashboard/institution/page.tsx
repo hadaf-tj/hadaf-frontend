@@ -85,7 +85,7 @@ export default function InstitutionDashboard() {
            </p>
         </div>
         <Button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsModalOpen(true)} 
             className="bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-bold h-12 px-6 rounded-xl shadow-lg shadow-[#1e3a8a]/20 flex items-center gap-2"
         >
            <Plus size={20} />
@@ -192,14 +192,12 @@ export default function InstitutionDashboard() {
       </div>
 
       {/* MODAL */}
-      {institutionId && (
-          <AddNeedModal 
-            isOpen={isModalOpen} 
-            onClose={() => setIsModalOpen(false)} 
-            institutionId={institutionId}
-            onSuccess={loadData} // Перезагружаем список после добавления
-          />
-      )}
+      <AddNeedModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        institutionId={institutionId || 1} 
+        onSuccess={loadData} 
+      />
 
     </div>
   );

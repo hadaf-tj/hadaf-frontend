@@ -3,14 +3,50 @@
 
 import Image from 'next/image';
 import MainLayout from '@/components/layout/MainLayout';
-import { Linkedin, Mail } from 'lucide-react';
+import { Linkedin, Mail, User } from 'lucide-react';
+import Link from 'next/link';
 
+// В массиве 10 человек. Заполни данные для первых трех, остальные — заглушки.
 const TEAM = [
-  { id: 1, name: 'Алишер Садиков', role: 'Основатель', img: '/team/1.jpg' },
-  { id: 2, name: 'Мадина Каримова', role: 'Координатор волонтеров', img: '/team/2.jpg' },
-  { id: 3, name: 'Фарход Джураев', role: 'Менеджер по работе с партнерами', img: '/team/3.jpg' },
-  { id: 4, name: 'Зарина Исмоилова', role: 'Юрист', img: '/team/4.jpg' },
-  // Добавьте больше людей
+  // 1. ТЫ (Данные, которые ты дал)
+  { 
+    id: 1, 
+    name: 'Сиёвуш Хамидов', 
+    role: 'Founder', // Укажи точную роль
+    email: 'siyovush.hamidov.1729@gmail.com', 
+    linkedin: '', // Вставь ссылку на LinkedIn, если есть
+    img: '' // Если фото нет, будет показана первая буква имени
+  },
+  // 2. Член команды (Данные есть)
+  { 
+    id: 2, 
+    name: 'Аличон Тошев', 
+    role: 'Разработчик', 
+    email: 'alijon07_t@mail.ru', 
+    linkedin: 'linkedin.com/in/alijon-toshev-48085b3a4', 
+    img: '' 
+  },
+  // 3. Член команды (Данные есть)
+  { 
+    id: 3, 
+    name: 'Шукурзода Саидмехроч', 
+    role: 'Chief Technology Officer', 
+    email: 'email@example.com', 
+    linkedin: 'https://www.linkedin.com/in/shukurzodasaidmehroj', 
+    img: '' 
+  },
+  // 4-10. Заглушки для остальных (Данных пока нет)
+  { id: 4, name: 'Член команды', role: 'Сотрудник', email: '', linkedin: '', img: '' },
+  { id: 5, name: 'Член команды', role: 'Сотрудник', email: '', linkedin: '', img: '' },
+  { id: 6, name: 'Член команды', role: 'Сотрудник', email: '', linkedin: '', img: '' },
+  { id: 7, name: 'Член команды', role: 'Сотрудник', email: '', linkedin: '', img: '' },
+  { id: 8, name: 'Член команды', role: 'Сотрудник', email: '', linkedin: '', img: '' },
+  { id: 9, name: 'Husein_A', 
+   role: 'Full Stack Developer', 
+   email: 'abdulloevhm2030@gmail.com', 
+   linkedin: 'https://www.linkedin.com/in/husein-abdulloev-4466b83a7', 
+   img: '' },
+  { id: 10, name: 'Член команды', role: 'Сотрудник', email: '', linkedin: '', img: '' },
 ];
 
 export default function TeamPage() {
@@ -36,26 +72,36 @@ export default function TeamPage() {
         {/* TEAM GRID */}
         <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 -mt-12 relative z-20">
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {TEAM.map((member) => (
-                <div key={member.id} className="bg-white p-4 rounded-3xl shadow-xl border border-gray-100 hover:-translate-y-1 transition-transform duration-300">
-                   {/* Фото (Заглушка, если нет фото) */}
-                   <div className="aspect-square rounded-2xl bg-gray-100 mb-4 relative overflow-hidden">
-                      {/* <Image src={member.img} fill alt={member.name} className="object-cover" /> */}
-                      <div className="absolute inset-0 flex items-center justify-center text-gray-300 text-4xl font-black">
-                         {member.name[0]}
-                      </div>
+               {TEAM.map((member) => (
+                <div key={member.id} className="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 hover:-translate-y-1 transition-transform duration-300 flex flex-col items-center text-center">
+                   
+                   {/* Аватарка или Заглушка */}
+                   <div className="w-32 h-32 rounded-full bg-blue-50 mb-4 relative overflow-hidden flex items-center justify-center border-4 border-white shadow-lg">
+                      {member.img ? (
+                          <Image src={member.img} fill alt={member.name} className="object-cover" />
+                      ) : (
+                          <span className="text-4xl font-black text-[#1e3a8a] opacity-50">
+                            {member.name ? member.name[0] : <User />}
+                          </span>
+                      )}
                    </div>
                    
                    <h3 className="text-xl font-bold text-[#1e3a8a] mb-1">{member.name}</h3>
                    <p className="text-sm text-gray-500 font-medium mb-4">{member.role}</p>
                    
-                   <div className="flex gap-2">
-                      <button className="w-8 h-8 rounded-full bg-blue-50 text-[#1e3a8a] flex items-center justify-center hover:bg-[#1e3a8a] hover:text-white transition-colors">
-                         <Linkedin size={16} />
-                      </button>
-                      <button className="w-8 h-8 rounded-full bg-blue-50 text-[#1e3a8a] flex items-center justify-center hover:bg-[#1e3a8a] hover:text-white transition-colors">
-                         <Mail size={16} />
-                      </button>
+                   {/* Соцсети */}
+                   <div className="flex gap-3 mt-auto">
+                      {member.linkedin && (
+                        <Link href={member.linkedin} target="_blank" className="w-10 h-10 rounded-xl bg-blue-50 text-[#1e3a8a] flex items-center justify-center hover:bg-[#0077b5] hover:text-white transition-all duration-300">
+                           <Linkedin size={20} />
+                        </Link>
+                      )}
+                      
+                      {member.email && (
+                        <Link href={`mailto:${member.email}`} className="w-10 h-10 rounded-xl bg-blue-50 text-[#1e3a8a] flex items-center justify-center hover:bg-red-500 hover:text-white transition-all duration-300">
+                           <Mail size={20} />
+                        </Link>
+                      )}
                    </div>
                 </div>
               ))}
