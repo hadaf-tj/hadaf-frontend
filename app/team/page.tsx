@@ -45,7 +45,7 @@ const TEAM = [
    role: 'Full Stack Developer', 
    email: 'abdulloevhm2030@gmail.com', 
    linkedin: 'https://www.linkedin.com/in/husein-abdulloev-4466b83a7', 
-   img: '' },
+   img: '/team/imaget9.webp' },
   { id: 10, name: 'Член команды', role: 'Сотрудник', email: '', linkedin: '', img: '' },
 ];
 
