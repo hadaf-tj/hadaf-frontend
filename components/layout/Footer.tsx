@@ -1,92 +1,28 @@
 'use client';
 
-import { HeartHandshake, Send, MessageCircle, Phone, Mail, MapPin, Facebook, Instagram, Twitter, Youtube, ArrowRight, Heart } from 'lucide-react';
+import { HeartHandshake, Send, Phone, Mail, MapPin, ArrowRight, Heart, Linkedin } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
 
 const Footer: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    // Симуляция отправки
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setEmail('');
-      alert('Спасибо за подписку!');
-    }, 1000);
-  };
-
   return (
     <footer className="relative bg-[#1e3a8a] text-white overflow-hidden">
       {/* Анимированный фон (можно добавить svg или градиенты, если нужно) */}
 
       <div className="absolute inset-0 z-0 pointer-events-none">
-         <div 
-            className="absolute inset-0 bg-[url('/ornament.png')] bg-repeat opacity-5"
-            // Используем opacity-10 или даже opacity-5, чтобы было еле заметно.
-            // На темном синем фоне желто-синий узор будет выглядеть интересно.
-            // Можно попробовать mix-blend-soft-light или mix-blend-overlay для разных эффектов.
-            style={{ mixBlendMode: 'soft-light' }} 
-         ></div>
-      </div>
-
-      {/* Блок подписки - премиум дизайн */}
-      <div className="relative z-10 border-b border-white/10">
-        {/* ИЗМЕНЕНИЕ: max-w-[1440px] и отступы xl:px-28 для выравнивания с контентом страницы */}
-        <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 py-16">
-          <div className="bg-white/10 rounded-[2.5rem] p-10 md:p-16 border border-white/20 shadow-2xl">
-            <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
-              <div className="text-center lg:text-left flex-1">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#ffca63]/20 backdrop-blur-xl rounded-full text-sm font-bold mb-4">
-                  <Heart size={16} className="text-[#ffca63]"/>
-                  <span>Будьте в курсе</span>
-                </div>
-                <h3 className="text-3xl md:text-4xl font-black mb-3 leading-tight">
-                  Подписаться на <span className="text-[#ffca63]">новости</span>
-                </h3>
-                <p className="text-white/80 text-lg">
-                  Узнавайте первыми о новых сборах, отчетах и историях помощи
-                </p>
-              </div>
-              
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row w-full lg:w-auto gap-3 lg:min-w-[500px]">
-                <div className="relative flex-1">
-                  <Mail size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-white/50"/>
-                  <input 
-                    type="email" 
-                    placeholder="Введите ваш email" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-14 pr-6 py-4 rounded-2xl bg-white/15 backdrop-blur-xl border border-white/30 text-white placeholder:text-white/50 focus:outline-none focus:bg-white/20 focus:border-white/50 transition-all font-medium shadow-lg"
-                    required
-                  />
-                </div>
-                <button 
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-[#ffca63] text-[#1e3a8a] px-8 py-4 rounded-2xl font-black hover:bg-white transition-all shadow-xl hover:shadow-2xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap group"
-                >
-                  {isSubmitting ? 'Отправка...' : (
-                    <span className="flex items-center gap-2">
-                      Подписаться
-                      <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform"/>
-                    </span>
-                  )}
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
+        <div
+          className="absolute inset-0 bg-[url('/ornament.png')] bg-repeat opacity-5"
+          // Используем opacity-10 или даже opacity-5, чтобы было еле заметно.
+          // На темном синем фоне желто-синий узор будет выглядеть интересно.
+          // Можно попробовать mix-blend-soft-light или mix-blend-overlay для разных эффектов.
+          style={{ mixBlendMode: 'soft-light' }}
+        ></div>
       </div>
 
       {/* Основной контент футера */}
       {/* ИЗМЕНЕНИЕ: Те же настройки контейнера для вертикального ритма */}
       <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 py-20 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
-          
+
           <div className="space-y-8 lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 text-2xl font-black text-white group">
               <div className="relative">
@@ -96,7 +32,7 @@ const Footer: React.FC = () => {
               </div>
               <span className="bg-white bg-clip-text text-transparent">Ҳадаф</span>
             </Link>
-            
+
             <p className="text-base text-white/80 leading-relaxed">
               Благотворительная платформа адресной помощи социальным учреждениям Таджикистана. Помогаем честно, прозрачно и напрямую.
             </p>
@@ -104,14 +40,13 @@ const Footer: React.FC = () => {
             {/* Социальные сети - стильные иконки */}
             <div className="flex gap-3">
               {[
-                { icon: <Send size={20}/>, href: '#', label: 'Telegram' },
-                { icon: <MessageCircle size={20}/>, href: '#', label: 'WhatsApp' },
-                { icon: <Facebook size={20}/>, href: '#', label: 'Facebook' },
-                { icon: <Instagram size={20}/>, href: '#', label: 'Instagram' },
+                { icon: <Send size={20} />, href: 'https://t.me/hadaftj', label: 'Telegram' },
+                { icon: <Linkedin size={20} />, href: 'https://www.linkedin.com/company/hadaftj', label: 'LinkedIn' },
+                { icon: <Mail size={20} />, href: 'mailto:info@hadaf.tj', label: 'Email' },
               ].map((social) => (
-                <a 
+                <a
                   key={social.label}
-                  href={social.href} 
+                  href={social.href}
                   aria-label={social.label}
                   className="group relative w-12 h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center hover:bg-white hover:text-[#1e3a8a] transition-all border border-white/20 hover:scale-110 hover:rotate-6 shadow-lg"
                 >
@@ -122,7 +57,7 @@ const Footer: React.FC = () => {
             </div>
 
             {/* Статистика в футере */}
-           
+
           </div>
 
           <div>
@@ -136,11 +71,11 @@ const Footer: React.FC = () => {
                 { name: 'Пресс-центр', href: '/press' },
               ].map((item) => (
                 <li key={item.name}>
-                  <Link 
+                  <Link
                     href={item.href}
                     className="text-white/70 hover:text-white transition-all flex items-center gap-2 group font-medium"
                   >
-                    <ArrowRight size={16} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#ffca63]"/>
+                    <ArrowRight size={16} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#ffca63]" />
                     {item.name}
                   </Link>
                 </li>
@@ -160,11 +95,11 @@ const Footer: React.FC = () => {
                 { name: 'Создать событие', href: '/events' },
               ].map((item) => (
                 <li key={item.name}>
-                  <Link 
+                  <Link
                     href={item.href}
                     className="text-white/70 hover:text-white transition-all flex items-center gap-2 group font-medium"
                   >
-                    <ArrowRight size={16} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#ffca63]"/>
+                    <ArrowRight size={16} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#ffca63]" />
                     {item.name}
                   </Link>
                 </li>
@@ -182,7 +117,7 @@ const Footer: React.FC = () => {
                 </div>
                 <div className="text-white/80 group-hover:text-white transition-colors">
                   <div className="font-bold text-white mb-1">Адрес офиса</div>
-                  <span>Душанбе, Таджикистан<br/>пр. Рудаки, 100</span>
+                  <span>Душанбе, Таджикистан<br />пр. Рудаки, 100</span>
                 </div>
               </div>
 
@@ -221,10 +156,10 @@ const Footer: React.FC = () => {
                 &copy; {new Date().getFullYear()} Проект "Ҳадаф". Все права защищены.
               </p>
               <p className="text-white/40 text-xs">
-                Создано с <Heart size={12} className="inline text-red-400 animate-pulse"/> к Таджикистану
+                Создано с <Heart size={12} className="inline text-red-400 animate-pulse" /> к Таджикистану
               </p>
             </div>
-            
+
             <div className="flex flex-wrap justify-center gap-6 text-sm">
               <a href="#" className="text-white/60 hover:text-white transition-colors font-medium">
                 Политика конфиденциальности

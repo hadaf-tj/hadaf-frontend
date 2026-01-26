@@ -29,10 +29,10 @@ const MapPage = () => {
   const MapView = useMemo(() => dynamic(() => import('@/components/specific/MapView'), {
     ssr: false,
     loading: () => (
-        <div className="h-full w-full bg-[#f7f9fe] flex flex-col items-center justify-center text-[#869cb9]">
-            <Loader2 size={40} className="mb-2 animate-spin text-[#1e3a8a]" />
-            <p className="font-medium animate-pulse">Загрузка карты...</p>
-        </div>
+      <div className="h-full w-full bg-[#f7f9fe] flex flex-col items-center justify-center text-[#869cb9]">
+        <Loader2 size={40} className="mb-2 animate-spin text-[#1e3a8a]" />
+        <p className="font-medium animate-pulse">Загрузка карты...</p>
+      </div>
     ),
   }), []);
 
@@ -42,16 +42,16 @@ const MapPage = () => {
   // Логика фильтрации
   const filteredLocations = MOCK_LOCATIONS.filter(loc => {
     const matchesCategory = activeCategory === 'all' || loc.type === activeCategory;
-    const matchesSearch = loc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          loc.address.toLowerCase().includes(searchQuery.toLowerCase());
-    
+    const matchesSearch = loc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      loc.address.toLowerCase().includes(searchQuery.toLowerCase());
+
     return matchesCategory && matchesSearch;
   });
 
   return (
     <MainLayout>
       <div className="min-h-screen bg-[#f8fafc] font-sans">
-        
+
         {/* 1. HERO HEADER (Точно такой же, как в Institutions) */}
         <div className="bg-[#1e3a8a] pt-32 pb-12 rounded-b-[3rem]">
           <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
@@ -61,22 +61,22 @@ const MapPage = () => {
                   Карта помощи
                 </h1>
                 <p className="text-white/80 text-lg">
-                  Найдите ближайшее учреждение и привезите помощь лично.
+                  Найдите ближайшее учреждение и привезите помощь лично
                 </p>
               </div>
-              
+
               {/* Переключатель Карта / Список */}
               <div className="hidden md:flex bg-white/10 p-1 rounded-xl backdrop-blur-sm border border-white/20">
-                 <Link href="/institutions">
-                    <button className="px-4 py-2 text-white/80 hover:text-white rounded-lg font-bold text-sm transition-colors flex items-center gap-2">
-                        <List size={16} />
-                        Список
-                    </button>
-                 </Link>
-                 <button className="px-4 py-2 bg-white text-[#1e3a8a] rounded-lg font-bold text-sm shadow-sm flex items-center gap-2">
-                    <MapIcon size={16} />
-                    На карте
-                 </button>
+                <Link href="/institutions">
+                  <button className="px-4 py-2 text-white/80 hover:text-white rounded-lg font-bold text-sm transition-colors flex items-center gap-2">
+                    <List size={16} />
+                    Список
+                  </button>
+                </Link>
+                <button className="px-4 py-2 bg-white text-[#1e3a8a] rounded-lg font-bold text-sm shadow-sm flex items-center gap-2">
+                  <MapIcon size={16} />
+                  На карте
+                </button>
               </div>
             </div>
 
@@ -84,15 +84,15 @@ const MapPage = () => {
             <div className="bg-white p-2 rounded-2xl shadow-xl flex flex-col md:flex-row gap-2 relative z-20">
               <div className="relative flex-1">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input 
-                  type="text" 
-                  placeholder="Найти по названию или городу..." 
+                <input
+                  type="text"
+                  placeholder="Найти по названию или городу..."
                   className="w-full h-12 pl-12 pr-4 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 transition-all font-medium"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              
+
               {/* Фильтры по категориям */}
               <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 px-1 no-scrollbar">
                 {CATEGORIES.map((cat) => (
@@ -101,18 +101,18 @@ const MapPage = () => {
                     onClick={() => setActiveCategory(cat.id)}
                     className={`
                       whitespace-nowrap px-6 h-12 rounded-xl font-bold transition-all text-sm
-                      ${activeCategory === cat.id 
-                        ? 'bg-[#1e3a8a] text-white shadow-md' 
+                      ${activeCategory === cat.id
+                        ? 'bg-[#1e3a8a] text-white shadow-md'
                         : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}
                     `}
                   >
                     {cat.label}
                   </button>
                 ))}
-                
+
                 {/* Кнопка доп. фильтров */}
                 <button className="h-12 w-12 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 flex-shrink-0 border border-transparent hover:border-gray-200">
-                   <SlidersHorizontal size={20} />
+                  <SlidersHorizontal size={20} />
                 </button>
               </div>
             </div>
@@ -121,26 +121,26 @@ const MapPage = () => {
 
         {/* 2. ОБЛАСТЬ КАРТЫ */}
         <section className="py-12 -mt-4 relative z-10">
-           <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
-              
-              {/* Счетчик */}
-              <div className="mb-4 text-gray-500 font-medium pl-2">
-                Найдено на карте: <span className="text-gray-900 font-bold">{filteredLocations.length}</span>
-              </div>
+          <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
 
-              {/* Контейнер карты */}
-              <div className="bg-white p-2 rounded-[2.5rem] shadow-xl border border-gray-100">
-                <div className="h-[65vh] w-full rounded-[2rem] overflow-hidden bg-gray-50 relative z-0">
-                    <MapView locations={filteredLocations} />
-                </div>
-              </div>
+            {/* Счетчик */}
+            <div className="mb-4 text-gray-500 font-medium pl-2">
+              Найдено на карте: <span className="text-gray-900 font-bold">{filteredLocations.length}</span>
+            </div>
 
-              {/* Подсказка */}
-              <div className="mt-6 text-center text-gray-400 text-sm font-medium">
-                 Нажмите на метку, чтобы увидеть подробности и перейти к странице помощи
+            {/* Контейнер карты */}
+            <div className="bg-white p-2 rounded-[2.5rem] shadow-xl border border-gray-100">
+              <div className="h-[65vh] w-full rounded-[2rem] overflow-hidden bg-gray-50 relative z-0">
+                <MapView locations={filteredLocations} />
               </div>
-              
-           </div>
+            </div>
+
+            {/* Подсказка */}
+            <div className="mt-6 text-center text-gray-400 text-sm font-medium">
+              Нажмите на метку, чтобы увидеть подробности и перейти к странице помощи
+            </div>
+
+          </div>
         </section>
 
       </div>
