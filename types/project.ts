@@ -15,7 +15,7 @@ export type Institution = {
   name: string;
   city: string;
   address: string;
-  type: 'Children' | 'Elderly' | 'Disabled';
+  type: 'Children' | 'Elderly';
   contactPhone: string;
   contactEmail: string;
   needsCount: number; // Общее количество активных нужд

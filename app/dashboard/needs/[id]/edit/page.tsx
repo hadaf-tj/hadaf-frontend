@@ -1,30 +1,81 @@
 'use client';
 
+import { useState, useEffect, use } from 'react';
+import { useRouter } from 'next/navigation';
 import { NeedForm } from '@/components/specific/NeedForm';
 import { Need } from '@/types/project';
+import { fetchNeedById, updateNeed } from '@/lib/api';
+import { Loader2 } from 'lucide-react';
 
-// Мок-данные для существующей нужды, которую мы "редактируем"
-const MOCK_NEED_DETAIL: Need = {
-  id: 'n4',
-  name: 'Теплые носки (детские)',
-  unit: 'пар',
-  requiredQuantity: 100,
-  receivedQuantity: 15,
-};
+const EditNeedPage = ({ params }: { params: Promise<{ id: string }> }) => {
+  const resolvedParams = use(params);
+  const router = useRouter();
 
-const EditNeedPage = ({ params }: { params: { id: string } }) => {
-  // В будущем здесь будет fetch-запрос к API для получения данных по params.id
-  const needData = MOCK_NEED_DETAIL;
+  const [needData, setNeedData] = useState<Need | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleUpdateNeed = (data: any) => {
-    // Здесь будет fetch-запрос к API (PUT /api/needs/{params.id})
-    console.log(`Updating need ${params.id} with data:`, data);
+  useEffect(() => {
+    const loadNeed = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchNeedById(resolvedParams.id);
+        if (!data) {
+          setError('Нужда не найдена');
+        } else {
+          setNeedData(data);
+        }
+      } catch (err) {
+        console.error(err);
+        setError('Ошибка загрузки данных');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadNeed();
+  }, [resolvedParams.id]);
+
+  const handleUpdateNeed = async (data: any) => {
+    setIsSubmitting(true);
+    try {
+      await updateNeed(resolvedParams.id, {
+        name: data.name,
+        unit: data.unit,
+        required_qty: data.requiredQuantity,
+        received_qty: data.receivedQuantity,
+      });
+      router.push('/dashboard/needs');
+    } catch (err) {
+      console.error(err);
+      alert('Ошибка при обновлении нужды');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="max-w-2xl mx-auto flex justify-center py-20">
+        <Loader2 size={40} className="animate-spin text-[#1e3a8a]" />
+      </div>
+    );
+  }
+
+  if (error || !needData) {
+    return (
+      <div className="max-w-2xl mx-auto text-center py-20">
+        <p className="text-red-500 font-medium">{error || 'Нужда не найдена'}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Передаем начальные данные в нашу универсальную форму */}
-      <NeedForm initialData={needData} onSubmit={handleUpdateNeed} />
+      <NeedForm
+        initialData={needData}
+        onSubmit={handleUpdateNeed}
+      />
     </div>
   );
 };

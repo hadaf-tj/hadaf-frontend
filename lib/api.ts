@@ -57,7 +57,7 @@ const mapInstitution = (item: BackendInstitution): Institution => ({
   name: item.name,
   city: item.city,
   address: item.address,
-  type: item.type as "Children" | "Elderly" | "Disabled",
+  type: item.type as "Children" | "Elderly",
   contactPhone: item.phone,
   contactEmail: item.email,
   needsCount: 0,
@@ -133,13 +133,19 @@ export async function register(
 export async function fetchInstitutions(filters?: {
   search?: string;
   type?: string;
+  sort?: string; // 'needs_desc' | 'distance'
+  lat?: number;
+  lng?: number;
 }): Promise<Institution[]> {
   try {
     const params = new URLSearchParams();
-    if (filters?.search) params.append("name", filters.search);
+    if (filters?.search) params.append("search", filters.search);
     if (filters?.type && filters.type !== "all") {
       params.append("type", filters.type);
     }
+    if (filters?.sort) params.append("sort", filters.sort);
+    if (filters?.lat !== undefined) params.append("lat", filters.lat.toString());
+    if (filters?.lng !== undefined) params.append("lng", filters.lng.toString());
 
     const res = await fetch(
       `${API_BASE_URL}/institutions?${params.toString()}`,
@@ -151,6 +157,39 @@ export async function fetchInstitutions(filters?: {
     const json: ApiResponse<BackendInstitution[]> = await res.json();
     if (!json.data) return [];
     return json.data.map(mapInstitution);
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+// Фильтры для нужд
+export interface NeedsFilters {
+  name?: string;
+  urgency?: string;
+  is_done?: boolean;
+  order_by?: string; // 'date_asc' | 'urgency' | default (date_desc)
+}
+
+export async function fetchNeedsByInstitution(
+  institutionId: string,
+  filters?: NeedsFilters
+): Promise<Need[]> {
+  try {
+    const params = new URLSearchParams();
+    if (filters?.name) params.append("name", filters.name);
+    if (filters?.urgency) params.append("urgency", filters.urgency);
+    if (filters?.is_done !== undefined) params.append("is_done", filters.is_done.toString());
+    if (filters?.order_by) params.append("order_by", filters.order_by);
+
+    const res = await fetch(
+      `${API_BASE_URL}/institutions/${institutionId}/needs?${params.toString()}`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) throw new Error("Ошибка загрузки нужд");
+    const json: ApiResponse<BackendNeed[]> = await res.json();
+    if (!json.data) return [];
+    return json.data.map(mapNeed);
   } catch (error) {
     console.error(error);
     return [];
@@ -226,4 +265,37 @@ export async function getProfile(): Promise<{
 
   const json = await res.json();
   return json.data;
+}
+
+// 6. Получение нужды по ID
+export async function fetchNeedById(id: string): Promise<Need | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/needs/${id}`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const json: ApiResponse<BackendNeed> = await res.json();
+    if (!json.data) return null;
+    return mapNeed(json.data);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+// 7. Обновление нужды
+export async function updateNeed(id: string, data: Partial<{
+  name: string;
+  unit: string;
+  required_qty: number;
+  received_qty: number;
+  urgency: string;
+}>) {
+  const res = await fetch(`${API_BASE_URL}/needs/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Ошибка обновления нужды");
+  return res.json();
 }
