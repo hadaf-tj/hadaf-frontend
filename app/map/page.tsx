@@ -3,25 +3,28 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Search, SlidersHorizontal, List, Map as MapIcon, Loader2 } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
+import { fetchInstitutions } from '@/lib/api';
+import { Institution } from '@/types/project';
 
-// Мок-данные (те же, что и раньше, но с координатами)
-const MOCK_LOCATIONS = [
-  { id: '1', name: 'Дом-интернат "Навруз"', type: 'Children', lat: 38.57, lng: 68.75, needsCount: 42, address: 'Душанбе' },
-  { id: '2', name: 'Дом престарелых "Отрада"', type: 'Elderly', lat: 38.53, lng: 68.80, needsCount: 18, address: 'Худжанд' },
-  { id: '3', name: 'Центр "Умед"', type: 'Disabled', lat: 38.56, lng: 68.79, needsCount: 5, address: 'Вахдат' },
-  { id: '4', name: 'Интернат №1', type: 'Children', lat: 38.59, lng: 68.73, needsCount: 12, address: 'Куляб' },
-  { id: '5', name: 'Центр ветеранов', type: 'Elderly', lat: 38.52, lng: 68.76, needsCount: 25, address: 'Душанбе' },
-];
+// Тип для локаций на карте
+interface MapLocation {
+  id: string;
+  name: string;
+  type: string;
+  lat: number;
+  lng: number;
+  needsCount: number;
+  address: string;
+}
 
 const CATEGORIES = [
   { id: 'all', label: 'Все' },
   { id: 'Children', label: 'Детям' },
   { id: 'Elderly', label: 'Пожилым' },
-  { id: 'Disabled', label: 'Людям с ОВЗ' },
 ];
 
 const MapPage = () => {
@@ -38,9 +41,38 @@ const MapPage = () => {
 
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [locations, setLocations] = useState<MapLocation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Загрузка учреждений из API
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        const institutions = await fetchInstitutions();
+        // Преобразуем в формат для карты
+        // Пока используем координаты Душанбе по умолчанию, если нет в API
+        const mapLocations: MapLocation[] = institutions.map((inst, index) => ({
+          id: inst.id,
+          name: inst.name,
+          type: inst.type,
+          lat: 38.55 + (index * 0.02), // Временные координаты пока нет в API
+          lng: 68.77 + (index * 0.02),
+          needsCount: inst.needsCount,
+          address: inst.city,
+        }));
+        setLocations(mapLocations);
+      } catch (error) {
+        console.error('Error loading institutions:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
   // Логика фильтрации
-  const filteredLocations = MOCK_LOCATIONS.filter(loc => {
+  const filteredLocations = locations.filter(loc => {
     const matchesCategory = activeCategory === 'all' || loc.type === activeCategory;
     const matchesSearch = loc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       loc.address.toLowerCase().includes(searchQuery.toLowerCase());

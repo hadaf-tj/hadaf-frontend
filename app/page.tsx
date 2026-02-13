@@ -1,28 +1,41 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Institution } from '@/types/project';
 import InstitutionCard from '@/components/specific/InstitutionCard';
-import { ArrowRight, Heart, Users, Baby, ShieldCheck, Sparkles, TrendingUp, Award, Mountain, Bold } from 'lucide-react';
+import { ArrowRight, Heart, Users, Baby, ShieldCheck, Sparkles, TrendingUp, Award, Mountain, Bold, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';
 import MainLayout from '@/components/layout/MainLayout';
 import OrnamentDivider from '@/components/ui/OrnamentDivider';
-
-// Мок-данные
-const MOCK_INSTITUTIONS: Institution[] = [
-  { id: '1', name: 'Дом-интернат "Навруз"', city: 'Душанбе', address: '', type: 'Children', contactPhone: '', contactEmail: '', needsCount: 42, lastUpdated: '', needs: [] },
-  { id: '2', name: 'Дом престарелых "Отрада"', city: 'Худжанд', address: '', type: 'Elderly', contactPhone: '', contactEmail: '', needsCount: 18, lastUpdated: '', needs: [] },
-  { id: '3', name: 'Центр "Умед"', city: 'Вахдат', address: '', type: 'Disabled', contactPhone: '', contactEmail: '', needsCount: 5, lastUpdated: '', needs: [] },
-];
+import { fetchInstitutions } from '@/lib/api';
 
 const DIRECTIONS = [
   { icon: <Baby size={32} />, title: 'Помощь детям', desc: 'Поддержка детских домов и интернатов необходимыми вещами и продуктами.' },
   { icon: <Users size={32} />, title: 'Пожилые люди', desc: 'Забота о домах престарелых, организация досуга и бытовая помощь.' },
-  { icon: <ShieldCheck size={32} />, title: 'Люди с ОВЗ', desc: 'Помощь специализированным центрам и адресная поддержка.' },
 ];
 
 const HomePage: React.FC = () => {
+  const [institutions, setInstitutions] = useState<Institution[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        // Загружаем первые 3 учреждения для главной страницы
+        const data = await fetchInstitutions();
+        setInstitutions(data.slice(0, 3));
+      } catch (error) {
+        console.error('Error loading institutions:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
   return (
     <MainLayout>
       <div className="font-sans overflow-hidden">
@@ -107,11 +120,21 @@ const HomePage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {MOCK_INSTITUTIONS.map((inst, idx) => (
-                <div key={inst.id} className="transform hover:scale-105 transition-all duration-300" style={{ animationDelay: `${idx * 100}ms` }}>
-                  <InstitutionCard institution={inst} />
+              {isLoading ? (
+                <div className="col-span-full flex justify-center py-12">
+                  <Loader2 size={40} className="animate-spin text-[#1e3a8a]" />
                 </div>
-              ))}
+              ) : institutions.length > 0 ? (
+                institutions.map((inst, idx) => (
+                  <div key={inst.id} className="transform hover:scale-105 transition-all duration-300" style={{ animationDelay: `${idx * 100}ms` }}>
+                    <InstitutionCard institution={inst} />
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12 text-gray-500">
+                  Учреждения не найдены
+                </div>
+              )}
             </div>
 
             <div className="text-center">
@@ -136,11 +159,11 @@ const HomePage: React.FC = () => {
                 <span className="bg-[#1e3a8a] bg-clip-text text-transparent">Наши направления</span>
               </h2>
               <p className="text-xl font-black text-gray-800">
-                Мы работаем по трем ключевым направлениям помощи
+                Мы работаем по двум ключевым направлениям помощи
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {DIRECTIONS.map((dir, idx) => (
                 <div
                   key={idx}
