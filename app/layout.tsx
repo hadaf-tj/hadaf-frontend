@@ -2,6 +2,7 @@
 import '../styles/globals.css';
 import { Montserrat } from 'next/font/google';
 import SplashScreen from '@/components/ui/SplashScreen';
+import Providers from '@/components/Providers';
 
 const montserrat = Montserrat({
   subsets: ['latin', 'cyrillic'],
@@ -17,9 +18,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ru" suppressHydrationWarning>
       <body className={montserrat.className}>
-        <SplashScreen />
-        {/* Мы убрали отсюда MainLayout. Теперь каждая страница сама (или через template) решает, какой ей нужен Layout */}
-        {children}
+        <Providers>
+          <SplashScreen />
+          {children}
+        </Providers>
       </body>
     </html>
   );

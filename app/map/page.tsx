@@ -52,12 +52,14 @@ const MapPage = () => {
         const institutions = await fetchInstitutions();
         // Преобразуем в формат для карты
         // Пока используем координаты Душанбе по умолчанию, если нет в API
-        const mapLocations: MapLocation[] = institutions.map((inst, index) => ({
+        const mapLocations: MapLocation[] = institutions
+          .filter((inst) => inst.latitude && inst.longitude)
+          .map((inst) => ({
           id: inst.id,
           name: inst.name,
           type: inst.type,
-          lat: 38.55 + (index * 0.02), // Временные координаты пока нет в API
-          lng: 68.77 + (index * 0.02),
+          lat: inst.latitude!,
+          lng: inst.longitude!,
           needsCount: inst.needsCount,
           address: inst.city,
         }));

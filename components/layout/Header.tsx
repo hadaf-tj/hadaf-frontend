@@ -3,10 +3,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Search, User, HeartHandshake, ChevronDown, ChevronRight } from 'lucide-react'; // Добавил ChevronDown
+import { Menu, X, Search, User, HeartHandshake, ChevronDown, ChevronRight, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/lib/AuthContext';
 
 // --- ДАННЫЕ МЕНЮ С ВЛОЖЕННОСТЬЮ ---
 const NAV_ITEMS = [
@@ -28,6 +29,7 @@ const NAV_ITEMS = [
       { name: 'Правила посещения', href: '/rules' },
     ]
   },
+  { name: 'События', href: '/events' },
   { name: 'Отчеты', href: '/reports' },
   { name: 'Контакты', href: '/contacts' }, // Страницу нужно будет создать
 ];
@@ -39,6 +41,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { user, isLoading, logout } = useAuth();
 
   // Состояние для активного дропдауна (храним индекс элемента)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -188,9 +191,21 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
             <button className="hover:opacity-70 transition-opacity">
               <Search size={22} />
             </button>
-            <Link href="/login" className="hover:opacity-70 transition-opacity">
-              <User size={22} />
-            </Link>
+            {!isLoading && user ? (
+              <>
+                <Link href="/dashboard" className="hover:opacity-70 transition-opacity flex items-center gap-2" title="Мой профиль">
+                  <User size={22} />
+                  <span className="text-sm font-bold hidden xl:inline">{user.full_name?.split(' ')[0] || 'Профиль'}</span>
+                </Link>
+                <button onClick={logout} className="hover:opacity-70 transition-opacity" title="Выйти">
+                  <LogOut size={20} />
+                </button>
+              </>
+            ) : (
+              <Link href="/login" className="hover:opacity-70 transition-opacity">
+                <User size={22} />
+              </Link>
+            )}
           </div>
 
           <div className={cn("fixed top-0 right-0 flex items-start z-40")}>
@@ -278,12 +293,28 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
               ))}
             </div>
             <div className="mt-auto pt-8 flex flex-col gap-3 mb-8">
-              <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-lg h-14 rounded-2xl w-full shadow-lg border-0">
-                <Link href="/login" onClick={() => setIsOpen(false)}>Авторизоваться</Link>
-              </Button>
-              <Button asChild className="bg-transparent border-2 border-white/20 text-white hover:bg-white/10 font-bold text-lg h-14 rounded-2xl w-full">
-                <Link href="/institutions" onClick={() => setIsOpen(false)}>Помочь</Link>
-              </Button>
+              {!isLoading && user ? (
+                <>
+                  <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-lg h-14 rounded-2xl w-full shadow-lg border-0">
+                    <Link href="/dashboard" onClick={() => setIsOpen(false)}>Мой профиль</Link>
+                  </Button>
+                  <Button
+                    onClick={() => { setIsOpen(false); logout(); }}
+                    className="bg-transparent border-2 border-white/20 text-white hover:bg-white/10 font-bold text-lg h-14 rounded-2xl w-full"
+                  >
+                    Выйти
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-lg h-14 rounded-2xl w-full shadow-lg border-0">
+                    <Link href="/login" onClick={() => setIsOpen(false)}>Авторизоваться</Link>
+                  </Button>
+                  <Button asChild className="bg-transparent border-2 border-white/20 text-white hover:bg-white/10 font-bold text-lg h-14 rounded-2xl w-full">
+                    <Link href="/institutions" onClick={() => setIsOpen(false)}>Помочь</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

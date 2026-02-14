@@ -118,24 +118,34 @@ export default function InstitutionDetailPage() {
     setIsModalOpen(true);
   };
 
-  // Прогресс-бар
-  const ProgressBar = ({ current, total }: { current: number, total: number }) => {
-    const percent = Math.min(100, Math.round((current / total) * 100));
-    const isCompleted = current >= total;
+  // Прогресс-бар с учетом booked
+  const ProgressBar = ({ received, booked, total, unit }: { received: number, booked: number, total: number, unit: string }) => {
+    const receivedPercent = Math.min(100, Math.round((received / total) * 100));
+    const bookedPercent = Math.min(100 - receivedPercent, Math.round((booked / total) * 100));
+    const remaining = Math.max(0, total - received - booked);
+    const isFullyCovered = remaining <= 0;
 
     return (
       <div className="w-full">
         <div className="flex justify-between text-xs font-bold mb-1">
-          <span className={isCompleted ? 'text-green-600' : 'text-[#1e3a8a]'}>
-            {isCompleted ? 'Сбор закрыт' : `Собрано: ${current} из ${total}`}
+          <span className={isFullyCovered ? 'text-green-600' : 'text-[#1e3a8a]'}>
+            {isFullyCovered ? 'Сбор покрыт' : `Осталось: ${remaining} ${unit}`}
           </span>
-          <span className="text-gray-400">{percent}%</span>
+          <span className="text-gray-400">
+            Получено: {received} {booked > 0 ? `· В пути: ${booked}` : ''} · Всего: {total}
+          </span>
         </div>
-        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden flex">
           <div
-            className={`h-full rounded-full transition-all duration-500 ${isCompleted ? 'bg-green-500' : 'bg-[#ffca63]'}`}
-            style={{ width: `${percent}%` }}
-          ></div>
+            className="h-full bg-green-500 transition-all duration-500"
+            style={{ width: `${receivedPercent}%` }}
+          />
+          {bookedPercent > 0 && (
+            <div
+              className="h-full bg-[#ffca63] transition-all duration-500"
+              style={{ width: `${bookedPercent}%` }}
+            />
+          )}
         </div>
       </div>
     );
@@ -352,7 +362,9 @@ export default function InstitutionDetailPage() {
                 ) : !needsLoading && (
                   <div className="space-y-4">
                     {needs.map((need) => {
+                      const remaining = Math.max(0, need.requiredQuantity - need.receivedQuantity - need.bookedQuantity);
                       const isDone = need.receivedQuantity >= need.requiredQuantity;
+                      const isFullyCovered = remaining <= 0;
 
                       return (
                         <div
@@ -368,7 +380,6 @@ export default function InstitutionDetailPage() {
                               <div className="flex justify-between items-start mb-2">
                                 <div>
                                   <div className="flex items-center gap-2 mb-1">
-                                    {/* Категории пока нет в модели Need с бэка, можно добавить позже */}
                                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">Потребность</span>
                                   </div>
                                   <h4 className={`text-xl font-bold ${isDone ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
@@ -378,19 +389,25 @@ export default function InstitutionDetailPage() {
                               </div>
 
                               <div className="max-w-md">
-                                <ProgressBar current={need.receivedQuantity} total={need.requiredQuantity} />
+                                <ProgressBar received={need.receivedQuantity} booked={need.bookedQuantity} total={need.requiredQuantity} unit={need.unit} />
                               </div>
                             </div>
 
-                            {!isDone && (
-                              <div className="flex-shrink-0 w-full md:w-auto mt-4 md:mt-0">
+                            <div className="flex-shrink-0 w-full md:w-auto mt-4 md:mt-0">
+                              {isDone ? (
+                                <span className="text-green-600 font-bold text-sm">✓ Закрыто</span>
+                              ) : isFullyCovered ? (
+                                <Button disabled className="w-full bg-gray-200 text-gray-500 font-bold h-12 rounded-xl px-6 cursor-not-allowed">
+                                  Покрыто (в пути)
+                                </Button>
+                              ) : (
                                 <Button
                                   onClick={() => handlePledgeClick(need)}
                                   className="w-full bg-[#1e3a8a] hover:bg-[#2c4db5] text-white font-bold h-12 rounded-xl px-6">
                                   Я привезу
                                 </Button>
-                              </div>
-                            )}
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
@@ -420,6 +437,10 @@ export default function InstitutionDetailPage() {
           onClose={() => setIsModalOpen(false)}
           need={selectedNeed}
           institutionName={data.name}
+          onSuccess={() => {
+            const id = Array.isArray(params.id) ? params.id[0] : params.id;
+            if (id) loadNeeds(id);
+          }}
         />
       )}
     </MainLayout>

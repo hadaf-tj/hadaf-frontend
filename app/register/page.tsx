@@ -19,7 +19,7 @@ export default function RegisterPage() {
   const [step, setStep] = useState<'form' | 'otp'>('form');
   
   // Данные формы
-  const [role, setRole] = useState<'volunteer' | 'institution'>('volunteer');
+  const [role, setRole] = useState<'volunteer' | 'employee'>('volunteer');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -35,7 +35,15 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // ... загрузка учреждений (как было)
+    const loadInstitutions = async () => {
+      try {
+        const data = await fetchInstitutions({});
+        setInstitutions(data);
+      } catch (err) {
+        console.error('Failed to load institutions:', err);
+      }
+    };
+    loadInstitutions();
   }, []);
 
   // 1. ОТПРАВКА ФОРМЫ
@@ -47,7 +55,7 @@ export default function RegisterPage() {
     try {
       const fullName = `${firstName} ${lastName}`.trim();
       let instId: number | null = null;
-      if (role === 'institution') {
+      if (role === 'employee') {
           if (!selectedInstitutionId) throw new Error("Выберите учреждение");
           instId = parseInt(selectedInstitutionId);
       }
@@ -155,10 +163,10 @@ export default function RegisterPage() {
                <User className={`mb-2 ${role === 'volunteer' ? 'text-[#1e3a8a]' : 'text-gray-400'}`} size={24} />
                <span className={`text-sm font-bold ${role === 'volunteer' ? 'text-[#1e3a8a]' : 'text-gray-600'}`}>Я волонтер</span>
             </button>
-            <button type="button" onClick={() => setRole('institution')} className={`relative overflow-hidden rounded-xl border-2 p-4 flex flex-col items-center text-center transition-all ${role === 'institution' ? 'border-[#1e3a8a] bg-blue-50/50' : 'border-gray-100 hover:border-gray-200'}`}>
-               {role === 'institution' && <div className="absolute top-2 right-2 text-[#1e3a8a]"><Check size={16} /></div>}
-               <Building2 className={`mb-2 ${role === 'institution' ? 'text-[#1e3a8a]' : 'text-gray-400'}`} size={24} />
-               <span className={`text-sm font-bold ${role === 'institution' ? 'text-[#1e3a8a]' : 'text-gray-600'}`}>Сотрудник</span>
+            <button type="button" onClick={() => setRole('employee')} className={`relative overflow-hidden rounded-xl border-2 p-4 flex flex-col items-center text-center transition-all ${role === 'employee' ? 'border-[#1e3a8a] bg-blue-50/50' : 'border-gray-100 hover:border-gray-200'}`}>
+               {role === 'employee' && <div className="absolute top-2 right-2 text-[#1e3a8a]"><Check size={16} /></div>}
+               <Building2 className={`mb-2 ${role === 'employee' ? 'text-[#1e3a8a]' : 'text-gray-400'}`} size={24} />
+               <span className={`text-sm font-bold ${role === 'employee' ? 'text-[#1e3a8a]' : 'text-gray-600'}`}>Сотрудник</span>
             </button>
         </div>
 
@@ -177,7 +185,7 @@ export default function RegisterPage() {
             </div>
 
             {/* ВЫБОР УЧРЕЖДЕНИЯ (ТОЛЬКО ДЛЯ СОТРУДНИКОВ) */}
-            {role === 'institution' && (
+            {role === 'employee' && (
                <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2">
                  <label className="text-xs font-bold text-gray-500 ml-1 uppercase">Выберите организацию</label>
                  <div className="relative">
@@ -208,8 +216,8 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-500 ml-1 uppercase">Телефон (опционально)</label>
-              <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+992..." className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900" />
+              <label className="text-xs font-bold text-gray-500 ml-1 uppercase">Телефон</label>
+              <input type="text" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+992..." className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900" />
             </div>
 
             <div className="space-y-1.5">

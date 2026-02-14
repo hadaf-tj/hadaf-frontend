@@ -6,9 +6,11 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { ArrowLeft, HeartHandshake, Loader2 } from 'lucide-react';
 import { login } from '@/lib/api';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { refreshUser } = useAuth();
 
 
   // Состояния
@@ -31,7 +33,10 @@ export default function LoginPage() {
       localStorage.setItem('accessToken', data.access_token);
       localStorage.setItem('refreshToken', data.refresh_token);
 
-      // 3. Редирект
+      // 3. Обновляем глобальное состояние авторизации
+      await refreshUser();
+
+      // 4. Редирект
       router.push('/dashboard');
     } catch (err: any) {
       console.error(err);
@@ -45,13 +50,13 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 relative font-sans">
 
       {/* Кнопка назад */}
-      <Link
+      <a
         href="/"
         className="absolute top-8 left-8 text-gray-400 hover:text-[#1e3a8a] flex items-center gap-2 font-bold transition-colors"
       >
         <ArrowLeft size={20} />
         На главную
-      </Link>
+      </a>
 
       {/* Логотип и заголовок */}
       <div className="mb-8 flex flex-col items-center">

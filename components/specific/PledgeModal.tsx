@@ -2,8 +2,9 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Gift, Calendar } from 'lucide-react';
+import { X, Gift, Calendar, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { createBooking } from '@/lib/api';
 
 // Тип данных для нужды, которую мы передаем в модалку
 export interface NeedItem {
@@ -19,21 +20,47 @@ interface PledgeModalProps {
   onClose: () => void;
   need: NeedItem;
   institutionName: string;
+  onSuccess?: () => void;
 }
 
-export default function PledgeModal({ isOpen, onClose, need, institutionName }: PledgeModalProps) {
+export default function PledgeModal({ isOpen, onClose, need, institutionName, onSuccess }: PledgeModalProps) {
   const [amount, setAmount] = useState<number>(1);
   const [date, setDate] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const remaining = need.total - need.collected;
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Здесь будет логика отправки данных на бэкенд
-    console.log(`Обещаю привезти ${amount} ${need.measure || 'шт.'} для ${need.title} до ${date}`);
-    alert("Спасибо! Ваше обещание добавлено в личный кабинет.");
-    onClose();
+    setError('');
+
+    if (amount <= 0 || amount > remaining) {
+      setError('Неверное количество');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const needId = typeof need.id === 'string' ? parseInt(need.id, 10) : need.id;
+      if (isNaN(needId)) {
+        setError('Некорректный ID нужды');
+        return;
+      }
+
+      const note = date ? `Планируемая дата визита: ${date}` : '';
+      await createBooking(needId, amount, note);
+
+      alert('Спасибо! Ваше бронирование отправлено.');
+      onSuccess?.();
+      onClose();
+    } catch (err) {
+      console.error('Booking error:', err);
+      setError(err instanceof Error ? err.message : 'Произошла ошибка');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -75,6 +102,11 @@ export default function PledgeModal({ isOpen, onClose, need, institutionName }: 
                 Осталось собрать: <span className="text-[#1e3a8a] font-bold">{remaining} {need.measure || 'шт.'}</span>
               </p>
            </div>
+
+           {/* Ошибка */}
+           {error && (
+             <div className="bg-red-50 text-red-600 text-sm font-bold p-3 rounded-xl">{error}</div>
+           )}
 
            {/* Input: Количество */}
            <div className="space-y-2">
@@ -122,10 +154,17 @@ export default function PledgeModal({ isOpen, onClose, need, institutionName }: 
               </Button>
               <Button 
                 type="submit" 
-                disabled={amount <= 0 || amount > remaining || !date}
+                disabled={amount <= 0 || amount > remaining || !date || isSubmitting}
                 className="flex-1 h-14 rounded-xl bg-[#1e3a8a] hover:bg-[#2a4ec2] text-white font-bold text-lg shadow-xl shadow-[#1e3a8a]/20 disabled:opacity-50 disabled:shadow-none"
               >
-                 Подтвердить
+                 {isSubmitting ? (
+                   <span className="flex items-center gap-2">
+                     <Loader2 size={20} className="animate-spin" />
+                     Отправка...
+                   </span>
+                 ) : (
+                   'Подтвердить'
+                 )}
               </Button>
            </div>
 

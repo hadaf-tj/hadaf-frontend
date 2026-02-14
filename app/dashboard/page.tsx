@@ -47,7 +47,7 @@ export default function DashboardPage() {
             Здравствуйте, {user?.full_name}!
          </h1>
          <p className="text-gray-500 font-medium mt-1">
-           Добро пожаловать в Hadaf.
+           Добро пожаловать в Hadaf
          </p>
        </div>
 
@@ -84,7 +84,8 @@ export default function DashboardPage() {
           </div>
        </div>
 
-       {/* 3. Блок "Что делать дальше" */}
+       {/* 3. Блок "Что делать дальше" — только для волонтёров */}
+       {user?.role !== 'employee' && (
        <div className="bg-[#1e3a8a] text-white rounded-3xl p-8 shadow-xl relative overflow-hidden">
           <div className="relative z-10">
               <h3 className="text-2xl font-black mb-4">С чего начать?</h3>
@@ -103,6 +104,7 @@ export default function DashboardPage() {
               <Heart size={200} />
           </div>
        </div>
+       )}
 
     </div>
   );

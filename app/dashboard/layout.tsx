@@ -63,7 +63,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   // Выбираем меню в зависимости от роли
   // Если роль еще не загрузилась (user === null), показываем пустое или дефолтное меню
-  const menuItems = user?.role === 'institution' ? INSTITUTION_MENU : VOLUNTEER_MENU;
+  const menuItems = (user?.role === 'institution' || user?.role === 'employee') ? INSTITUTION_MENU : VOLUNTEER_MENU;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex font-sans">
@@ -76,12 +76,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         )}
       >
         <div className="h-20 flex items-center px-6 border-b border-white/10">
-           <div className="flex items-center gap-3 font-black text-xl tracking-tight">
+           <a href="/" className="flex items-center gap-3 font-black text-xl tracking-tight hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-white text-[#1e3a8a] rounded-lg flex items-center justify-center">
                  <HeartHandshake size={18} />
               </div>
               Hadaf
-           </div>
+           </a>
            <button onClick={() => setSidebarOpen(false)} className="ml-auto lg:hidden text-white/50 hover:text-white">
              <X size={24} />
            </button>
@@ -145,7 +145,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         {user ? user.full_name : 'Загрузка...'}
                     </div>
                     <div className="text-xs text-gray-400 font-medium capitalize">
-                        {user ? (user.role === 'institution' ? 'Сотрудник' : 'Волонтер') : '...'}
+                        {user ? ((user.role === 'institution' || user.role === 'employee') ? 'Сотрудник' : 'Волонтер') : '...'}
                     </div>
                  </div>
                  <div className="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500">
