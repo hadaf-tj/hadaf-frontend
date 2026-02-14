@@ -18,6 +18,7 @@ interface BackendInstitution {
   longitude?: number;
   created_at: string;
   updated_at?: string;
+  needs_count?: number;
 }
 
 interface BackendNeed {
@@ -28,6 +29,7 @@ interface BackendNeed {
   unit: string;
   required_qty: number;
   received_qty: number;
+  booked_qty: number;
   urgency: string;
 }
 
@@ -60,12 +62,14 @@ const mapInstitution = (item: BackendInstitution): Institution => ({
   type: item.type as "Children" | "Elderly",
   contactPhone: item.phone,
   contactEmail: item.email,
-  needsCount: 0,
+  needsCount: item.needs_count || 0,
   lastUpdated: item.updated_at
     ? new Date(item.updated_at).toLocaleDateString("ru-RU")
     : new Date(item.created_at).toLocaleDateString("ru-RU"),
   needs: [],
   activityHours: item.activity_hours,
+  latitude: item.latitude,
+  longitude: item.longitude,
 });
 
 const mapNeed = (item: BackendNeed): Need => ({
@@ -74,6 +78,8 @@ const mapNeed = (item: BackendNeed): Need => ({
   unit: item.unit,
   requiredQuantity: item.required_qty,
   receivedQuantity: item.received_qty,
+  bookedQuantity: item.booked_qty || 0,
+  urgency: item.urgency || 'medium',
 });
 
 // --- API МЕТОДЫ ---
@@ -104,7 +110,7 @@ export async function register(
   phone: string,
   password: string,
   fullName: string,
-  role: "volunteer" | "institution",
+  role: "volunteer" | "employee",
   institutionId: number | null // null для волонтеров
 ): Promise<TokenResponse> {
   const res = await fetch(`${API_BASE_URL}/register`, {
@@ -298,4 +304,113 @@ export async function updateNeed(id: string, data: Partial<{
   });
   if (!res.ok) throw new Error("Ошибка обновления нужды");
   return res.json();
+}
+
+// 8. Бронирование (Я привезу)
+export async function createBooking(
+  needId: number,
+  quantity: number,
+  note?: string
+): Promise<{ id: number }> {
+  const res = await fetch(`${API_BASE_URL}/bookings`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      need_id: needId,
+      quantity: quantity,
+      note: note || "",
+    }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ message: "Ошибка бронирования" }));
+    throw new Error(errorData.message || "Ошибка бронирования");
+  }
+
+  const json: ApiResponse<{ id: number }> = await res.json();
+  return json.data;
+}
+
+// 9. Booking management (для менеджера)
+export async function fetchInstitutionBookings(institutionId: number | string): Promise<any[]> {
+  const res = await fetch(`${API_BASE_URL}/institutions/${institutionId}/bookings`, {
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) throw new Error("Ошибка загрузки бронирований");
+  const json: ApiResponse<any[]> = await res.json();
+  return json.data || [];
+}
+
+export async function approveBooking(bookingId: number): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/bookings/${bookingId}/approve`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) throw new Error("Ошибка подтверждения");
+}
+
+export async function rejectBooking(bookingId: number): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/bookings/${bookingId}/reject`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) throw new Error("Ошибка отклонения");
+}
+
+export async function completeBooking(bookingId: number): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/bookings/${bookingId}/complete`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) throw new Error("Ошибка завершения");
+}
+
+// 10. Публичная статистика
+export async function fetchStats(): Promise<{ closed_needs: number; people_helped: number; institutions_count: number }> {
+  const res = await fetch(`${API_BASE_URL}/stats`);
+  if (!res.ok) throw new Error("Ошибка загрузки статистики");
+  const json: ApiResponse<{ closed_needs: number; people_helped: number; institutions_count: number }> = await res.json();
+  return json.data;
+}
+
+// 11. События (Events)
+export async function fetchEvents(): Promise<any[]> {
+  const res = await fetch(`${API_BASE_URL}/events`, {
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) throw new Error("Ошибка загрузки событий");
+  const json: ApiResponse<any[]> = await res.json();
+  return json.data || [];
+}
+
+export async function createEvent(data: {
+  title: string;
+  description: string;
+  event_date: string;
+  institution_id: number;
+}): Promise<{ id: number }> {
+  const res = await fetch(`${API_BASE_URL}/events`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Ошибка создания события");
+  const json: ApiResponse<{ id: number }> = await res.json();
+  return json.data;
+}
+
+export async function joinEvent(eventId: number): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/events/${eventId}/join`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) throw new Error("Ошибка записи на событие");
+}
+
+export async function leaveEvent(eventId: number): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/events/${eventId}/leave`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) throw new Error("Ошибка отмены записи");
 }
