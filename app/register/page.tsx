@@ -84,7 +84,7 @@ export default function RegisterPage() {
           // const data = await confirmOTP(email, otpCode);
           
           // ВРЕМЕННО для теста, пока ты не обновил api.ts:
-          const res = await fetch('http://localhost:8000/api/v1/confirm_otp', {
+          const res = await fetch('/api/v1/confirm_otp', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ receiver: email, otp: otpCode })
