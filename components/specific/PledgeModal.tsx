@@ -73,7 +73,7 @@ export default function PledgeModal({ isOpen, onClose, need, institutionName, on
         {/* Header с орнаментом */}
         <div className="relative bg-[#1e3a8a] p-6 text-white">
            <div className="absolute inset-0 pointer-events-none opacity-10">
-              <div className="absolute inset-0 bg-[url('/ornament.png')] bg-repeat mix-blend-overlay"></div>
+              <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat mix-blend-overlay"></div>
            </div>
            <button 
              onClick={onClose}

@@ -116,7 +116,7 @@ const HomePage: React.FC = () => {
             style={{ transform: `translateY(${scrollY * 0.35}px)` }}
           >
             <Image
-              src="/hero.png"
+              src="/hero.webp"
               alt="Hero Banner"
               fill
               priority
@@ -291,7 +291,7 @@ const HomePage: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-tr from-[#ffca63]/20 via-transparent to-transparent z-0"></div>
                     <div className="relative w-[85%] h-[85%] rounded-2xl overflow-hidden shadow-2xl z-10 group-hover:scale-105 transition-transform duration-500">
                       <Image
-                        src="/master_klass.png"
+                        src="/master_klass.webp"
                         alt="Волонтеры проводят мастер-класс с детьми"
                         fill
                         className="object-cover"

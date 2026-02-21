@@ -11,7 +11,7 @@ export default function ReportsPage() {
             {/* HERO HEADER */}
             <div className="bg-[#1e3a8a] pb-24 pt-32 relative overflow-hidden rounded-b-[3rem]">
                <div className="absolute inset-0 pointer-events-none opacity-10">
-                  <div className="absolute inset-0 bg-[url('/ornament.png')] bg-repeat mix-blend-overlay"></div>
+                  <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat mix-blend-overlay"></div>
                </div>
 
                <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 relative z-10 text-center">

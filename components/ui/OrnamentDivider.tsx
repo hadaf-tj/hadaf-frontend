@@ -20,7 +20,7 @@ const OrnamentDivider: React.FC<OrnamentDividerProps> = ({
     <div className={cn("relative w-full overflow-hidden bg-white", height, className)}>
       {/* Слой с картинкой.
          - absolute inset-0: растягиваем на весь родительский div
-         - bg-[url('/ornament.png')]: подключаем картинку
+         - bg-[url('/ornament.webp')]: подключаем картинку
          - bg-repeat: замостить узором всё пространство
          - bg-center: центрируем
          - mix-blend-multiply: режим наложения, чтобы белый фон картинки стал прозрачным, 
@@ -28,7 +28,7 @@ const OrnamentDivider: React.FC<OrnamentDividerProps> = ({
       */}
       <div 
         className={cn(
-          "absolute inset-0 bg-[url('/ornament.png')] bg-repeat bg-contain bg-center",
+          "absolute inset-0 bg-[url('/ornament.webp')] bg-repeat bg-contain bg-center",
           opacity,
           // mix-blend-multiply хорошо работает, если фон сайта светлый (белый/серый).
           // Если фон темный, лучше убрать blend-mode и просто оставить opacity.

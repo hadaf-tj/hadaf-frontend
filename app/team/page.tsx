@@ -21,7 +21,7 @@ export default function TeamPage() {
             {/* HERO SECTION */}
             <div className="bg-[#1e3a8a] pt-32 pb-20 rounded-b-[3rem] text-center relative overflow-hidden">
                <div className="absolute inset-0 pointer-events-none opacity-10">
-                  <div className="absolute inset-0 bg-[url('/ornament.png')] bg-repeat mix-blend-overlay"></div>
+                  <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat mix-blend-overlay"></div>
                </div>
                <div className="container mx-auto px-6 relative z-10">
                   <h1 className="text-4xl md:text-5xl font-black text-white mb-4">

@@ -15,7 +15,7 @@ export default function AboutPage() {
         {/* 1. HERO SECTION (Верхний баннер) */}
         <section className="relative w-full h-[450px] lg:h-[500px]">
           <Image
-            src="/hero_about.png" // Основной баннер (можно оставить тот же или поменять)
+            src="/hero_about.webp" // Основной баннер (можно оставить тот же или поменять)
             alt="About Hero"
             fill
             className="object-cover"
@@ -83,12 +83,12 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              {/* Правая часть - Визуал (hero_about.png) */}
+              {/* Правая часть - Визуал (hero_about.webp) */}
               <div className="flex-1 relative w-full h-[400px] lg:h-[500px]">
                 <div className="absolute inset-0 bg-[#1e3a8a] rounded-[3rem] rotate-3 transform translate-x-4 translate-y-4 opacity-10"></div>
                 <div className="relative h-full w-full rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white">
                   <Image
-                    src="/hero_about_2.png"
+                    src="/hero_about_2.webp"
                     alt="Волонтеры помогают учреждениям"
                     fill
                     className="object-cover"
@@ -104,7 +104,7 @@ export default function AboutPage() {
           <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
             <div className="bg-[#1e3a8a] rounded-[3rem] p-8 md:p-16 text-center relative overflow-hidden shadow-2xl">
               <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-                <div className="absolute inset-0 bg-[url('/ornament.png')] bg-repeat mix-blend-overlay"></div>
+                <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat mix-blend-overlay"></div>
               </div>
 
               <div className="relative z-10 max-w-3xl mx-auto space-y-8">

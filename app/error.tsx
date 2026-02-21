@@ -42,7 +42,7 @@ export default function GlobalError({
       </div>
       <div className="flex-shrink-0 mb-8 lg:mb-0">
         <Image
-          src="/500.jpg" // Ваш файл 500.jpg
+          src="/500.webp" // Ваш файл 500.webp
           alt="Ошибка на сервере"
           width={375}
           height={375}

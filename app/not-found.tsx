@@ -20,7 +20,7 @@ export default function NotFound() {
            <div className="absolute inset-0 bg-blue-50 rounded-full scale-90 -z-10"></div>
            
            <Image
-             src="/404.jpg" // Используем сгенерированное фото
+             src="/404.webp" // Используем сгенерированное фото
              alt="Заблудившийся волонтер"
              fill
              className="object-contain"

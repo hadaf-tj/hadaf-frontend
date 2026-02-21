@@ -259,7 +259,7 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
       {isOpen && (
         <div className="lg:hidden fixed inset-0 top-[60px] w-full bg-[#1e3a8a] z-40 overflow-hidden flex flex-col animate-in fade-in slide-in-from-top-5">
           <div className="absolute inset-0 z-0 pointer-events-none">
-            <div className="absolute inset-0 bg-[url('/ornament.png')] bg-repeat opacity-20 mix-blend-overlay"></div>
+            <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat opacity-20 mix-blend-overlay"></div>
           </div>
           <div className="relative z-10 flex flex-col h-full overflow-y-auto pb-20 px-6 mt-8">
             <div className="flex flex-col gap-1">

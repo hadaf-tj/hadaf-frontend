@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
 
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div
-          className="absolute inset-0 bg-[url('/ornament.png')] bg-repeat opacity-5"
+          className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat opacity-5"
           // Используем opacity-10 или даже opacity-5, чтобы было еле заметно.
           // На темном синем фоне желто-синий узор будет выглядеть интересно.
           // Можно попробовать mix-blend-soft-light или mix-blend-overlay для разных эффектов.

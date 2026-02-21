@@ -186,7 +186,7 @@ export default function InstitutionDetailPage() {
         <div className="relative h-[300px] lg:h-[350px] w-full bg-[#1e3a8a]">
           {/* Фото учреждения (пока ставим заглушку, так как с бэка фото не приходит) */}
           <Image
-            src="/hero_institution_id.png"
+            src="/hero_institution_id.webp"
             alt={data.name}
             fill
             className="object-cover opacity-40 mix-blend-overlay"
