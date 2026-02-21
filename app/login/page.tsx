@@ -26,21 +26,18 @@ export default function LoginPage() {
     setError('');
 
     try {
-      // 1. Запрос к API
-      const data = await login(email, password);
+      // 1. Запрос к API (backend sets httpOnly cookies)
+      await login(email, password);
 
-      // 2. Сохраняем токены
-      localStorage.setItem('accessToken', data.access_token);
-      localStorage.setItem('refreshToken', data.refresh_token);
-
-      // 3. Обновляем глобальное состояние авторизации
+      // 2. Обновляем глобальное состояние авторизации
       await refreshUser();
 
-      // 4. Редирект
+      // 3. Редирект
       router.push('/dashboard');
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Ошибка входа. Проверьте данные.';
       console.error(err);
-      setError(err.message || 'Ошибка входа. Проверьте данные.');
+      setError(message);
     } finally {
       setLoading(false);
     }

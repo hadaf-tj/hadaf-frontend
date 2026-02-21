@@ -55,8 +55,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const handleLogout = () => {
       if (confirm('Вы уверены, что хотите выйти?')) {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
+          fetch('/api/v1/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
           router.push('/login');
       }
   };

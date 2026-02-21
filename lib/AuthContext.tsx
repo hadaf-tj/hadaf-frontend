@@ -14,7 +14,7 @@ interface AuthUser {
 interface AuthContextType {
   user: AuthUser | null;
   isLoading: boolean;
-  /** Call after login saves tokens to localStorage */
+  /** Call after login to refresh the user profile via httpOnly cookie */
   refreshUser: () => Promise<void>;
   /** Atomic logout: clear tokens + state + redirect */
   logout: () => void;
@@ -34,20 +34,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const refreshUser = useCallback(async () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
-    if (!token) {
-      setUser(null);
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const profile = await getProfile();
       setUser(profile);
     } catch {
-      // Token invalid/expired — clear
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      // Cookie invalid/expired or not set
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -55,10 +46,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    // Clear httpOnly cookie via backend logout endpoint
+    fetch('/api/v1/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
     setUser(null);
-    // Redirect to home
     window.location.href = '/';
   }, []);
 

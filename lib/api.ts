@@ -46,11 +46,8 @@ interface TokenResponse {
 // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
 
 const getAuthHeaders = () => {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
   return {
     "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 };
 
@@ -92,6 +89,7 @@ export async function login(
   const res = await fetch(`${API_BASE_URL}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ email: email, password: password }),
   });
 
@@ -116,6 +114,7 @@ export async function register(
   const res = await fetch(`${API_BASE_URL}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({
       email,
       phone,
@@ -237,6 +236,7 @@ export async function createNeed(data: any) {
   const res = await fetch(`${API_BASE_URL}/needs`, {
     method: "POST",
     headers: getAuthHeaders(),
+    credentials: "include",
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Ошибка создания нужды");
@@ -247,6 +247,7 @@ export async function deleteNeed(id: string) {
   const res = await fetch(`${API_BASE_URL}/needs/${id}`, {
     method: "DELETE",
     headers: getAuthHeaders(),
+    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка удаления");
   return res.json();
@@ -262,6 +263,7 @@ export async function getProfile(): Promise<{
   const res = await fetch(`${API_BASE_URL}/me`, {
     method: "GET",
     headers: getAuthHeaders(),
+    credentials: "include",
     cache: "no-store",
   });
 
@@ -300,6 +302,7 @@ export async function updateNeed(id: string, data: Partial<{
   const res = await fetch(`${API_BASE_URL}/needs/${id}`, {
     method: "PUT",
     headers: getAuthHeaders(),
+    credentials: "include",
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Ошибка обновления нужды");
@@ -315,6 +318,7 @@ export async function createBooking(
   const res = await fetch(`${API_BASE_URL}/bookings`, {
     method: "POST",
     headers: getAuthHeaders(),
+    credentials: "include",
     body: JSON.stringify({
       need_id: needId,
       quantity: quantity,
@@ -335,6 +339,7 @@ export async function createBooking(
 export async function fetchInstitutionBookings(institutionId: number | string): Promise<any[]> {
   const res = await fetch(`${API_BASE_URL}/institutions/${institutionId}/bookings`, {
     headers: getAuthHeaders(),
+    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка загрузки бронирований");
   const json: ApiResponse<any[]> = await res.json();
@@ -345,6 +350,7 @@ export async function approveBooking(bookingId: number): Promise<void> {
   const res = await fetch(`${API_BASE_URL}/bookings/${bookingId}/approve`, {
     method: "PUT",
     headers: getAuthHeaders(),
+    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка подтверждения");
 }
@@ -353,6 +359,7 @@ export async function rejectBooking(bookingId: number): Promise<void> {
   const res = await fetch(`${API_BASE_URL}/bookings/${bookingId}/reject`, {
     method: "PUT",
     headers: getAuthHeaders(),
+    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка отклонения");
 }
@@ -361,6 +368,7 @@ export async function completeBooking(bookingId: number): Promise<void> {
   const res = await fetch(`${API_BASE_URL}/bookings/${bookingId}/complete`, {
     method: "PUT",
     headers: getAuthHeaders(),
+    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка завершения");
 }
@@ -377,6 +385,7 @@ export async function fetchStats(): Promise<{ closed_needs: number; people_helpe
 export async function fetchEvents(): Promise<any[]> {
   const res = await fetch(`${API_BASE_URL}/events`, {
     headers: getAuthHeaders(),
+    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка загрузки событий");
   const json: ApiResponse<any[]> = await res.json();
@@ -392,6 +401,7 @@ export async function createEvent(data: {
   const res = await fetch(`${API_BASE_URL}/events`, {
     method: "POST",
     headers: getAuthHeaders(),
+    credentials: "include",
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Ошибка создания события");
@@ -403,6 +413,7 @@ export async function joinEvent(eventId: number): Promise<void> {
   const res = await fetch(`${API_BASE_URL}/events/${eventId}/join`, {
     method: "POST",
     headers: getAuthHeaders(),
+    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка записи на событие");
 }
@@ -411,6 +422,7 @@ export async function leaveEvent(eventId: number): Promise<void> {
   const res = await fetch(`${API_BASE_URL}/events/${eventId}/leave`, {
     method: "DELETE",
     headers: getAuthHeaders(),
+    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка отмены записи");
 }

@@ -23,8 +23,6 @@ export default function DashboardPage() {
             setUser(userData);
         } catch (e) {
             console.error("Ошибка авторизации:", e);
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
             router.push('/login');
         } finally {
             setLoading(false);

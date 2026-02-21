@@ -66,8 +66,9 @@ export default function RegisterPage() {
       
       // Переходим к вводу кода
       setStep('otp');
-    } catch (err: any) {
-      setError(err.message || 'Ошибка регистрации');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Ошибка регистрации';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -80,26 +81,21 @@ export default function RegisterPage() {
       setError('');
       
       try {
-          // Здесь нужно вызвать метод confirmOTP (нужно добавить его в lib/api.ts)
-          // const data = await confirmOTP(email, otpCode);
-          
-          // ВРЕМЕННО для теста, пока ты не обновил api.ts:
+          // Backend sets httpOnly cookies on confirm_otp
           const res = await fetch('/api/v1/confirm_otp', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
               body: JSON.stringify({ receiver: email, otp: otpCode })
           });
           const json = await res.json();
           
           if (!res.ok) throw new Error(json.message || "Неверный код");
 
-          // Сохраняем токены
-          localStorage.setItem('accessToken', json.data.access_token);
-          localStorage.setItem('refreshToken', json.data.refresh_token);
-
           router.push('/dashboard');
-      } catch(err: any) {
-          setError(err.message);
+      } catch(err: unknown) {
+          const message = err instanceof Error ? err.message : 'Неверный код';
+          setError(message);
       } finally {
           setIsLoading(false);
       }
