@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/Button';
-import { Heart, UserPlus, Search, Gift, ArrowRight } from 'lucide-react';
+import { UserPlus, Search, Gift, ArrowRight } from 'lucide-react';
 
 export default function VolunteersPage() {
   return (

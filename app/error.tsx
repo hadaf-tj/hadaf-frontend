@@ -1,12 +1,12 @@
 'use client'; // Страницы ошибок ОБЯЗАТЕЛЬНО должны быть клиентскими
 
-import Link from 'next/link';
+
 import { Button } from '@/components/ui/Button';
 import Image from 'next/image';
 
 // Страница ошибки принимает специальные пропсы: error и reset
 export default function GlobalError({
-  error,
+  error: _error,
   reset,
 }: {
   error: Error & { digest?: string };

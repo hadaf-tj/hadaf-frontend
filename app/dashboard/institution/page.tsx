@@ -31,10 +31,18 @@ import { Need } from '@/types/project';
 
 type Tab = 'needs' | 'bookings';
 
+interface Booking {
+  id: number;
+  need_id: number;
+  quantity: number;
+  note?: string;
+  status: string;
+}
+
 export default function InstitutionDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('needs');
   const [needs, setNeeds] = useState<Need[]>([]);
-  const [bookings, setBookings] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [institutionId, setInstitutionId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,7 +80,7 @@ export default function InstitutionDashboard() {
       // Load bookings
       try {
         const bookingsData = await fetchInstitutionBookings(user.institution_id);
-        setBookings(bookingsData);
+        setBookings(bookingsData as unknown as Booking[]);
       } catch (e) {
         console.error('Bookings load error:', e);
       }

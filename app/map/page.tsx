@@ -4,11 +4,10 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useMemo, useState, useEffect } from 'react';
-import { Button } from '@/components/ui/Button';
 import { Search, SlidersHorizontal, List, Map as MapIcon, Loader2 } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import { fetchInstitutions } from '@/lib/api';
-import { Institution } from '@/types/project';
+
 
 // Тип для локаций на карте
 interface MapLocation {
@@ -42,7 +41,7 @@ const MapPage = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [locations, setLocations] = useState<MapLocation[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [, setIsLoading] = useState(true);
 
   // Загрузка учреждений из API
   useEffect(() => {

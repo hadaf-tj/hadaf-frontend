@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+
 import MainLayout from '@/components/layout/MainLayout';
 import InstitutionCard from '@/components/specific/InstitutionCard';
 import { Button } from '@/components/ui/Button';
-import { Search, SlidersHorizontal, Map, Loader2, MapPin, ArrowUpDown, Navigation } from 'lucide-react';
+import { Search, Map, Loader2, ArrowUpDown, Navigation } from 'lucide-react';
 import { Institution } from '@/types/project';
 import Link from 'next/link';
 import { fetchInstitutions } from '@/lib/api';

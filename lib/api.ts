@@ -232,7 +232,7 @@ export async function fetchInstitutionById(
 }
 
 // 4. Управление нуждами
-export async function createNeed(data: any) {
+export async function createNeed(data: Record<string, unknown>) {
   const res = await fetch(`${API_BASE_URL}/needs`, {
     method: "POST",
     headers: getAuthHeaders(),
@@ -336,13 +336,13 @@ export async function createBooking(
 }
 
 // 9. Booking management (для менеджера)
-export async function fetchInstitutionBookings(institutionId: number | string): Promise<any[]> {
+export async function fetchInstitutionBookings(institutionId: number | string): Promise<Record<string, unknown>[]> {
   const res = await fetch(`${API_BASE_URL}/institutions/${institutionId}/bookings`, {
     headers: getAuthHeaders(),
     credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка загрузки бронирований");
-  const json: ApiResponse<any[]> = await res.json();
+  const json: ApiResponse<Record<string, unknown>[]> = await res.json();
   return json.data || [];
 }
 
@@ -382,13 +382,13 @@ export async function fetchStats(): Promise<{ closed_needs: number; people_helpe
 }
 
 // 11. События (Events)
-export async function fetchEvents(): Promise<any[]> {
+export async function fetchEvents(): Promise<Record<string, unknown>[]> {
   const res = await fetch(`${API_BASE_URL}/events`, {
     headers: getAuthHeaders(),
     credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка загрузки событий");
-  const json: ApiResponse<any[]> = await res.json();
+  const json: ApiResponse<Record<string, unknown>[]> = await res.json();
   return json.data || [];
 }
 

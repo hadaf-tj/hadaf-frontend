@@ -14,7 +14,7 @@ const EditNeedPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [needData, setNeedData] = useState<Need | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const loadNeed = async () => {
@@ -36,7 +36,7 @@ const EditNeedPage = ({ params }: { params: Promise<{ id: string }> }) => {
     loadNeed();
   }, [resolvedParams.id]);
 
-  const handleUpdateNeed = async (data: any) => {
+  const handleUpdateNeed = async (data: { name?: string; unit?: string; requiredQuantity?: number; receivedQuantity?: number }) => {
     setIsSubmitting(true);
     try {
       await updateNeed(resolvedParams.id, {

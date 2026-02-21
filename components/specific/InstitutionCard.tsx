@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { Institution } from '@/types/project';
-import { MapPin, ArrowRight, Building2, Users, Baby, Accessibility } from 'lucide-react';
+import { MapPin, ArrowRight, Building2, Users, Baby } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface InstitutionCardProps {

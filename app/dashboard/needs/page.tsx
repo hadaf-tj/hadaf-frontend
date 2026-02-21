@@ -34,7 +34,7 @@ export default function NeedsManagementPage() {
         await deleteNeed(id);
         // Обновляем список локально
         setNeeds(prev => prev.filter(n => n.id !== id));
-      } catch (err) {
+      } catch (_err) {
         alert('Ошибка при удалении');
       }
     }

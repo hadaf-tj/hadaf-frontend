@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
    const router = useRouter();
-   const [user, setUser] = useState<any>(null);
+   const [user, setUser] = useState<{ full_name: string; role: string; email: string; phone?: string; institution_id?: number } | null>(null);
    const [loading, setLoading] = useState(true);
 
   useEffect(() => {

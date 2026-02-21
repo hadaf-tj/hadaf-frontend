@@ -6,7 +6,7 @@ import { getProfile } from '@/lib/api';
 import { User, Mail, Phone, Building } from 'lucide-react';
 
 export default function SettingsPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ full_name: string; role: string; email: string; phone?: string; institution_id?: number } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

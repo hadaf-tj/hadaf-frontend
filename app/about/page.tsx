@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/Button';
-import OrnamentDivider from '@/components/ui/OrnamentDivider';
+
 import { Target, Heart, Shield, Users, CheckCircle2 } from 'lucide-react';
 
 export default function AboutPage() {

@@ -10,7 +10,6 @@ import {
   Check, 
   X, 
   UserPlus, 
-  UserCheck, 
   Clock,
   Sparkles,
   ArrowRight
@@ -20,8 +19,19 @@ import MainLayout from '@/components/layout/MainLayout';
 import { fetchEvents, createEvent, joinEvent, leaveEvent, fetchInstitutions } from '@/lib/api';
 import { Institution } from '@/types/project';
 
+interface EventItem {
+  id: number;
+  title: string;
+  description?: string;
+  event_date: string;
+  institution_name?: string;
+  creator_name?: string;
+  participants_count?: number;
+  is_joined?: boolean;
+}
+
 export default function EventsPage() {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [institutions, setInstitutions] = useState<Institution[]>([]);
   const [showCreate, setShowCreate] = useState(false);
@@ -40,7 +50,7 @@ export default function EventsPage() {
   const loadEvents = async () => {
     try {
       const data = await fetchEvents();
-      setEvents(data);
+      setEvents(data as unknown as EventItem[]);
     } catch (e) {
       console.error('Error loading events:', e);
     } finally {
@@ -304,7 +314,7 @@ export default function EventsPage() {
 
 /* ---------- EVENT CARD ---------- */
 interface EventCardProps {
-  event: any;
+  event: EventItem;
   past?: boolean;
   expanded: boolean;
   onToggle: () => void;

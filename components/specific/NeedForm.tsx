@@ -11,7 +11,7 @@ import { Trash2 } from 'lucide-react'; // <-- Иконка для удалени
 interface NeedFormProps {
   initialData?: Partial<Need>;
   isSaving?: boolean;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: { name?: string; unit?: string; requiredQuantity?: number; receivedQuantity?: number }) => void;
 }
 
 export const NeedForm: React.FC<NeedFormProps> = ({ initialData, isSaving, onSubmit }) => {

@@ -5,7 +5,6 @@ import { HeartHandshake } from 'lucide-react';
 import { cn } from '@/lib/utils'; // Assuming cn utility is available based on previous file reads
 
 const SplashScreen: React.FC = () => {
-    const [isVisible, setIsVisible] = useState(true);
     const [shouldRender, setShouldRender] = useState(true);
     const [opacity, setOpacity] = useState(1);
 

@@ -1,7 +1,7 @@
 /* FILE: app/team/page.tsx */
 'use client';
 
-import Image from 'next/image';
+
 import MainLayout from '@/components/layout/MainLayout';
 import { Linkedin, Mail, Send } from 'lucide-react';
 

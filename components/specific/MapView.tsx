@@ -4,9 +4,18 @@
 import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { Institution } from '@/types/project'; // Убедитесь, что типы импортированы
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+
+// MapLocation type for map markers
+interface MapLocation {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  type: string;
+  needsCount: number;
+}
 
 // Фикс для иконок Leaflet в Next.js (стандартная проблема библиотеки)
 const iconUrl = 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png';
@@ -28,7 +37,7 @@ const customIcon = L.icon({
 const CENTER_POS: [number, number] = [38.5598, 68.7870]; 
 
 interface MapViewProps {
-  locations: any[]; // В реальном проекте используйте Institution[]
+  locations: MapLocation[];
 }
 
 const MapView: React.FC<MapViewProps> = ({ locations }) => {

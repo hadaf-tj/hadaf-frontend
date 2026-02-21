@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Institution } from '@/types/project';
 import InstitutionCard from '@/components/specific/InstitutionCard';
-import { ArrowRight, Heart, Users, Baby, ShieldCheck, Sparkles, TrendingUp, Award, Mountain, Bold, Loader2 } from 'lucide-react';
+import { ArrowRight, Users, Baby, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';

@@ -9,7 +9,7 @@ const NewNeedPage = () => {
   const router = useRouter();
   const [error, setError] = useState('');
 
-  const handleCreateNeed = async (data: any) => {
+  const handleCreateNeed = async (data: { name?: string; unit?: string; requiredQuantity?: number; receivedQuantity?: number }) => {
     try {
       // ВАЖНО: В реальном приложении ID учреждения берется из токена на бэкенде или из контекста юзера.
       // Поскольку у нас сейчас токен с ролью employee учреждения ID=1 (Навруз),

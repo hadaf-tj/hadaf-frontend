@@ -6,11 +6,11 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
+
 import {
   MapPin, Phone, Users, CheckCircle2,
   ChevronLeft, Share2, AlertCircle, Gift, Loader2,
-  Search, Filter, ArrowUpDown
+  Search, ArrowUpDown
 } from 'lucide-react';
 import PledgeModal, { NeedItem } from '@/components/specific/PledgeModal';
 import { fetchInstitutionById, fetchNeedsByInstitution, NeedsFilters } from '@/lib/api';

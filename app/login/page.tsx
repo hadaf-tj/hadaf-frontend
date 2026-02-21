@@ -14,7 +14,7 @@ export default function LoginPage() {
 
 
   // Состояния
-  const [phone, setPhone] = useState('');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -47,13 +47,13 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 relative font-sans">
 
       {/* Кнопка назад */}
-      <a
+      <Link
         href="/"
         className="absolute top-8 left-8 text-gray-400 hover:text-[#1e3a8a] flex items-center gap-2 font-bold transition-colors"
       >
         <ArrowLeft size={20} />
         На главную
-      </a>
+      </Link>
 
       {/* Логотип и заголовок */}
       <div className="mb-8 flex flex-col items-center">

@@ -39,7 +39,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   
   // Состояние пользователя
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ full_name: string; role: string; email: string; phone?: string; institution_id?: number } | null>(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -75,12 +75,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         )}
       >
         <div className="h-20 flex items-center px-6 border-b border-white/10">
-           <a href="/" className="flex items-center gap-3 font-black text-xl tracking-tight hover:opacity-80 transition-opacity">
+           <Link href="/" className="flex items-center gap-3 font-black text-xl tracking-tight hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-white text-[#1e3a8a] rounded-lg flex items-center justify-center">
                  <HeartHandshake size={18} />
               </div>
               Hadaf
-           </a>
+           </Link>
            <button onClick={() => setSidebarOpen(false)} className="ml-auto lg:hidden text-white/50 hover:text-white">
              <X size={24} />
            </button>

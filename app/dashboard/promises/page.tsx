@@ -1,12 +1,10 @@
 /* FILE: app/dashboard/promises/page.tsx */
 import { 
-  Package, 
   MapPin, 
   Phone, 
   Calendar, 
   CheckCircle2, 
   Clock, 
-  AlertTriangle 
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge'; // Предполагаем, что Badge у нас есть, или используем span с классами
