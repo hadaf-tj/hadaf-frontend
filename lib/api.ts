@@ -110,7 +110,7 @@ export async function register(
   fullName: string,
   role: "volunteer" | "employee",
   institutionId: number | null // null для волонтеров
-): Promise<TokenResponse> {
+): Promise<void> {
   const res = await fetch(`${API_BASE_URL}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -128,6 +128,25 @@ export async function register(
   if (!res.ok) {
     const errorData = await res.json();
     throw new Error(errorData.message || "Register error");
+  }
+  // Backend returns { message: "verification_required", email } — no tokens yet
+}
+
+// 2b. Подтверждение OTP-кода
+export async function confirmOTP(
+  receiver: string,
+  otp: string
+): Promise<TokenResponse> {
+  const res = await fetch(`${API_BASE_URL}/confirm_otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ receiver, otp }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message || "Неверный код");
   }
 
   const json: ApiResponse<TokenResponse> = await res.json();
@@ -335,7 +354,18 @@ export async function createBooking(
   return json.data;
 }
 
-// 9. Booking management (для менеджера)
+// 9. Мои бронирования (для волонтера)
+export async function fetchMyBookings(): Promise<Record<string, unknown>[]> {
+  const res = await fetch(`${API_BASE_URL}/bookings/my`, {
+    headers: getAuthHeaders(),
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Ошибка загрузки обещаний");
+  const json: ApiResponse<Record<string, unknown>[]> = await res.json();
+  return json.data || [];
+}
+
+// 10. Booking management (для менеджера)
 export async function fetchInstitutionBookings(institutionId: number | string): Promise<Record<string, unknown>[]> {
   const res = await fetch(`${API_BASE_URL}/institutions/${institutionId}/bookings`, {
     headers: getAuthHeaders(),

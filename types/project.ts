@@ -32,6 +32,6 @@ export type Institution = {
 export type User = {
   id: string;
   email: string;
-  role: 'employee' | 'super_admin' | 'institution' | 'volunteer';
+  role: 'employee' | 'super_admin' | 'volunteer';
   institutionId?: string; // Привязка к учреждению, если не SuperAdmin
 };

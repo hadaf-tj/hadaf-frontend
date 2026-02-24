@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import InstitutionCard from '@/components/specific/InstitutionCard';
 import { Button } from '@/components/ui/Button';
-import { Search, Map, Loader2, ArrowUpDown, Navigation } from 'lucide-react';
+import { Search, Map, Loader2, ArrowUpDown, Navigation, ChevronDown } from 'lucide-react';
 import { Institution } from '@/types/project';
 import Link from 'next/link';
 import { fetchInstitutions } from '@/lib/api';
@@ -102,20 +102,20 @@ export default function InstitutionsPage() {
       <div className="min-h-screen bg-[#f8fafc] font-sans">
 
         {/* 1. COMPACT HERO & SEARCH */}
-        <div className="bg-[#1e3a8a] pt-32 pb-12 rounded-b-[3rem]">
-          <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
+        <div className="bg-[#1e3a8a] pt-24 sm:pt-32 pb-8 sm:pb-12 rounded-b-[2rem] sm:rounded-b-[3rem]">
+          <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
               <div>
-                <h1 className="text-3xl md:text-5xl font-black text-white mb-3">
+                <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-2 sm:mb-3">
                   Кому помочь?
                 </h1>
-                <p className="text-white/80 text-lg">
+                <p className="text-white/80 text-base sm:text-lg">
                   Выберите учреждение или человека, которому нужна поддержка
                 </p>
               </div>
 
               {/* Переключатель Карта / Список */}
-              <div className="hidden md:flex bg-white/10 p-1 rounded-xl backdrop-blur-sm border border-white/20">
+              <div className="flex bg-white/10 p-1 rounded-xl backdrop-blur-sm border border-white/20">
                 <button className="px-4 py-2 bg-white text-[#1e3a8a] rounded-lg font-bold text-sm shadow-sm">Список</button>
                 <Link href="/map">
                   <button className="px-4 py-2 text-white/80 hover:text-white rounded-lg font-bold text-sm transition-colors flex items-center gap-2">
@@ -127,13 +127,13 @@ export default function InstitutionsPage() {
             </div>
 
             {/* Блок поиска и фильтров */}
-            <div className="bg-white p-2 rounded-2xl shadow-xl flex flex-col md:flex-row gap-2">
+            <div className="bg-white p-1.5 sm:p-2 rounded-xl sm:rounded-2xl shadow-xl flex flex-col sm:flex-row gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="text"
                   placeholder="Найти по названию или городу..."
-                  className="w-full h-12 pl-12 pr-4 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 transition-all font-medium"
+                  className="w-full h-11 sm:h-12 pl-10 sm:pl-12 pr-4 rounded-lg sm:rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 transition-all font-medium text-sm sm:text-base"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -146,7 +146,7 @@ export default function InstitutionsPage() {
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
                     className={`
-                      whitespace-nowrap px-6 h-12 rounded-xl font-bold transition-all text-sm
+                      whitespace-nowrap px-4 sm:px-6 h-11 sm:h-12 rounded-lg sm:rounded-xl font-bold transition-all text-sm
                       ${activeCategory === cat.id
                         ? 'bg-[#1e3a8a] text-white shadow-md'
                         : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}
@@ -163,24 +163,27 @@ export default function InstitutionsPage() {
               {/* Сортировка */}
               <div className="flex items-center gap-3">
                 <ArrowUpDown size={18} className="text-white/60" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value === 'distance' && !userLocation) {
-                      requestGeolocation();
-                    } else {
-                      setSortBy(value);
-                    }
-                  }}
-                  className="bg-white/10 text-white border border-white/20 rounded-xl px-4 py-2.5 font-medium text-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 cursor-pointer"
-                >
-                  {SORT_OPTIONS.map((opt) => (
-                    <option key={opt.id} value={opt.id} className="text-gray-900">
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === 'distance' && !userLocation) {
+                        requestGeolocation();
+                      } else {
+                        setSortBy(value);
+                      }
+                    }}
+                    className="appearance-none bg-white/10 text-white border border-white/20 rounded-xl pl-4 pr-10 py-2.5 font-medium text-sm backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 cursor-pointer"
+                  >
+                    {SORT_OPTIONS.map((opt) => (
+                      <option key={opt.id} value={opt.id} className="text-gray-900">
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 pointer-events-none" />
+                </div>
               </div>
 
               {/* Кнопка геолокации */}
@@ -214,8 +217,8 @@ export default function InstitutionsPage() {
         </div>
 
         {/* 2. СПИСОК (GRID) ИЛИ ЗАГРУЗКА */}
-        <section className="py-12">
-          <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
+        <section className="py-6 sm:py-8 md:py-12">
+          <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28">
 
             {/* Состояние загрузки */}
             {isLoading && (
@@ -241,7 +244,7 @@ export default function InstitutionsPage() {
                 </div>
 
                 {filteredData.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                     {filteredData.map((item) => (
                       <div key={item.id} className="h-full">
                         <InstitutionCard institution={item} />

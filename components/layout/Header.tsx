@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Search, User, HeartHandshake, ChevronDown, ChevronRight, LogOut } from 'lucide-react';
+import { Menu, X, User, HeartHandshake, ChevronDown, ChevronRight, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
@@ -46,6 +46,15 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
   // Состояние для активного дропдауна (храним индекс элемента)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
+  // Состояние раскрытых подменю в мобильной версии
+  const [openMobileMenus, setOpenMobileMenus] = useState<string[]>([]);
+
+  const toggleMobileMenu = (name: string) => {
+    setOpenMobileMenus(prev => 
+      prev.includes(name) ? prev.filter(m => m !== name) : [...prev, name]
+    );
+  };
+
   const pathname = usePathname();
   const isDashboard = pathname.startsWith('/dashboard');
 
@@ -65,6 +74,12 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsOpen(false);
+    setOpenMobileMenus([]);
+  }, [pathname]);
 
   if (isDashboard) return null;
 
@@ -97,31 +112,32 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
     >
       <div
         className={cn(
-          "w-full mx-auto px-4 sm:px-8 lg:px-12 xl:px-20 flex items-start relative transition-all duration-200",
-          isScrolled ? "h-12" : "h-12"
+          "w-full mx-auto px-4 sm:px-8 lg:px-12 xl:px-20 flex items-center relative transition-all duration-300",
+          isScrolled ? "h-12" : "h-14"
         )}
       >
 
         {/* --- ЛОГОТИП --- */}
         <Link href="/" className="flex items-center gap-1 sm:gap-3 group shrink-0 z-30 mr-8 lg:mr-12" onClick={() => setIsOpen(false)}>
           <div className={cn(
-            "transition-transform duration-300 origin-left flex items-center gap-2 sm:gap-3",
-            !isOpen && isScrolled ? "scale-90" : "scale-100"
+            "transition-all duration-300 origin-left flex items-center gap-2 sm:gap-3"
           )}>
             <div className={cn(
-              "flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl transition-colors",
+              "flex items-center justify-center rounded-xl transition-all duration-300",
+              isScrolled ? "w-9 h-9 md:w-10 md:h-10" : "w-10 h-10 md:w-12 md:h-12",
               isOpen
                 ? "bg-white/20 text-white"
                 : useDarkColors
                   ? "bg-[#1e3a8a] text-white"
                   : "bg-white/20 backdrop-blur-sm text-white"
             )}>
-              <HeartHandshake size={24} className="md:w-7 md:h-7" />
+              <HeartHandshake size={isScrolled ? 20 : 24} className="transition-all duration-300" />
             </div>
 
             <div className="flex flex-col -space-y-1">
               <span className={cn(
-                "text-xl md:text-2xl font-black tracking-tight transition-colors",
+                "font-black tracking-tight transition-all duration-300",
+                isScrolled ? "text-xl md:text-2xl" : "text-2xl md:text-3xl",
                 logoTextColorClass
               )}>
                 Ҳадаф
@@ -133,8 +149,7 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
         {/* --- НАВИГАЦИЯ (DESKTOP) С ДРОПДАУНАМИ --- */}
         <nav
           className={cn(
-            "hidden xl:flex items-center gap-6 2xl:gap-10 z-30 h-full transition-all duration-300",
-            isScrolled ? "mt-0" : "mb-4" // При скролле 4, без скролла 1 (подняли)
+            "hidden xl:flex items-center gap-6 2xl:gap-10 z-30 h-full transition-all duration-300"
           )}
         >
           {NAV_ITEMS.map((item, index) => (
@@ -186,11 +201,8 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
         </nav>
 
         {/* --- ПРАВАЯ ЧАСТЬ (DESKTOP) --- */}
-        <div className="hidden lg:flex items-start justify-end ml-auto">
-          <div className={cn("flex items-center gap-4 transition-colors mt-4 z-50 mr-[220px] xl:mr-[250px] 2xl:mr-[300px] relative", textColorClass)}>
-            <button className="hover:opacity-70 transition-opacity">
-              <Search size={22} />
-            </button>
+        <div className="hidden lg:flex items-center justify-end ml-auto h-full">
+          <div className={cn("flex items-center gap-4 transition-colors z-50 mr-[calc(220px+6vw)] xl:mr-[calc(250px+6vw)] 2xl:mr-[calc(300px+6vw)] absolute right-0 top-1/2 -translate-y-1/2", textColorClass)}>
             {!isLoading && user ? (
               <>
                 <Link href="/dashboard" className="hover:opacity-70 transition-opacity flex items-center gap-2" title="Мой профиль">
@@ -202,7 +214,7 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
                 </button>
               </>
             ) : (
-              <Link href="/login" className="hover:opacity-70 transition-opacity">
+              <Link href="/login" className="hover:opacity-70 transition-opacity flex items-center h-full" title="Войти">
                 <User size={22} />
               </Link>
             )}
@@ -258,31 +270,43 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
       {/* --- ВЫПАДАЮЩЕЕ МЕНЮ (MOBILE) --- */}
       {isOpen && (
         <div className="lg:hidden fixed inset-0 top-[60px] w-full bg-[#1e3a8a] z-40 overflow-hidden flex flex-col animate-in fade-in slide-in-from-top-5">
-          <div className="absolute inset-0 z-0 pointer-events-none">
-            <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat opacity-20 mix-blend-overlay"></div>
-          </div>
           <div className="relative z-10 flex flex-col h-full overflow-y-auto pb-20 px-6 mt-8">
             <div className="flex flex-col gap-1">
-              {NAV_ITEMS.map((item) => (
-                <div key={item.name} className="border-b border-white/10 last:border-0">
-                  <Link
-                    href={item.href}
-                    className="text-white/90 font-bold text-xl py-4 hover:bg-white/10 px-4 rounded-xl transition-all flex items-center justify-between group"
-                    onClick={() => !item.subItems && setIsOpen(false)}
-                  >
-                    {item.name}
-                    {!item.subItems && <ChevronRight size={20} className="opacity-30 group-hover:opacity-100" />}
-                  </Link>
+              {NAV_ITEMS.map((item) => {
+                const isSubOpen = openMobileMenus.includes(item.name);
+                
+                return (
+                <div key={item.name} className="border-b border-white/10 last:border-0 relative">
+                  {item.subItems ? (
+                    <button
+                      onClick={() => toggleMobileMenu(item.name)}
+                      className="w-full text-left text-white/90 font-bold text-xl py-4 hover:bg-white/10 px-4 rounded-xl transition-all flex items-center justify-between group"
+                    >
+                      {item.name}
+                      <ChevronDown size={20} className={cn("opacity-50 transition-transform duration-300 shrink-0", isSubOpen ? "rotate-180 opacity-100" : "")} />
+                    </button>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className="text-white/90 font-bold text-xl py-4 hover:bg-white/10 px-4 rounded-xl transition-all flex items-center justify-between group"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  )}
 
-                  {/* Подпункты в мобилке */}
+                  {/* Подпункты в мобилке (Accordion) */}
                   {item.subItems && (
-                    <div className="pl-8 pb-4 flex flex-col gap-2">
+                    <div className={cn(
+                      "pl-8 pb-4 flex flex-col gap-2 overflow-hidden transition-all duration-300",
+                      isSubOpen ? "max-h-48 opacity-100" : "max-h-0 opacity-0 pb-0"
+                    )}>
                       {item.subItems.map(sub => (
                         <Link
                           key={sub.name}
                           href={sub.href}
                           onClick={() => setIsOpen(false)}
-                          className="text-white/60 text-base font-medium py-1 hover:text-white"
+                          className="text-white/60 text-base font-medium py-1.5 hover:text-white"
                         >
                           {sub.name}
                         </Link>
@@ -290,12 +314,12 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
                     </div>
                   )}
                 </div>
-              ))}
+              )})}
             </div>
-            <div className="mt-auto pt-8 flex flex-col gap-3 mb-8">
+            <div className="mt-auto pb-6 pt-4 flex flex-col gap-3">
               {!isLoading && user ? (
                 <>
-                  <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-lg h-14 rounded-2xl w-full shadow-lg border-0">
+                  <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-lg h-14 rounded-2xl w-full shadow-lg border-0 shrink-0">
                     <Link href="/dashboard" onClick={() => setIsOpen(false)}>Мой профиль</Link>
                   </Button>
                   <Button
@@ -307,10 +331,10 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
                 </>
               ) : (
                 <>
-                  <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-lg h-14 rounded-2xl w-full shadow-lg border-0">
+                  <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-lg h-14 rounded-2xl w-full shadow-lg border-0 shrink-0">
                     <Link href="/login" onClick={() => setIsOpen(false)}>Авторизоваться</Link>
                   </Button>
-                  <Button asChild className="bg-transparent border-2 border-white/20 text-white hover:bg-white/10 font-bold text-lg h-14 rounded-2xl w-full">
+                  <Button asChild className="bg-transparent border-2 border-white/20 text-white hover:bg-white/10 font-bold text-lg h-14 rounded-2xl w-full shrink-0">
                     <Link href="/institutions" onClick={() => setIsOpen(false)}>Помочь</Link>
                   </Button>
                 </>

@@ -12,7 +12,7 @@ export default function VolunteersPage() {
       <div className="min-h-screen bg-[#f8fafc] font-sans pb-20">
         
         {/* HERO */}
-        <div className="bg-[#1e3a8a] pt-32 pb-24 rounded-b-[3rem] text-center relative overflow-hidden">
+        <div className="bg-[#1e3a8a] pt-24 pb-24 rounded-b-[3rem] text-center relative overflow-hidden">
            <div className="container mx-auto px-6 relative z-10">
               <h1 className="text-4xl md:text-6xl font-black text-white mb-6">
                  Станьте частью добра
