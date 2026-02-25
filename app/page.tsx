@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Institution } from '@/types/project';
 import InstitutionCard from '@/components/specific/InstitutionCard';
-import { ArrowRight, ArrowLeft, Users, Baby, Sparkles, Loader2, HelpCircle, Plus, Minus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Users, Baby, Sparkles, Loader2, HelpCircle, Plus, Minus, ChevronLeft, ChevronRight, Search, ClipboardList, HeartHandshake, MessageCircleQuestion, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -33,10 +33,26 @@ const HERO_SLIDES = [
   },
 ];
 
-/* ──────────────── Direction cards ──────────────── */
-const DIRECTIONS = [
-  { icon: <Baby size={32} />, title: 'Помощь детям', desc: 'Поддержка детских домов и интернатов необходимыми вещами и продуктами.', href: '/institutions?type=Children' },
-  { icon: <Users size={32} />, title: 'Пожилые люди', desc: 'Забота о домах престарелых, организация досуга и бытовая помощь.', href: '/institutions?type=Elderly' },
+/* ──────────────── How it works ──────────────── */
+const HOW_IT_WORKS = [
+  { 
+    id: 1,
+    title: 'Выбираете учреждение', 
+    desc: 'Найдите в реестре детский дом или дом престарелых, которому хотите помочь. Все учреждения проверены.',
+    icon: <Search className="w-20 h-20 sm:w-24 sm:h-24 text-[#ffca63] group-hover:scale-110 transition-transform duration-500" strokeWidth={1.5} />
+  },
+  { 
+    id: 2,
+    title: 'Смотрите нужды', 
+    desc: 'Узнайте, в чём именно нуждается учреждение (вещи, продукты, развитие), и выберите, чем помочь.',
+    icon: <ClipboardList className="w-20 h-20 sm:w-24 sm:h-24 text-[#ffca63] group-hover:scale-110 transition-transform duration-500" strokeWidth={1.5} />
+  },
+  { 
+    id: 3,
+    title: 'Доставляете помощь', 
+    desc: 'Привезите вещи лично или организуйте доставку напрямую в учреждение. Прозрачно и от сердца.',
+    icon: <HeartHandshake className="w-20 h-20 sm:w-24 sm:h-24 text-[#ffca63] group-hover:scale-110 transition-transform duration-500" strokeWidth={1.5} />
+  },
 ];
 
 /* ──────────────── FAQ ──────────────── */
@@ -256,7 +272,7 @@ const HomePage: React.FC = () => {
   const missionReveal = useScrollReveal();
   const helpReveal = useScrollReveal();
   const ctaReveal = useScrollReveal();
-  const directionsReveal = useScrollReveal();
+  const howItWorksReveal = useScrollReveal();
   const faqReveal = useScrollReveal();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
@@ -541,54 +557,82 @@ const HomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* ──── 5. НАПРАВЛЕНИЯ ──── */}
-        <section className="py-8 sm:py-12 md:py-16 relative overflow-hidden z-10">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMTAwIDAgTCAwIDAgMCAxMDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzc2M2Y5NyIgc3Ryb2tlLXdpZHRoPSIwLjUiIG9wYWNpdHk9IjAuMDUiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50"></div>
+        {/* ──── 5. КАК ЭТО РАБОТАЕТ (HOW IT WORKS) ──── */}
+        <section className="py-12 sm:py-16 md:py-24 relative overflow-hidden bg-white z-10">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-b from-[#f3f9ff] to-transparent rounded-full blur-3xl opacity-50 pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
 
           <div
-            ref={directionsReveal.ref}
-            className={`container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 relative z-10 transition-all duration-700 ${
-              directionsReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            ref={howItWorksReveal.ref}
+            className={`container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 relative z-10 transition-all duration-1000 ${
+              howItWorksReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
             }`}
           >
-            <div className="text-center mb-8 sm:mb-12 md:mb-20">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-gray-800 mb-4 sm:mb-6">
-                <span className="bg-[#1e3a8a] bg-clip-text text-transparent">Наши направления</span>
+            <div className="text-center mb-12 md:mb-20">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#ffca63]/10 text-[#1e3a8a] rounded-full text-sm font-bold mb-4">
+                <Sparkles size={16} className="text-[#ffca63]" />
+                Просто и прозрачно
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#1e3a8a]">
+                Как это работает
               </h2>
-              <p className="text-base sm:text-lg md:text-xl font-bold text-gray-600">
-                Мы работаем по двум ключевым направлениям помощи
-              </p>
             </div>
 
-            <div className="pl-5 sm:pl-6 md:pl-12 xl:pl-28 2xl:pl-[calc(50vw-720px+112px)] relative">
+            <div className="md:hidden relative w-[100vw] -ml-6 pr-6">
               <HorizontalScroller>
-                {DIRECTIONS.map((dir, idx) => (
-                  <Link
-                    href={dir.href}
-                    key={idx}
-                    className={`group relative bg-white flex-shrink-0 w-[300px] sm:w-[340px] md:w-[380px] mr-2 sm:mr-4 rounded-3xl p-6 sm:p-8 md:p-10 hover:shadow-xl transition-all duration-500 cursor-pointer border border-gray-100 hover:border-[#1e3a8a]/30 overflow-hidden transform group-hover:-translate-y-1 ${
-                      directionsReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-                    }`}
-                    style={{ transitionDelay: `${idx * 200 + 200}ms` }}
+                {HOW_IT_WORKS.map((step, idx) => (
+                  <div 
+                    key={step.id} 
+                    className="flex flex-col items-center text-center relative z-10 group flex-shrink-0 w-[280px] sm:w-[320px] ml-6 mr-2"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#1e3a8a]/0 to-[#1e3a8a]/0 group-hover:from-[#1e3a8a]/[0.02] group-hover:to-[#1e3a8a]/[0.05] transition-all duration-500"></div>
-                    <div className="relative z-10 flex flex-col h-full">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-[#1e3a8a] rounded-2xl md:rounded-3xl flex items-center justify-center text-white mb-4 sm:mb-6 md:mb-8 shadow-lg shadow-[#1e3a8a]/30 group-hover:scale-110 transition-transform duration-300">
-                        {dir.icon}
+                    {/* Image Container */}
+                    <div className="w-full aspect-square relative mb-6 rounded-[2.5rem] bg-[#1e3a8a] border-2 border-transparent group-hover:border-[#ffca63]/30 overflow-hidden transition-all duration-500 shadow-xl flex items-center justify-center">
+                      <div className="absolute top-4 left-4 w-10 h-10 bg-[#ffca63] rounded-2xl shadow-sm text-[#1e3a8a] font-black text-xl flex items-center justify-center z-20">
+                        {step.id}
                       </div>
-                      <h3 className="text-lg sm:text-xl md:text-2xl font-black text-gray-900 mb-2 sm:mb-4 group-hover:text-[#1e3a8a] transition-colors">{dir.title}</h3>
-                      <p className="text-gray-600 leading-relaxed mb-4 sm:mb-6 text-sm sm:text-base md:text-lg whitespace-normal">{dir.desc}</p>
-                      <div className="flex items-center text-[#1e3a8a] font-bold text-sm sm:opacity-0 sm:group-hover:opacity-100 transform sm:translate-y-4 sm:group-hover:translate-y-0 transition-all duration-300 mt-auto">
-                        Узнать больше
-                        <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                      
+                      <div className="relative z-10 w-full h-full flex items-center justify-center">
+                        {/* We use React.cloneElement to easily override styles on mobile if needed, but it works fine as is */}
+                        {step.icon}
                       </div>
                     </div>
-                  </Link>
+
+                    {/* Text Details */}
+                    <h3 className="text-xl sm:text-2xl font-black text-[#1e3a8a] mb-3 group-hover:text-[#ffca63] transition-colors">{step.title}</h3>
+                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-xs">{step.desc}</p>
+                  </div>
                 ))}
-                
                 {/* Visual Spacer for right padding in scroller */}
-                <div className="flex-shrink-0 w-4 sm:w-8 border-r border-transparent"></div>
+                <div className="flex-shrink-0 w-4 border-r border-transparent"></div>
               </HorizontalScroller>
+            </div>
+
+            {/* Desktop View */}
+            <div className="hidden md:grid grid-cols-3 gap-8 lg:gap-12 relative max-w-6xl mx-auto">
+              {/* Desktop connecting line */}
+              <div className="absolute top-[110px] left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-transparent via-[#1e3a8a]/10 to-transparent border-t border-dashed border-[#1e3a8a]/20 z-0"></div>
+
+              {HOW_IT_WORKS.map((step, idx) => (
+                <div 
+                  key={step.id} 
+                  className="flex flex-col items-center text-center relative z-10 group"
+                  style={{ transitionDelay: `${idx * 200 + 100}ms` }}
+                >
+                  {/* Image Container with Hover Effect */}
+                  <div className="w-full max-w-[280px] aspect-square relative mb-6 rounded-[2.5rem] bg-[#1e3a8a] border-2 border-transparent group-hover:border-[#ffca63]/30 overflow-hidden transition-all duration-500 shadow-xl group-hover:shadow-2xl flex items-center justify-center">
+                    <div className="absolute top-4 left-4 w-10 h-10 bg-[#ffca63] rounded-2xl shadow-sm text-[#1e3a8a] font-black text-xl flex items-center justify-center z-20">
+                      {step.id}
+                    </div>
+                    
+                    <div className="relative z-10">
+                      {step.icon}
+                    </div>
+                  </div>
+
+                  {/* Text Details */}
+                  <h3 className="text-xl font-black text-[#1e3a8a] mb-3 group-hover:text-[#ffca63] transition-colors">{step.title}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed max-w-xs">{step.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -633,18 +677,16 @@ const HomePage: React.FC = () => {
                   >
                     <div className="relative w-full h-full bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#1e3a8a]/20 transition-all duration-500 flex flex-col group-hover:-translate-y-1">
                       
-                      {/* Photo Header */}
-                      <div className="relative h-[220px] sm:h-[260px] w-full shrink-0 overflow-hidden">
-                        <Image 
-                          src={idx % 2 === 0 ? "/hero_about.webp" : "/master_klass.webp"} 
-                          alt="FAQ Illustration" 
-                          fill 
-                          className="object-cover group-hover:scale-105 transition-transform duration-700"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                      {/* Icon Header */}
+                      <div className="relative h-[180px] sm:h-[220px] w-full shrink-0 overflow-hidden bg-[#1e3a8a] border-b border-gray-100 flex items-center justify-center">
+                        {idx % 2 === 0 ? (
+                          <MessageCircleQuestion className="w-24 h-24 sm:w-32 sm:h-32 text-white/20 group-hover:text-white/40 group-hover:scale-110 transition-all duration-700" strokeWidth={1} />
+                        ) : (
+                          <ShieldCheck className="w-24 h-24 sm:w-32 sm:h-32 text-white/20 group-hover:text-white/40 group-hover:scale-110 transition-all duration-700" strokeWidth={1} />
+                        )}
                         
                         {/* Question Mark Badge */}
-                        <div className="absolute top-4 left-4 sm:top-5 sm:left-5 bg-white/20 backdrop-blur-md rounded-full w-10 h-10 flex items-center justify-center text-white font-black text-xl border border-white/30 shadow-lg">
+                        <div className="absolute top-4 left-4 sm:top-5 sm:left-5 bg-[#ffca63] text-[#1e3a8a] rounded-full w-10 h-10 flex items-center justify-center font-black text-xl shadow-md">
                           ?
                         </div>
                         
