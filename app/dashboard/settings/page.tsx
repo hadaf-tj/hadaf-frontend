@@ -35,7 +35,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-4xl space-y-5 sm:space-y-8">
+    <div className="space-y-5 sm:space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-[#1e3a8a]">Настройки профиля</h1>
         <p className="text-gray-500 font-medium text-sm sm:text-base">

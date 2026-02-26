@@ -13,9 +13,9 @@ const Footer: React.FC = () => {
       {/* Основной контент футера */}
       {/* ИЗМЕНЕНИЕ: Те же настройки контейнера для вертикального ритма */}
       <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28 py-10 sm:py-16 md:py-20 relative z-10">
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16">
 
-          <div className="space-y-6 sm:space-y-8 col-span-2 sm:col-span-2 lg:col-span-1">
+          <div className="space-y-6 sm:space-y-8 lg:col-span-5">
             <Link href="/" className="flex items-center gap-3 text-2xl font-black text-white group">
               <div className="relative">
                 <div className="relative bg-white text-[#1e3a8a] p-3 rounded-2xl shadow-xl">
@@ -52,14 +52,15 @@ const Footer: React.FC = () => {
 
           </div>
 
-          <div>
-            <h3 className="font-black text-lg sm:text-xl mb-4 sm:mb-8 text-white/95">О нас</h3>
+          {/* Колонка 2: Навигация */}
+          <div className="lg:col-span-3 lg:col-start-7 lg:pl-8">
+            <h3 className="font-black text-lg sm:text-xl mb-4 sm:mb-8 text-white/95">Навигация</h3>
             <ul className="space-y-3 sm:space-y-4 text-sm sm:text-base">
               {[
-                { name: 'Миссия и ценности', href: '/about' },
-                { name: 'Отчеты и документы', href: '/reports' },
-                { name: 'Команда', href: '/team' },
-                { name: 'Документы', href: '/docs' },
+                { name: 'О нас', href: '/about' },
+                { name: 'Учреждения', href: '/institutions' },
+                { name: 'События', href: '/events' },
+                { name: 'Контакты', href: '/contacts' },
               ].map((item) => (
                 <li key={item.name}>
                   <Link
@@ -74,32 +75,8 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Колонка 3: Помощь */}
-          <div>
-            <h3 className="font-black text-lg sm:text-xl mb-4 sm:mb-8 text-white/95">Как помочь</h3>
-            <ul className="space-y-3 sm:space-y-4 text-sm sm:text-base">
-              {[
-                { name: 'Хочу помочь вещами', href: '/institutions' },
-                { name: 'Найти на карте', href: '/map' },
-                { name: 'Стать волонтером', href: '/volunteers' },
-                { name: 'Вход для учреждений', href: '/login' },
-                { name: 'Создать событие', href: '/events' },
-              ].map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="text-white/70 hover:text-white transition-all flex items-center gap-2 group font-medium"
-                  >
-                    <ArrowRight size={16} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#ffca63]" />
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Колонка 4: Контакты - выделенная */}
-          <div>
+          {/* Колонка 3: Контакты */}
+          <div className="lg:col-span-3">
             <h3 className="font-black text-lg sm:text-xl mb-4 sm:mb-8 text-white/95">Контакты</h3>
             <div className="space-y-4 sm:space-y-6 text-sm sm:text-base">
               <div className="flex items-start gap-3 sm:gap-4 group cursor-pointer">

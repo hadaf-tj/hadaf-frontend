@@ -5,14 +5,16 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { HeartHandshake, Loader2, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { fetchMyBookings } from '@/lib/api';
+import { fetchMyBookings, cancelMyBooking, updateMyBooking } from '@/lib/api';
 
 interface Booking {
   id: number;
   need_name: string;
   institution_name: string;
+  institution_id: number;
   quantity: number;
   status: string;
+  note?: string;
   planned_date?: string;
 }
 
@@ -20,6 +22,9 @@ export default function PromisesPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editQty, setEditQty] = useState<number>(0);
+  const [isProcessing, setIsProcessing] = useState<number | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -37,8 +42,38 @@ export default function PromisesPage() {
     load();
   }, []);
 
+  const handleCancel = async (id: number) => {
+    if (!confirm('Вы уверены, что хотите отменить это обещание?')) return;
+    try {
+      setIsProcessing(id);
+      await cancelMyBooking(id);
+      setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'cancelled' } : b));
+    } catch (err: any) {
+      alert(err.message || 'Ошибка отмены');
+    } finally {
+      setIsProcessing(null);
+    }
+  };
+
+  const handleSaveEdit = async (id: number) => {
+    if (editQty <= 0) {
+      alert('Количество должно быть больше 0');
+      return;
+    }
+    try {
+      setIsProcessing(id);
+      await updateMyBooking(id, editQty);
+      setBookings(prev => prev.map(b => b.id === id ? { ...b, quantity: editQty } : b));
+      setEditingId(null);
+    } catch (err: any) {
+      alert(err.message || 'Ошибка сохранения');
+    } finally {
+      setIsProcessing(null);
+    }
+  };
+
   return (
-    <div className="max-w-4xl space-y-5 sm:space-y-8">
+    <div className="space-y-5 sm:space-y-6">
 
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-[#1e3a8a]">Мои обещания</h1>
@@ -88,21 +123,79 @@ export default function PromisesPage() {
             <div key={b.id} className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">{b.need_name}</h3>
-                  <p className="text-sm text-gray-500">{b.institution_name} · {b.quantity} шт.</p>
-                  {b.planned_date && (
-                    <p className="text-xs text-gray-400 mt-1">Плановая дата: {b.planned_date}</p>
+                  <h3 className="text-lg font-bold text-gray-900">{b.need_name || 'Неизвестная нужда'}</h3>
+                  <div className="text-sm text-gray-500 font-medium mt-1 flex items-center gap-1">
+                    {b.institution_name ? (
+                      <Link href={`/institutions/${b.institution_id}`} className="hover:text-[#1e3a8a] hover:underline transition-colors">
+                        {b.institution_name}
+                      </Link>
+                    ) : (
+                      'Учреждение'
+                    )}
+                    <span>· {b.quantity} шт.</span>
+                  </div>
+                  {(b.planned_date || b.note) && (
+                    <p className="text-xs text-gray-400 mt-1">Плановая дата: {b.planned_date || b.note}</p>
                   )}
                 </div>
-                <span className={`text-xs font-bold px-3 py-1 rounded-full ${
-                  b.status === 'delivered' ? 'bg-green-100 text-green-700' :
+                <span className={`text-xs font-bold px-3 py-1 rounded-full shrink-0 ${
+                  b.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
                   b.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                  b.status === 'rejected' ? 'bg-orange-100 text-orange-700' :
                   'bg-blue-100 text-[#1e3a8a]'
                 }`}>
-                  {b.status === 'delivered' ? 'Выполнено' :
-                   b.status === 'cancelled' ? 'Отменено' : 'Активно'}
+                  {b.status === 'completed' ? 'Выполнено' :
+                   b.status === 'cancelled' ? 'Отменено' :
+                   b.status === 'rejected' ? 'Отклонено' : 'Активно'}
                 </span>
               </div>
+
+              {/* Действия для активных (pending) бронирований */}
+              {editingId === b.id ? (
+                <div className="mt-4 flex items-center gap-3 bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-100">
+                  <div className="flex-1">
+                    <label className="text-xs text-gray-500 font-bold mb-1 block uppercase tracking-wider">Новое количество</label>
+                    <input 
+                      type="number" 
+                      min="1"
+                      className="w-full border-gray-200 rounded-lg text-sm bg-white"
+                      value={editQty}
+                      onChange={(e) => setEditQty(Number(e.target.value))}
+                      disabled={isProcessing === b.id}
+                    />
+                  </div>
+                  <div className="flex gap-2 items-end pt-5">
+                    <Button size="sm" onClick={() => handleSaveEdit(b.id)} disabled={isProcessing === b.id} className="bg-[#1e3a8a]">
+                      {isProcessing === b.id ? <Loader2 className="animate-spin w-4 h-4" /> : 'Сохранить'}
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => setEditingId(null)} disabled={isProcessing === b.id}>Отмена</Button>
+                  </div>
+                </div>
+              ) : (
+                b.status === 'pending' && (
+                  <div className="mt-5 flex gap-3 pt-4 border-t border-gray-100">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => { setEditingId(b.id); setEditQty(b.quantity); }}
+                      disabled={isProcessing === b.id}
+                      className="text-[#1e3a8a] border-[#1e3a8a]/20 hover:bg-[#1e3a8a]/5"
+                    >
+                      Изменить
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => handleCancel(b.id)}
+                      disabled={isProcessing === b.id}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      {isProcessing === b.id && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
+                      Отменить
+                    </Button>
+                  </div>
+                )
+              )}
             </div>
           ))}
         </div>

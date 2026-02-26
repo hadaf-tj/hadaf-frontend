@@ -58,7 +58,7 @@ export default function DashboardPage() {
        </div>
 
        {/* Stats Grid */}
-       <div className="grid grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
           <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
              <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <div className="p-2 sm:p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">

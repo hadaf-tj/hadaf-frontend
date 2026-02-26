@@ -365,6 +365,31 @@ export async function fetchMyBookings(): Promise<Record<string, unknown>[]> {
   return json.data || [];
 }
 
+export async function cancelMyBooking(bookingId: number): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/bookings/my/${bookingId}/cancel`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    credentials: "include",
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ message: "Ошибка отмены" }));
+    throw new Error(errorData.message || "Ошибка отмены");
+  }
+}
+
+export async function updateMyBooking(bookingId: number, quantity: number): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/bookings/my/${bookingId}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    credentials: "include",
+    body: JSON.stringify({ quantity }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ message: "Ошибка обновления" }));
+    throw new Error(errorData.message || "Ошибка обновления");
+  }
+}
+
 // 10. Booking management (для менеджера)
 export async function fetchInstitutionBookings(institutionId: number | string): Promise<Record<string, unknown>[]> {
   const res = await fetch(`${API_BASE_URL}/institutions/${institutionId}/bookings`, {

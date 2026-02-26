@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { cn } from '@/lib/utils';
 import { Institution } from '@/types/project';
 import InstitutionCard from '@/components/specific/InstitutionCard';
 import { ArrowRight, ArrowLeft, Users, Baby, Sparkles, Loader2, HelpCircle, Plus, Minus, ChevronLeft, ChevronRight, Search, ClipboardList, HeartHandshake, MessageCircleQuestion, ShieldCheck } from 'lucide-react';
@@ -190,18 +191,48 @@ const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({ closed_needs: 0, people_helped: 0, institutions_count: 0 });
 
-  // Hero slider
-  const [currentSlide, setCurrentSlide] = useState(0);
+  // Hero slider Ring Topology
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(true);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
   const slideInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const nextSlide = useCallback(() => setCurrentSlide(prev => (prev + 1) % HERO_SLIDES.length), []);
-  const prevSlide = useCallback(() => setCurrentSlide(prev => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length), []);
+  // Fake array to enable infinite scroll (length 5: Last, Slide1, Slide2, Slide3, First)
+  const infiniteSlides = [HERO_SLIDES[HERO_SLIDES.length - 1], ...HERO_SLIDES, HERO_SLIDES[0]];
+
+  const nextSlide = useCallback(() => {
+    if (!isTransitioning) return;
+    setCurrentSlideIndex(prev => prev + 1);
+  }, [isTransitioning]);
+
+  const prevSlide = useCallback(() => {
+    if (!isTransitioning) return;
+    setCurrentSlideIndex(prev => prev - 1);
+  }, [isTransitioning]);
+
+  // Handle transparent loop resets
+  useEffect(() => {
+    if (currentSlideIndex === 0) {
+      const timeout = setTimeout(() => {
+        setIsTransitioning(false);
+        setCurrentSlideIndex(HERO_SLIDES.length);
+      }, 700); // match duration
+      return () => clearTimeout(timeout);
+    } else if (currentSlideIndex === HERO_SLIDES.length + 1) {
+      const timeout = setTimeout(() => {
+        setIsTransitioning(false);
+        setCurrentSlideIndex(1);
+      }, 700);
+      return () => clearTimeout(timeout);
+    } else {
+      setIsTransitioning(true);
+    }
+  }, [currentSlideIndex]);
 
   // Auto-advance hero slides
   useEffect(() => {
-    slideInterval.current = setInterval(nextSlide, 8000); // Slower interval for better reading
+    slideInterval.current = setInterval(nextSlide, 8000);
     return () => { if (slideInterval.current) clearInterval(slideInterval.current); };
   }, [nextSlide]);
 
@@ -287,12 +318,29 @@ const HomePage: React.FC = () => {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {/* Flex Track for true horizontal sliding */}
-          <div 
-            className="flex w-full h-full transition-transform duration-700 ease-in-out"
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          {/* Edge Navigation Arrows (Только для десктопа/планшета) */}
+          <button
+            onClick={() => { prevSlide(); resetAutoplay(); }}
+            className="hidden md:flex absolute left-4 xl:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 lg:w-14 lg:h-14 bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/30 rounded-full items-center justify-center transition-all shadow-lg"
+            aria-label="Предыдущий слайд"
           >
-            {HERO_SLIDES.map((slide, idx) => (
+            <ArrowLeft size={24} />
+          </button>
+          
+          <button
+            onClick={() => { nextSlide(); resetAutoplay(); }}
+            className="hidden md:flex absolute right-4 xl:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 lg:w-14 lg:h-14 bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/30 rounded-full items-center justify-center transition-all shadow-lg"
+            aria-label="Следующий слайд"
+          >
+            <ArrowRight size={24} className="lg:w-6 lg:h-6" />
+          </button>
+
+          {/* Flex Track for ring topology sliding */}
+          <div 
+            className={cn("flex w-full h-full", isTransitioning ? "transition-transform duration-700 ease-in-out" : "transition-none")}
+            style={{ transform: `translateX(-${currentSlideIndex * 100}%)` }}
+          >
+            {infiniteSlides.map((slide, idx) => (
               <div
                 key={idx}
                 className="w-full h-full flex-shrink-0 relative"
@@ -301,7 +349,7 @@ const HomePage: React.FC = () => {
                   src={slide.image}
                   alt=""
                   fill
-                  priority={idx === 0}
+                  priority={idx === 1} // First real slide
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
@@ -318,15 +366,6 @@ const HomePage: React.FC = () => {
                         <Button asChild size="lg" className="bg-[#ffca63] text-[#1e3a8a] hover:bg-white hover:text-[#1e3a8a] font-bold h-12 sm:h-14 px-8 sm:px-10 rounded-full shadow-xl transition-all hover:scale-105 text-base">
                           <Link href={slide.cta.href}>{slide.cta.label}</Link>
                         </Button>
-                        
-                        {/* Inline Arrow button next to CTA */}
-                        <button
-                          onClick={() => { nextSlide(); resetAutoplay(); }}
-                          className="w-12 h-12 sm:w-14 sm:h-14 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-[#ffca63] hover:bg-white/25 transition-all border border-white/15"
-                          aria-label="Следующий слайд"
-                        >
-                          <ArrowRight size={20} />
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -403,13 +442,16 @@ const HomePage: React.FC = () => {
             </div>
 
             {/* Horizontal scrolling cards */}
-            <div className="pl-5 sm:pl-6 md:pl-12 xl:pl-28 2xl:pl-[calc(50vw-720px+112px)]">
+            <div className="w-full">
               {isLoading ? (
                 <div className="flex justify-center py-16">
                   <Loader2 size={40} className="animate-spin text-[#1e3a8a]" />
                 </div>
               ) : institutions.length > 0 ? (
                 <HorizontalScroller>
+                  {/* Visual Spacer for left alignment */}
+                  <div className="flex-shrink-0 w-5 sm:w-6 md:w-12 xl:w-28 2xl:w-[calc(50vw-720px+112px)] border-r border-transparent"></div>
+                  
                   {institutions.map((inst) => (
                     <div
                       key={inst.id}
@@ -460,14 +502,32 @@ const HomePage: React.FC = () => {
               <div className="flex-1 w-full max-w-[340px] sm:max-w-md mx-auto lg:max-w-none relative mt-8 lg:mt-0">
                 <div className="relative h-[520px] sm:h-[550px] md:h-[600px] flex items-center justify-center perspective-[1200px]">
                   {displayEvents.map((ev, idx) => {
-                    const offset = (idx - currentEventIdx + displayEvents.length) % displayEvents.length;
-                    if (offset > 2) return null;
+                    let diff = idx - currentEventIdx;
+                    
+                    // Handle ring topology gracefully for a deck
+                    const len = displayEvents.length;
+                    
+                    if (diff > Math.floor(len / 2)) diff -= len;
+                    else if (diff < -Math.floor(len / 2)) diff += len;
 
-                    const scale = 1 - (offset * 0.05);
-                    const translateX = offset * 40; 
-                    const zIndex = 30 - offset;
-                    const opacity = offset === 2 ? 0.3 : offset === 1 ? 0.7 : 1;
-                    const isInteractive = offset === 0;
+                    // Only show 3 cards: current (0), next (1), next-next (2), previous (-1 is animated out)
+                    if (diff < -1 || diff > 2) return null;
+
+                    const isDismissed = diff < 0; 
+                    
+                    // Local stack offsets
+                    // diff === 0: top card exactly in center.
+                    // diff === 1: slight left and down
+                    // diff === 2: further left and down
+                    // diff < 0 (dismissed): slide right temporarily, before circling back
+                    
+                    const translateX = isDismissed ? '100%' : `${-diff * 1.5}rem`; 
+                    const translateY = isDismissed ? '10%' : `${diff * 0.75}rem`;
+                    const scale = isDismissed ? 1.05 : Math.max(0.85, 1 - (diff * 0.05));
+                    
+                    const zIndex = isDismissed ? 40 : 30 - diff;
+                    const opacity = isDismissed ? 0 : diff === 2 ? 0.3 : diff === 1 ? 0.7 : 1;
+                    const isInteractive = diff === 0;
 
                     const formattedDate = ev.event_date ? new Date(ev.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Даты уточняются';
                     const locationName = ev.institution?.name || ev.institution_name || 'Учреждение не указано';
@@ -476,13 +536,13 @@ const HomePage: React.FC = () => {
                       <div
                         key={ev.id}
                         onClick={() => isInteractive && nextEventDeck()}
-                        className={`absolute left-0 right-0 top-0 bottom-0 bg-white rounded-3xl shadow-2xl border border-gray-100 flex flex-col transform transition-all duration-[600ms] ease-out-back ${isInteractive ? 'cursor-pointer sm:hover:-translate-translate-y-2' : 'pointer-events-none'}`}
+                        className={`absolute left-0 right-0 top-0 bottom-0 bg-white rounded-3xl shadow-2xl border border-gray-100 flex flex-col transform transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] ${isInteractive ? 'cursor-pointer sm:hover:-translate-translate-y-2' : 'pointer-events-none'}`}
                         style={{
-                          transform: `translateX(${translateX}px) scale(${scale})`,
+                          transform: `translate(${translateX}, ${translateY}) scale(${scale}) rotate(${isDismissed ? 5 : -diff * 2}deg)`,
                           zIndex,
                           opacity,
-                          transformOrigin: 'left center',
-                          boxShadow: offset === 0 ? '-10px 25px 50px -12px rgba(0, 0, 0, 0.4)' : '-5px 10px 15px -3px rgba(0, 0, 0, 0.2)'
+                          transformOrigin: 'bottom center',
+                          boxShadow: diff === 0 ? '-10px 25px 40px -12px rgba(0, 0, 0, 0.4)' : '-5px 10px 15px -3px rgba(0, 0, 0, 0.2)'
                         }}
                       >
                         <div className="relative h-[45%] sm:h-[55%] w-full shrink-0">
@@ -668,8 +728,11 @@ const HomePage: React.FC = () => {
             </div>
 
             {/* Horizontal FAQ Photo Cards */}
-            <div className="pl-5 sm:pl-6 md:pl-12 xl:pl-28 2xl:pl-[calc(50vw-720px+112px)] relative">
+            <div className="w-full relative">
               <HorizontalScroller>
+                {/* Visual Spacer for left alignment */}
+                <div className="flex-shrink-0 w-5 sm:w-6 md:w-12 xl:w-28 2xl:w-[calc(50vw-720px+112px)] border-r border-transparent"></div>
+                
                 {FAQ_ITEMS.map((item, idx) => (
                   <div
                     key={idx}
@@ -680,9 +743,9 @@ const HomePage: React.FC = () => {
                       {/* Icon Header */}
                       <div className="relative h-[180px] sm:h-[220px] w-full shrink-0 overflow-hidden bg-[#1e3a8a] border-b border-gray-100 flex items-center justify-center">
                         {idx % 2 === 0 ? (
-                          <MessageCircleQuestion className="w-24 h-24 sm:w-32 sm:h-32 text-white/20 group-hover:text-white/40 group-hover:scale-110 transition-all duration-700" strokeWidth={1} />
+                          <MessageCircleQuestion className="w-24 h-24 sm:w-32 sm:h-32 text-[#ffca63] group-hover:scale-110 transition-all duration-700" strokeWidth={1} />
                         ) : (
-                          <ShieldCheck className="w-24 h-24 sm:w-32 sm:h-32 text-white/20 group-hover:text-white/40 group-hover:scale-110 transition-all duration-700" strokeWidth={1} />
+                          <ShieldCheck className="w-24 h-24 sm:w-32 sm:h-32 text-[#ffca63] group-hover:scale-110 transition-all duration-700" strokeWidth={1} />
                         )}
                         
                         {/* Question Mark Badge */}

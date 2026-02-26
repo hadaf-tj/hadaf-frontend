@@ -45,9 +45,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     // Clear httpOnly cookie via backend logout endpoint
-    fetch('/api/v1/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+    try {
+      await fetch('/api/v1/logout', { method: 'POST', credentials: 'include' });
+    } catch {
+      // Ignore network errors
+    }
     setUser(null);
     window.location.href = '/';
   }, []);

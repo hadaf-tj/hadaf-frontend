@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
   HeartHandshake, 
@@ -37,26 +37,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const pathname = usePathname();
-  const { logout } = useAuth();
-  
-  const [user, setUser] = useState<{ full_name: string; role: string; email: string; phone?: string; institution_id?: number } | null>(null);
+  const { user, isLoading, logout } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, isLoading, router]);
 
   // Load collapse state from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('sidebar-collapsed');
     if (saved === 'true') setSidebarCollapsed(true);
-  }, []);
-
-  useEffect(() => {
-    const loadUser = async () => {
-        try {
-            const userData = await getProfile();
-            setUser(userData);
-        } catch (e) {
-            console.error("Не удалось загрузить профиль", e);
-        }
-    };
-    loadUser();
   }, []);
 
   const toggleCollapse = () => {
@@ -70,6 +63,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   const menuItems = user?.role === 'employee' ? INSTITUTION_MENU : VOLUNTEER_MENU;
+
+  if (isLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f8fafc]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1e3a8a]"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex font-sans">

@@ -9,29 +9,12 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/lib/AuthContext';
 
-// --- ДАННЫЕ МЕНЮ С ВЛОЖЕННОСТЬЮ ---
+// --- ДАННЫЕ МЕНЮ ---
 const NAV_ITEMS = [
-  {
-    name: 'О нас',
-    href: '/about',
-    subItems: [
-      { name: 'Миссия и ценности', href: '/about' },
-      { name: 'Команда', href: '/team' }, // Страницу нужно будет создать или убрать этот пункт
-      { name: 'Документы', href: '/docs' }, // Страницу нужно будет создать
-    ]
-  },
-  {
-    name: 'Волонтерам',
-    href: '/volunteers', // Страницу нужно будет создать
-    subItems: [
-      { name: 'Как стать волонтером', href: '/volunteers' },
-      { name: 'Частые вопросы (FAQ)', href: '/faq' },
-      { name: 'Правила посещения', href: '/rules' },
-    ]
-  },
+  { name: 'О нас', href: '/about' },
+  { name: 'Учреждения', href: '/institutions' },
   { name: 'События', href: '/events' },
-  { name: 'Отчеты', href: '/reports' },
-  { name: 'Контакты', href: '/contacts' }, // Страницу нужно будет создать
+  { name: 'Контакты', href: '/contacts' },
 ];
 
 interface HeaderProps {
@@ -111,10 +94,7 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
       onMouseLeave={() => setHoveredIndex(null)}
     >
       <div
-        className={cn(
-          "w-full mx-auto px-4 sm:px-8 lg:px-12 xl:px-20 flex items-center relative transition-all duration-300",
-          isScrolled ? "h-12" : "h-14"
-        )}
+        className="w-full mx-auto px-4 sm:px-8 lg:px-12 xl:px-20 h-12 flex items-center relative transition-colors duration-300"
       >
 
         {/* --- ЛОГОТИП --- */}
@@ -146,17 +126,14 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
           </div>
         </Link>
 
-        {/* --- НАВИГАЦИЯ (DESKTOP) С ДРОПДАУНАМИ --- */}
+        {/* --- НАВИГАЦИЯ (DESKTOP) --- */}
         <nav
-          className={cn(
-            "hidden xl:flex items-center gap-6 2xl:gap-10 z-30 h-full transition-all duration-300"
-          )}
+          className="hidden xl:flex items-center gap-6 2xl:gap-10 z-30 h-full transition-colors duration-300"
         >
-          {NAV_ITEMS.map((item, index) => (
+          {NAV_ITEMS.map((item) => (
             <div
               key={item.name}
               className="relative h-full flex items-center"
-              onMouseEnter={() => setHoveredIndex(index)}
             >
               <Link
                 href={item.href}
@@ -166,36 +143,7 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
                 )}
               >
                 {item.name}
-                {/* Стрелочка вниз, если есть подпункты */}
-                {item.subItems && (
-                  <ChevronDown size={14} strokeWidth={3} className={cn("opacity-50 mt-0.5 transition-transform duration-200", hoveredIndex === index ? "rotate-180" : "")} />
-                )}
               </Link>
-
-              {/* --- САМ ВЫПАДАЮЩИЙ СПИСОК --- */}
-              {item.subItems && (
-                <div
-                  className={cn(
-                    "absolute top-full left-0 pt-4 w-64 transition-all duration-200 transform origin-top-left",
-                    hoveredIndex === index
-                      ? "opacity-100 scale-100 visible"
-                      : "opacity-0 scale-95 invisible"
-                  )}
-                >
-                  <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden p-2">
-                    {item.subItems.map((subItem) => (
-                      <Link
-                        key={subItem.name}
-                        href={subItem.href}
-                        onClick={() => setHoveredIndex(null)}
-                        className="block px-4 py-3 text-sm font-bold text-gray-600 hover:text-[#1e3a8a] hover:bg-blue-50 rounded-xl transition-colors"
-                      >
-                        {subItem.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           ))}
         </nav>
@@ -229,7 +177,7 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
                 "text-sm xl:text-base 2xl:text-lg",
                 "px-6 xl:px-6 2xl:px-6",
                 "pr-10 xl:pr-14 2xl:pr-18",
-                isScrolled ? "h-16" : "h-16",
+                "h-16",
                 "transition-all duration-300"
               )}
             >
@@ -249,8 +197,7 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
                 "pr-1 xl:pr-4 2xl:pr-8",
                 "min-w-[160px] xl:min-w-[200px] 2xl:min-w-[240px]",
                 "text-sm xl:text-base 2xl:text-lg",
-                isScrolled ? "h-16" : "h-16",
-                "transition-all duration-300"
+                "h-16 transition-colors duration-300"
               )}
             >
               <Link href="/about">Нужна помощь</Link>
@@ -269,72 +216,41 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
 
       {/* --- ВЫПАДАЮЩЕЕ МЕНЮ (MOBILE) --- */}
       {isOpen && (
-        <div className="lg:hidden fixed inset-0 top-[60px] w-full bg-[#1e3a8a] z-40 overflow-hidden flex flex-col animate-in fade-in slide-in-from-top-5">
-          <div className="relative z-10 flex flex-col h-full overflow-y-auto pb-20 px-6 mt-8">
-            <div className="flex flex-col gap-1">
-              {NAV_ITEMS.map((item) => {
-                const isSubOpen = openMobileMenus.includes(item.name);
-                
-                return (
+        <div className="lg:hidden fixed inset-0 top-[60px] w-full bg-[#1e3a8a] z-40 flex flex-col animate-in fade-in slide-in-from-top-5">
+          <div className="relative z-10 flex flex-col flex-1 overflow-y-auto pt-8">
+            <div className="flex flex-col gap-1 px-6 pb-20">
+              {NAV_ITEMS.map((item) => (
                 <div key={item.name} className="border-b border-white/10 last:border-0 relative">
-                  {item.subItems ? (
-                    <button
-                      onClick={() => toggleMobileMenu(item.name)}
-                      className="w-full text-left text-white/90 font-bold text-xl py-4 hover:bg-white/10 px-4 rounded-xl transition-all flex items-center justify-between group"
-                    >
-                      {item.name}
-                      <ChevronDown size={20} className={cn("opacity-50 transition-transform duration-300 shrink-0", isSubOpen ? "rotate-180 opacity-100" : "")} />
-                    </button>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      className="text-white/90 font-bold text-xl py-4 hover:bg-white/10 px-4 rounded-xl transition-all flex items-center justify-between group"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  )}
-
-                  {/* Подпункты в мобилке (Accordion) */}
-                  {item.subItems && (
-                    <div className={cn(
-                      "pl-8 pb-4 flex flex-col gap-2 overflow-hidden transition-all duration-300",
-                      isSubOpen ? "max-h-48 opacity-100" : "max-h-0 opacity-0 pb-0"
-                    )}>
-                      {item.subItems.map(sub => (
-                        <Link
-                          key={sub.name}
-                          href={sub.href}
-                          onClick={() => setIsOpen(false)}
-                          className="text-white/60 text-base font-medium py-1.5 hover:text-white"
-                        >
-                          {sub.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
+                  <Link
+                    href={item.href}
+                    className="text-white/90 font-bold text-xl py-4 hover:bg-white/10 px-4 rounded-xl transition-colors flex items-center justify-between group"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
                 </div>
-              )})}
+              ))}
             </div>
-            <div className="mt-auto pb-6 pt-4 flex flex-col gap-3">
+            
+            <div className="mt-auto pb-4 pt-4 flex flex-col gap-2 w-[90%] mx-auto">
               {!isLoading && user ? (
                 <>
-                  <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-lg h-14 rounded-2xl w-full shadow-lg border-0 shrink-0">
+                  <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-base sm:text-lg h-12 sm:h-14 rounded-2xl w-full shadow-md border-0 shrink-0">
                     <Link href="/dashboard" onClick={() => setIsOpen(false)}>Мой профиль</Link>
                   </Button>
                   <Button
                     onClick={() => { setIsOpen(false); logout(); }}
-                    className="bg-transparent border-2 border-white/20 text-white hover:bg-white/10 font-bold text-lg h-14 rounded-2xl w-full"
+                    className="bg-transparent border-2 border-white/20 text-white hover:bg-white/10 font-bold text-base sm:text-lg h-12 sm:h-14 rounded-2xl w-full shrink-0"
                   >
                     Выйти
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-lg h-14 rounded-2xl w-full shadow-lg border-0 shrink-0">
+                  <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-base sm:text-lg h-12 sm:h-14 rounded-2xl w-full shadow-md border-0 shrink-0">
                     <Link href="/login" onClick={() => setIsOpen(false)}>Авторизоваться</Link>
                   </Button>
-                  <Button asChild className="bg-transparent border-2 border-white/20 text-white hover:bg-white/10 font-bold text-lg h-14 rounded-2xl w-full shrink-0">
+                  <Button asChild className="bg-transparent border-2 border-white/20 text-white hover:bg-white/10 font-bold text-base sm:text-lg h-12 sm:h-14 rounded-2xl w-full shrink-0">
                     <Link href="/institutions" onClick={() => setIsOpen(false)}>Помочь</Link>
                   </Button>
                 </>
