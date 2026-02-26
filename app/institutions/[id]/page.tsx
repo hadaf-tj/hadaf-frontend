@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/Button';
 import {
   MapPin, Phone, Users, CheckCircle2,
   ChevronLeft, Share2, AlertCircle, Gift, Loader2,
-  Search, ArrowUpDown
+  Search, ArrowUpDown, Clock
 } from 'lucide-react';
 import PledgeModal, { NeedItem } from '@/components/specific/PledgeModal';
 import { fetchInstitutionById, fetchNeedsByInstitution, NeedsFilters } from '@/lib/api';
@@ -228,15 +228,11 @@ export default function InstitutionDetailPage() {
                   {data.city}, {data.address}
                 </div>
 
-                {/* Статистика (заглушка, так как в API этого пока нет) */}
-                <div className="grid grid-cols-2 gap-4 mb-8">
-                  <div className="bg-gray-50 p-4 rounded-2xl text-center">
-                    <div className="text-2xl font-black text-[#1e3a8a]">{data.needsCount}</div>
-                    <div className="text-xs text-gray-400 font-bold uppercase">Открытых нужд</div>
-                  </div>
-                  <div className="bg-gray-50 p-4 rounded-2xl text-center">
-                    <div className="text-2xl font-black text-[#1e3a8a]">{data.activityHours ? 'Есть' : '-'}</div>
-                    <div className="text-xs text-gray-400 font-bold uppercase">Часы приема</div>
+                {/* Статистика */}
+                <div className="grid grid-cols-1 gap-4 mb-8">
+                  <div className="bg-gray-50 flex items-center justify-between p-4 rounded-2xl w-full">
+                    <div className="text-xs text-gray-500 font-bold uppercase">Открытых нужд</div>
+                    <div className="text-xl font-black text-[#1e3a8a]">{data.needsCount}</div>
                   </div>
                 </div>
 
@@ -267,12 +263,23 @@ export default function InstitutionDetailPage() {
             {/* ПРАВАЯ КОЛОНКА (Нужды) */}
             <div className="lg:col-span-8 space-y-8">
 
-              {/* Описание (Description пока нет в модели Institution бэкенда, берем заглушку или поле activityHours как временное решение) */}
-              <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
-                <h3 className="text-xl font-black text-gray-900 mb-4">О нас</h3>
-                <p className="text-gray-600 leading-relaxed text-lg">
-                  {`Учреждение "${data.name}" находится в городе ${data.city}.`}
-                </p>
+              {/* Описание */}
+              <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 flex flex-col lg:flex-row gap-8 justify-between items-start">
+                <div className="flex-1">
+                  <h3 className="text-xl font-black text-gray-900 mb-4">О нас</h3>
+                  <p className="text-gray-600 leading-relaxed text-lg">
+                    {`Учреждение "${data.name}" находится в городе ${data.city}.`}
+                  </p>
+                </div>
+                
+                <div className="w-full lg:w-[350px] bg-[#f8fafc] border border-gray-200 rounded-2xl p-6 flex-shrink-0">
+                  <div className="text-xs text-gray-500 font-bold uppercase mb-2 flex items-center gap-2">
+                    <Clock size={16} className="text-[#1e3a8a]" /> Часы приема
+                  </div>
+                  <div className="text-sm font-bold text-[#1e3a8a] leading-relaxed break-words">
+                    {data.activityHours && data.activityHours.trim() !== '' ? data.activityHours : 'Не указаны'}
+                  </div>
+                </div>
               </div>
 
               <div>

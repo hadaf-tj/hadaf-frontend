@@ -10,7 +10,7 @@ export default function RulesPage() {
       <div className="min-h-screen bg-[#f8fafc] font-sans pb-20">
         
         {/* HERO */}
-        <div className="bg-[#1e3a8a] pt-32 pb-16 rounded-b-[3rem] text-center">
+        <div className="bg-[#1e3a8a] pt-24 pb-16 rounded-b-[3rem] text-center">
            <div className="container mx-auto px-6">
               <h1 className="text-4xl font-black text-white mb-4">Правила посещения</h1>
               <p className="text-white/80 text-lg max-w-2xl mx-auto">

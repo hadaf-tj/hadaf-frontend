@@ -5,7 +5,9 @@ import {
   Heart, 
   PackageCheck, 
   Clock, 
-  Loader2
+  Loader2,
+  ArrowRight,
+  Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
 import { getProfile } from '@/lib/api';
@@ -32,74 +34,85 @@ export default function DashboardPage() {
   }, [router]);
 
   if (loading) {
-      return <div className="flex h-[50vh] items-center justify-center text-[#1e3a8a]"><Loader2 className="animate-spin" size={40}/></div>
+      return (
+        <div className="flex h-[50vh] items-center justify-center">
+          <Loader2 className="animate-spin text-[#1e3a8a]" size={36}/>
+        </div>
+      );
   }
   if (!user) return null;
 
+  const firstName = user.full_name.split(' ')[0] || user.full_name;
+
   return (
-    <div className="space-y-8 max-w-5xl">
+    <div className="space-y-5 sm:space-y-6">
        
-       {/* 1. Приветствие (РЕАЛЬНОЕ) */}
+       {/* Greeting */}
        <div>
-         <h1 className="text-3xl font-black text-[#1e3a8a]">
-            Здравствуйте, {user?.full_name}!
+         <h1 className="text-2xl sm:text-3xl font-black text-gray-900">
+            Привет, {firstName} 👋
          </h1>
-         <p className="text-gray-500 font-medium mt-1">
-           Добро пожаловать в Hadaf
+         <p className="text-gray-500 font-medium mt-0.5 text-sm sm:text-base">
+           Добро пожаловать в личный кабинет
          </p>
        </div>
 
-       {/* 2. Статистика (Пока заглушки, но честные) */}
-       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 opacity-60">
-             <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-green-50 text-green-600 rounded-xl">
-                   <PackageCheck size={24} />
+       {/* Stats Grid */}
+       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+             <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <div className="p-2 sm:p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+                   <PackageCheck size={18} />
                 </div>
              </div>
-             <div className="text-3xl font-black text-gray-900 mb-1">0</div>
-             <div className="text-sm text-gray-400 font-bold uppercase">Закрытых нужд</div>
+             <div className="text-2xl sm:text-3xl font-black text-gray-900 mb-0.5">0</div>
+             <div className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">Закрытых</div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 opacity-60">
-             <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-yellow-50 text-yellow-600 rounded-xl">
-                   <Clock size={24} />
+          <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+             <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <div className="p-2 sm:p-2.5 bg-amber-50 text-amber-600 rounded-xl">
+                   <Clock size={18} />
                 </div>
              </div>
-             <div className="text-3xl font-black text-gray-900 mb-1">0</div>
-             <div className="text-sm text-gray-400 font-bold uppercase">Активные обещания</div>
+             <div className="text-2xl sm:text-3xl font-black text-gray-900 mb-0.5">0</div>
+             <div className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">Активных</div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 opacity-60">
-             <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
-                   <Heart size={24} />
+          <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+             <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <div className="p-2 sm:p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+                   <Heart size={18} />
                 </div>
              </div>
-             <div className="text-3xl font-black text-gray-900 mb-1">0 c.</div>
-             <div className="text-sm text-gray-400 font-bold uppercase">Ваш вклад</div>
+             <div className="text-2xl sm:text-3xl font-black text-gray-900 mb-0.5">0</div>
+             <div className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">Вклад</div>
           </div>
        </div>
 
-       {/* 3. Блок "Что делать дальше" — только для волонтёров */}
+       {/* CTA - for volunteers */}
        {user?.role !== 'employee' && (
-       <div className="bg-[#1e3a8a] text-white rounded-3xl p-8 shadow-xl relative overflow-hidden">
+       <div className="bg-gradient-to-br from-[#1e3a8a] to-[#2d4ea0] text-white rounded-2xl p-5 sm:p-8 shadow-xl relative overflow-hidden">
           <div className="relative z-10">
-              <h3 className="text-2xl font-black mb-4">С чего начать?</h3>
-              <p className="text-white/80 mb-6 max-w-xl">
-                  Выберите учреждение на карте или в списке, найдите актуальную нужду (продукты, вещи, лекарства) и нажмите «Я привезу».
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 rounded-full text-xs font-bold mb-3 backdrop-blur-sm">
+                <Sparkles size={12} />
+                Начните сегодня
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black mb-2 sm:mb-3">С чего начать?</h3>
+              <p className="text-white/80 mb-5 text-sm sm:text-base leading-relaxed">
+                  Выберите учреждение, найдите актуальную нужду и нажмите «Я привезу». Это просто!
               </p>
               <Link 
                 href="/institutions" 
-                className="inline-block bg-[#ffca63] text-[#1e3a8a] px-8 py-4 rounded-xl font-black hover:bg-white transition-all"
+                className="inline-flex items-center gap-2 bg-[#ffca63] text-[#1e3a8a] px-5 sm:px-7 py-3 rounded-xl font-black hover:bg-white transition-all text-sm sm:text-base shadow-lg"
               >
-                  Перейти к списку нужд
+                  Перейти к нуждам
+                  <ArrowRight size={16} />
               </Link>
           </div>
-          {/* Декор */}
-          <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none">
-              <Heart size={200} />
+          {/* Decorative */}
+          <div className="absolute -right-6 -bottom-6 opacity-[0.07] pointer-events-none">
+              <Heart size={160} strokeWidth={1} />
           </div>
        </div>
        )}

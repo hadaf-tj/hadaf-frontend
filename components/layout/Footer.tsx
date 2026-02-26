@@ -8,22 +8,14 @@ const Footer: React.FC = () => {
     <footer className="relative bg-[#1e3a8a] text-white overflow-hidden">
       {/* Анимированный фон (можно добавить svg или градиенты, если нужно) */}
 
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div
-          className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat opacity-5"
-          // Используем opacity-10 или даже opacity-5, чтобы было еле заметно.
-          // На темном синем фоне желто-синий узор будет выглядеть интересно.
-          // Можно попробовать mix-blend-soft-light или mix-blend-overlay для разных эффектов.
-          style={{ mixBlendMode: 'soft-light' }}
-        ></div>
-      </div>
+      <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat bg-[length:300px] opacity-[0.1] pointer-events-none mix-blend-overlay"></div>
 
       {/* Основной контент футера */}
       {/* ИЗМЕНЕНИЕ: Те же настройки контейнера для вертикального ритма */}
-      <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 py-20 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
+      <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28 py-10 sm:py-16 md:py-20 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16">
 
-          <div className="space-y-8 lg:col-span-1">
+          <div className="space-y-6 sm:space-y-8 lg:col-span-5">
             <Link href="/" className="flex items-center gap-3 text-2xl font-black text-white group">
               <div className="relative">
                 <div className="relative bg-white text-[#1e3a8a] p-3 rounded-2xl shadow-xl">
@@ -60,15 +52,15 @@ const Footer: React.FC = () => {
 
           </div>
 
-          <div>
-            <h3 className="font-black text-xl mb-8 text-white/95">О нас</h3>
-            <ul className="space-y-4 text-base">
+          {/* Колонка 2: Навигация */}
+          <div className="lg:col-span-3 lg:col-start-7 lg:pl-8">
+            <h3 className="font-black text-lg sm:text-xl mb-4 sm:mb-8 text-white/95">Навигация</h3>
+            <ul className="space-y-3 sm:space-y-4 text-sm sm:text-base">
               {[
-                { name: 'Миссия и ценности', href: '/about' },
-                { name: 'Отчеты и документы', href: '/reports' },
-                { name: 'Команда', href: '/team' },
-                { name: 'Партнеры', href: '/partners' },
-                { name: 'Пресс-центр', href: '/press' },
+                { name: 'О нас', href: '/about' },
+                { name: 'Учреждения', href: '/institutions' },
+                { name: 'События', href: '/events' },
+                { name: 'Контакты', href: '/contacts' },
               ].map((item) => (
                 <li key={item.name}>
                   <Link
@@ -83,36 +75,12 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Колонка 3: Помощь */}
-          <div>
-            <h3 className="font-black text-xl mb-8 text-white/95">Как помочь</h3>
-            <ul className="space-y-4 text-base">
-              {[
-                { name: 'Хочу помочь вещами', href: '/institutions' },
-                { name: 'Найти на карте', href: '/map' },
-                { name: 'Стать волонтером', href: '/volunteers' },
-                { name: 'Вход для учреждений', href: '/login' },
-                { name: 'Создать событие', href: '/events' },
-              ].map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="text-white/70 hover:text-white transition-all flex items-center gap-2 group font-medium"
-                  >
-                    <ArrowRight size={16} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#ffca63]" />
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Колонка 4: Контакты - выделенная */}
-          <div>
-            <h3 className="font-black text-xl mb-8 text-white/95">Контакты</h3>
-            <div className="space-y-6 text-base">
-              <div className="flex items-start gap-4 group cursor-pointer">
-                <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-all border border-white/20">
+          {/* Колонка 3: Контакты */}
+          <div className="lg:col-span-3">
+            <h3 className="font-black text-lg sm:text-xl mb-4 sm:mb-8 text-white/95">Контакты</h3>
+            <div className="space-y-4 sm:space-y-6 text-sm sm:text-base">
+              <div className="flex items-start gap-3 sm:gap-4 group cursor-pointer">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-all border border-white/20">
                   <MapPin size={20} />
                 </div>
                 <div className="text-white/80 group-hover:text-white transition-colors">
@@ -121,8 +89,8 @@ const Footer: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 group cursor-pointer">
-                <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-all border border-white/20">
+              <div className="flex items-center gap-3 sm:gap-4 group cursor-pointer">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-all border border-white/20">
                   <Mail size={20} />
                 </div>
                 <div>
@@ -133,8 +101,8 @@ const Footer: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 group cursor-pointer">
-                <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-all border border-white/20">
+              <div className="flex items-center gap-3 sm:gap-4 group cursor-pointer">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-all border border-white/20">
                   <Phone size={20} />
                 </div>
                 <div>
@@ -149,7 +117,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Нижняя полоса - улучшенная */}
-        <div className="mt-20 pt-10 border-t border-white/10">
+        <div className="mt-10 sm:mt-16 md:mt-20 pt-6 sm:pt-10 border-t border-white/10">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
             <div className="text-center lg:text-left">
               <p className="text-white/60 text-sm font-medium mb-2">
@@ -160,18 +128,18 @@ const Footer: React.FC = () => {
               </p>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-6 text-sm">
-              <a href="#" className="text-white/60 hover:text-white transition-colors font-medium">
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-6 text-xs sm:text-sm">
+              <Link href="/docs" className="text-white/60 hover:text-white transition-colors font-medium">
                 Политика конфиденциальности
-              </a>
+              </Link>
               <span className="text-white/20">•</span>
-              <a href="#" className="text-white/60 hover:text-white transition-colors font-medium">
+              <Link href="/docs" className="text-white/60 hover:text-white transition-colors font-medium">
                 Публичная оферта
-              </a>
+              </Link>
               <span className="text-white/20">•</span>
-              <a href="#" className="text-white/60 hover:text-white transition-colors font-medium">
+              <Link href="/docs" className="text-white/60 hover:text-white transition-colors font-medium">
                 Документы
-              </a>
+              </Link>
             </div>
           </div>
         </div>

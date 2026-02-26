@@ -1,19 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { User, Building2, ArrowLeft, HeartHandshake, Check, Loader2, Mail } from 'lucide-react';
-import { register, fetchInstitutions } from '@/lib/api'; // Нужно будет добавить confirmOTP в api.ts
+import { User, Building2, ArrowLeft, HeartHandshake, Check, Loader2, Mail, RefreshCw } from 'lucide-react';
+import { register, fetchInstitutions, confirmOTP } from '@/lib/api';
 import { Institution } from '@/types/project';
-
-
-// --- ДОБАВЬ ЭТОТ ИМПОРТ в lib/api.ts ---
-// export async function confirmOTP(receiver: string, otp: string) { ... }
+import { useAuth } from '@/lib/AuthContext';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { refreshUser } = useAuth();
   
   // Steps: 'form' | 'otp'
   const [step, setStep] = useState<'form' | 'otp'>('form');
@@ -30,6 +28,7 @@ export default function RegisterPage() {
   
   // Данные OTP
   const [otpCode, setOtpCode] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -74,24 +73,15 @@ export default function RegisterPage() {
     }
   };
 
-  // 2. ОТПРАВКА КОДА (НОВОЕ)
+  // 2. ОТПРАВКА КОДА
   const handleVerify = async (e: React.FormEvent) => {
       e.preventDefault();
       setIsLoading(true);
       setError('');
       
       try {
-          // Backend sets httpOnly cookies on confirm_otp
-          const res = await fetch('/api/v1/confirm_otp', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
-              body: JSON.stringify({ receiver: email, otp: otpCode })
-          });
-          const json = await res.json();
-          
-          if (!res.ok) throw new Error(json.message || "Неверный код");
-
+          await confirmOTP(email, otpCode);
+          await refreshUser();
           router.push('/dashboard');
       } catch(err: unknown) {
           const message = err instanceof Error ? err.message : 'Неверный код';
@@ -99,6 +89,31 @@ export default function RegisterPage() {
       } finally {
           setIsLoading(false);
       }
+  }
+
+  // 3. ПОВТОРНАЯ ОТПРАВКА КОДА
+  const startResendCooldown = useCallback(() => {
+    setResendCooldown(60);
+    const interval = setInterval(() => {
+      setResendCooldown(prev => {
+        if (prev <= 1) { clearInterval(interval); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+  }, []);
+
+  const handleResendOTP = async () => {
+    try {
+      await fetch('/api/v1/send_otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ receiver: email }),
+      });
+      startResendCooldown();
+    } catch {
+      setError('Не удалось отправить код повторно');
+    }
   }
 
   // --- РЕНДЕР: ШАГ 2 (ВВОД КОДА) ---
@@ -119,18 +134,27 @@ export default function RegisterPage() {
                     
                     <input 
                         type="text" 
-                        placeholder="0000" 
-                        className="w-full h-16 text-center text-3xl font-black tracking-[0.5em] rounded-xl border-2 border-gray-200 focus:border-[#1e3a8a] focus:outline-none transition-all"
+                        placeholder="000000" 
+                        className="w-full h-16 text-center text-3xl font-black tracking-[0.3em] rounded-xl border-2 border-gray-200 focus:border-[#1e3a8a] focus:outline-none transition-all"
                         value={otpCode}
-                        onChange={(e) => setOtpCode(e.target.value)}
-                        maxLength={4}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                        maxLength={6}
                         autoFocus
                     />
                     
-                    <Button type="submit" disabled={isLoading} className="w-full h-14 bg-[#1e3a8a] text-white font-bold rounded-xl text-lg">
+                    <Button type="submit" disabled={isLoading || otpCode.length !== 6} className="w-full h-14 bg-[#1e3a8a] text-white font-bold rounded-xl text-lg disabled:opacity-50">
                         {isLoading ? <Loader2 className="animate-spin"/> : 'Подтвердить'}
                     </Button>
                 </form>
+
+                <button
+                    onClick={handleResendOTP}
+                    disabled={resendCooldown > 0}
+                    className="mt-4 text-sm font-bold text-[#1e3a8a] hover:underline disabled:text-gray-400 disabled:no-underline flex items-center gap-2 mx-auto"
+                >
+                    <RefreshCw size={14} />
+                    {resendCooldown > 0 ? `Повторно через ${resendCooldown}с` : 'Отправить код повторно'}
+                </button>
             </div>
         </div>
       )
@@ -218,7 +242,8 @@ export default function RegisterPage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-gray-500 ml-1 uppercase">Пароль</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900" />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900" />
+              <p className="text-[10px] text-gray-400 ml-1">Минимум 8 символов</p>
             </div>
 
             <Button type="submit" disabled={isLoading} className="w-full h-12 bg-[#1e3a8a] hover:bg-[#2a4ec2] text-white font-bold text-base rounded-xl mt-4 shadow-lg shadow-[#1e3a8a]/20 disabled:opacity-70">

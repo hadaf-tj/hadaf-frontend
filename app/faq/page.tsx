@@ -42,7 +42,7 @@ export default function FAQPage() {
       <div className="min-h-screen bg-[#f8fafc] pb-20 font-sans">
         
         {/* Header */}
-        <div className="bg-[#1e3a8a] pt-32 pb-16 rounded-b-[3rem] text-center relative overflow-hidden">
+        <div className="bg-[#1e3a8a] pt-24 pb-16 rounded-b-[3rem] text-center relative overflow-hidden">
            <div className="container mx-auto px-6 relative z-10">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-full mb-6 backdrop-blur-md text-[#ffca63]">
                  <HelpCircle size={32} />

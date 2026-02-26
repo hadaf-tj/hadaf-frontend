@@ -9,7 +9,7 @@ export default function ReportsPage() {
          <div className="min-h-screen bg-[#f8fafc] font-sans">
 
             {/* HERO HEADER */}
-            <div className="bg-[#1e3a8a] pb-24 pt-32 relative overflow-hidden rounded-b-[3rem]">
+            <div className="bg-[#1e3a8a] pb-24 pt-24 relative overflow-hidden rounded-b-[3rem]">
                <div className="absolute inset-0 pointer-events-none opacity-10">
                   <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat mix-blend-overlay"></div>
                </div>

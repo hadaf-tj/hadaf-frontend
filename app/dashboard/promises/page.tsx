@@ -1,126 +1,206 @@
 /* FILE: app/dashboard/promises/page.tsx */
-import { 
-  MapPin, 
-  Phone, 
-  Calendar, 
-  CheckCircle2, 
-  Clock, 
-} from 'lucide-react';
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { HeartHandshake, Loader2, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge'; // Предполагаем, что Badge у нас есть, или используем span с классами
+import { fetchMyBookings, cancelMyBooking, updateMyBooking } from '@/lib/api';
+
+interface Booking {
+  id: number;
+  need_name: string;
+  institution_name: string;
+  institution_id: number;
+  quantity: number;
+  status: string;
+  note?: string;
+  planned_date?: string;
+}
 
 export default function PromisesPage() {
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editQty, setEditQty] = useState<number>(0);
+  const [isProcessing, setIsProcessing] = useState<number | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchMyBookings();
+        setBookings((data as unknown as Booking[]) || []);
+      } catch (err) {
+        console.error(err);
+        // API may not exist yet — show empty state gracefully
+        setBookings([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const handleCancel = async (id: number) => {
+    if (!confirm('Вы уверены, что хотите отменить это обещание?')) return;
+    try {
+      setIsProcessing(id);
+      await cancelMyBooking(id);
+      setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'cancelled' } : b));
+    } catch (err: any) {
+      alert(err.message || 'Ошибка отмены');
+    } finally {
+      setIsProcessing(null);
+    }
+  };
+
+  const handleSaveEdit = async (id: number) => {
+    if (editQty <= 0) {
+      alert('Количество должно быть больше 0');
+      return;
+    }
+    try {
+      setIsProcessing(id);
+      await updateMyBooking(id, editQty);
+      setBookings(prev => prev.map(b => b.id === id ? { ...b, quantity: editQty } : b));
+      setEditingId(null);
+    } catch (err: any) {
+      alert(err.message || 'Ошибка сохранения');
+    } finally {
+      setIsProcessing(null);
+    }
+  };
+
   return (
-    <div className="max-w-4xl space-y-8">
-      
+    <div className="space-y-5 sm:space-y-6">
+
       <div>
-        <h1 className="text-3xl font-black text-[#1e3a8a]">Мои обещания</h1>
-        <p className="text-gray-500 font-medium">
+        <h1 className="text-2xl sm:text-3xl font-black text-[#1e3a8a]">Мои обещания</h1>
+        <p className="text-gray-500 font-medium text-sm sm:text-base">
           Список вещей, которые вы планируете передать учреждениям.
         </p>
       </div>
 
-      {/* Список карточек */}
-      <div className="space-y-4">
-        
-        {/* КАРТОЧКА 1: Активная (Срочная) */}
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-l-4 border-l-orange-400 border-gray-100 flex flex-col md:flex-row gap-6">
-           <div className="flex-1 space-y-3">
-              <div className="flex items-center gap-3">
-                 <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-200">В процессе</Badge>
-                 <span className="flex items-center text-xs font-bold text-orange-500 uppercase tracking-wide">
-                    <Clock size={14} className="mr-1" />
-                    Ждут до 15 января
-                 </span>
-              </div>
-              
-              <h3 className="text-xl font-black text-gray-900">
-                 Зимняя обувь (5 пар)
-              </h3>
-              
-              <div className="flex items-start gap-3 text-gray-600">
-                 <MapPin className="shrink-0 mt-0.5" size={18} />
-                 <div>
-                    <span className="font-bold block text-gray-900">Дом-интернат "Навруз"</span>
-                    <span className="text-sm">г. Душанбе, ул. Сомони 45</span>
-                 </div>
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-50 p-2 rounded-lg w-fit">
-                 <Phone size={14} />
-                 Контакт: +992 900 12 34 56 (Директор: Мадина)
-              </div>
-           </div>
-
-           <div className="flex flex-col gap-2 justify-center border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6 min-w-[180px]">
-              <Button className="w-full bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-bold">
-                 <CheckCircle2 size={18} className="mr-2" />
-                 Я отвез
-              </Button>
-              <Button variant="outline" className="w-full border-red-100 text-red-500 hover:bg-red-50 hover:text-red-600 font-bold border-2 bg-transparent">
-                 Отменить
-              </Button>
-           </div>
+      {/* Loading */}
+      {isLoading && (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 size={40} className="animate-spin text-[#1e3a8a]" />
         </div>
+      )}
 
-        {/* КАРТОЧКА 2: Обычная */}
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6">
-           <div className="flex-1 space-y-3">
-              <div className="flex items-center gap-3">
-                 <Badge className="bg-blue-100 text-[#1e3a8a] hover:bg-blue-200">Запланировано</Badge>
-                 <span className="flex items-center text-xs font-bold text-gray-400 uppercase tracking-wide">
-                    <Calendar size={14} className="mr-1" />
-                    До 20 января
-                 </span>
-              </div>
-              
-              <h3 className="text-xl font-black text-gray-900">
-                 Медикаменты (Список №4)
-              </h3>
-              
-              <div className="flex items-start gap-3 text-gray-600">
-                 <MapPin className="shrink-0 mt-0.5" size={18} />
-                 <div>
-                    <span className="font-bold block text-gray-900">Дом престарелых "Отрада"</span>
-                    <span className="text-sm">г. Худжанд</span>
-                 </div>
-              </div>
-           </div>
-
-           <div className="flex flex-col gap-2 justify-center border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6 min-w-[180px]">
-              <Button className="w-full bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-bold">
-                 <CheckCircle2 size={18} className="mr-2" />
-                 Я отвез
-              </Button>
-              <Button variant="outline" className="w-full border-gray-200 text-gray-500 hover:bg-gray-50 font-bold border-2 bg-transparent">
-                 Подробнее
-              </Button>
-           </div>
+      {/* Error */}
+      {!isLoading && error && (
+        <div className="text-center py-16">
+          <p className="text-red-500 font-bold mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()}>Попробовать снова</Button>
         </div>
+      )}
 
-        {/* КАРТОЧКА 3: Завершенная (Для истории) */}
-        <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100 flex flex-col md:flex-row gap-6 opacity-75 grayscale hover:grayscale-0 transition-all">
-           <div className="flex-1 space-y-3">
-              <div className="flex items-center gap-3">
-                 <Badge className="bg-green-100 text-green-700">Выполнено</Badge>
-                 <span className="text-xs font-bold text-gray-400">12 дек 2024</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-700 line-through">
-                 Мешок муки (50кг)
-              </h3>
-              <div className="text-sm text-gray-500">
-                 Центр "Умед"
-              </div>
-           </div>
-           <div className="flex items-center justify-center min-w-[180px]">
-              <div className="text-green-600 font-bold flex items-center gap-2">
-                 <CheckCircle2 size={24} />
-                 Спасибо!
-              </div>
-           </div>
+      {/* Empty State */}
+      {!isLoading && !error && bookings.length === 0 && (
+        <div className="text-center py-14 sm:py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
+          <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <HeartHandshake size={40} className="text-[#1e3a8a]" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">У вас пока нет обещаний</h3>
+          <p className="text-gray-500 mb-6 max-w-md mx-auto">
+            Перейдите к списку учреждений, чтобы найти тех, кому нужна помощь, и начните помогать.
+          </p>
+          <Link href="/institutions">
+            <Button className="bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-bold px-8">
+              <ExternalLink size={16} className="mr-2" />
+              Найти учреждения
+            </Button>
+          </Link>
         </div>
+      )}
 
-      </div>
+      {/* Bookings List */}
+      {!isLoading && bookings.length > 0 && (
+        <div className="space-y-4">
+          {bookings.map((b) => (
+            <div key={b.id} className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">{b.need_name || 'Неизвестная нужда'}</h3>
+                  <div className="text-sm text-gray-500 font-medium mt-1 flex items-center gap-1">
+                    {b.institution_name ? (
+                      <Link href={`/institutions/${b.institution_id}`} className="hover:text-[#1e3a8a] hover:underline transition-colors">
+                        {b.institution_name}
+                      </Link>
+                    ) : (
+                      'Учреждение'
+                    )}
+                    <span>· {b.quantity} шт.</span>
+                  </div>
+                  {(b.planned_date || b.note) && (
+                    <p className="text-xs text-gray-400 mt-1">Плановая дата: {b.planned_date || b.note}</p>
+                  )}
+                </div>
+                <span className={`text-xs font-bold px-3 py-1 rounded-full shrink-0 ${
+                  b.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
+                  b.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                  b.status === 'rejected' ? 'bg-orange-100 text-orange-700' :
+                  'bg-blue-100 text-[#1e3a8a]'
+                }`}>
+                  {b.status === 'completed' ? 'Выполнено' :
+                   b.status === 'cancelled' ? 'Отменено' :
+                   b.status === 'rejected' ? 'Отклонено' : 'Активно'}
+                </span>
+              </div>
+
+              {/* Действия для активных (pending) бронирований */}
+              {editingId === b.id ? (
+                <div className="mt-4 flex items-center gap-3 bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-100">
+                  <div className="flex-1">
+                    <label className="text-xs text-gray-500 font-bold mb-1 block uppercase tracking-wider">Новое количество</label>
+                    <input 
+                      type="number" 
+                      min="1"
+                      className="w-full border-gray-200 rounded-lg text-sm bg-white"
+                      value={editQty}
+                      onChange={(e) => setEditQty(Number(e.target.value))}
+                      disabled={isProcessing === b.id}
+                    />
+                  </div>
+                  <div className="flex gap-2 items-end pt-5">
+                    <Button size="sm" onClick={() => handleSaveEdit(b.id)} disabled={isProcessing === b.id} className="bg-[#1e3a8a]">
+                      {isProcessing === b.id ? <Loader2 className="animate-spin w-4 h-4" /> : 'Сохранить'}
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => setEditingId(null)} disabled={isProcessing === b.id}>Отмена</Button>
+                  </div>
+                </div>
+              ) : (
+                b.status === 'pending' && (
+                  <div className="mt-5 flex gap-3 pt-4 border-t border-gray-100">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => { setEditingId(b.id); setEditQty(b.quantity); }}
+                      disabled={isProcessing === b.id}
+                      className="text-[#1e3a8a] border-[#1e3a8a]/20 hover:bg-[#1e3a8a]/5"
+                    >
+                      Изменить
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => handleCancel(b.id)}
+                      disabled={isProcessing === b.id}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      {isProcessing === b.id && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
+                      Отменить
+                    </Button>
+                  </div>
+                )
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
     </div>
   );
 }
