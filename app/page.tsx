@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { Institution } from '@/types/project';
 import InstitutionCard from '@/components/specific/InstitutionCard';
-import { ArrowRight, ArrowLeft, Users, Baby, Sparkles, Loader2, HelpCircle, Plus, Minus, ChevronLeft, ChevronRight, Search, ClipboardList, HeartHandshake, MessageCircleQuestion, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Users, Baby, Sparkles, Loader2, HelpCircle, Plus, Minus, ChevronLeft, ChevronRight, ChevronDown, Search, ClipboardList, HeartHandshake, MessageCircleQuestion, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -727,63 +727,63 @@ const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Horizontal FAQ Photo Cards */}
-            <div className="w-full relative">
-              <HorizontalScroller>
-                {/* Visual Spacer for left alignment */}
-                <div className="flex-shrink-0 w-5 sm:w-6 md:w-12 xl:w-28 2xl:w-[calc(50vw-720px+112px)] border-r border-transparent"></div>
-                
-                {FAQ_ITEMS.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex-shrink-0 w-[300px] sm:w-[340px] md:w-[380px] mr-2 sm:mr-4 group"
-                  >
-                    <div className="relative w-full h-full bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#1e3a8a]/20 transition-all duration-500 flex flex-col group-hover:-translate-y-1">
-                      
-                      {/* Icon Header */}
-                      <div className="relative h-[180px] sm:h-[220px] w-full shrink-0 overflow-hidden bg-[#1e3a8a] border-b border-gray-100 flex items-center justify-center">
-                        {idx % 2 === 0 ? (
-                          <MessageCircleQuestion className="w-24 h-24 sm:w-32 sm:h-32 text-[#ffca63] group-hover:scale-110 transition-all duration-700" strokeWidth={1} />
-                        ) : (
-                          <ShieldCheck className="w-24 h-24 sm:w-32 sm:h-32 text-[#ffca63] group-hover:scale-110 transition-all duration-700" strokeWidth={1} />
-                        )}
-                        
-                        {/* Question Mark Badge */}
-                        <div className="absolute top-4 left-4 sm:top-5 sm:left-5 bg-[#ffca63] text-[#1e3a8a] rounded-full w-10 h-10 flex items-center justify-center font-black text-xl shadow-md">
-                          ?
-                        </div>
-                        
-                        {/* Question Text Overlay */}
-                        <div className="absolute bottom-5 left-5 right-5">
-                          <h3 className="text-white text-lg sm:text-xl md:text-2xl font-black leading-tight drop-shadow-md">
+            {/* Vertical FAQ Accordion */}
+            <div className="container mx-auto max-w-4xl px-5 sm:px-6 mt-8">
+              <div className="flex flex-col gap-4">
+                {FAQ_ITEMS.map((item, idx) => {
+                  const isOpen = openFaq === idx;
+                  return (
+                    <div 
+                      key={idx} 
+                      className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
+                        isOpen 
+                          ? 'bg-white shadow-lg shadow-[#1e3a8a]/5 border-[#1e3a8a]/20' 
+                          : 'bg-white/60 border-gray-200 hover:bg-white hover:border-[#1e3a8a]/30'
+                      }`}
+                    >
+                      <button
+                        onClick={() => setOpenFaq(isOpen ? null : idx)}
+                        className="w-full text-left p-5 sm:p-6 md:p-8 flex items-center justify-between gap-6"
+                      >
+                        <span className="flex items-start sm:items-center gap-4">
+                          <span className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#1e3a8a]/5 text-[#1e3a8a] flex items-center justify-center font-black text-lg sm:text-xl">
+                            ?
+                          </span>
+                          <span className="font-bold text-lg sm:text-xl text-[#1e3a8a] mt-0.5 sm:mt-0 leading-tight">
                             {item.q}
-                          </h3>
-                        </div>
-                      </div>
+                          </span>
+                        </span>
+                        <ChevronDown 
+                          size={24} 
+                          className={`flex-shrink-0 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#1e3a8a]' : ''}`} 
+                        />
+                      </button>
                       
-                      {/* Description Body */}
-                      <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between bg-white relative">
-                        <p className="text-gray-600 leading-relaxed text-sm sm:text-base mb-6">
-                          {item.a}
-                        </p>
-                        <Link href="/faq" className="mt-auto opacity-0 group-hover:opacity-100 flex items-center text-[#1e3a8a] font-bold text-sm transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                          Читать подробнее <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                        </Link>
+                      <div 
+                        className={`grid transition-all duration-300 ease-in-out ${
+                          isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                        }`}
+                      >
+                        <div className="overflow-hidden">
+                          <div className="px-5 sm:px-6 md:px-8 pb-5 sm:pb-6 md:pb-8 pt-0 flex">
+                            {/* Visual indent aligning with text */}
+                            <div className="w-8 sm:w-10 mr-4 flex-shrink-0 hidden sm:block"></div>
+                            <p className="text-gray-600 leading-relaxed text-sm sm:text-base border-t border-gray-100 pt-5 w-full">
+                              {item.a}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-                
-                {/* Visual Spacer for right padding in scroller */}
-                <div className="flex-shrink-0 w-4 sm:w-8 border-r border-transparent"></div>
-              </HorizontalScroller>
-            </div>
+                  );
+                })}
+              </div>
 
-            {/* Mobile FAQ link */}
-            <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28 mt-6 sm:hidden">
-              <Link href="/faq" className="flex items-center justify-center gap-2 text-[#1e3a8a] font-bold">
-                Все вопросы <ArrowRight size={18} />
-              </Link>
+              <div className="mt-8 text-center sm:hidden">
+                <Link href="/faq" className="inline-flex items-center justify-center gap-2 text-[#1e3a8a] font-bold">
+                  Все вопросы <ArrowRight size={18} />
+                </Link>
+              </div>
             </div>
           </div>
         </section>
