@@ -129,15 +129,15 @@ const Footer: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap justify-center gap-3 sm:gap-6 text-xs sm:text-sm">
-              <Link href="/docs" className="text-white/60 hover:text-white transition-colors font-medium">
+              <Link href="/privacy" className="text-white/60 hover:text-white transition-colors font-medium">
                 Политика конфиденциальности
               </Link>
               <span className="text-white/20">•</span>
-              <Link href="/docs" className="text-white/60 hover:text-white transition-colors font-medium">
+              <Link href="/terms" className="text-white/60 hover:text-white transition-colors font-medium">
                 Публичная оферта
               </Link>
               <span className="text-white/20">•</span>
-              <Link href="/docs" className="text-white/60 hover:text-white transition-colors font-medium">
+              <Link href="/documents" className="text-white/60 hover:text-white transition-colors font-medium">
                 Документы
               </Link>
             </div>

@@ -3,6 +3,7 @@ import '../styles/globals.css';
 import { Montserrat } from 'next/font/google';
 import SplashScreen from '@/components/ui/SplashScreen';
 import Providers from '@/components/Providers';
+import CookieBanner from '@/components/ui/CookieBanner';
 
 const montserrat = Montserrat({
   subsets: ['latin', 'cyrillic'],
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <SplashScreen />
           {children}
+          <CookieBanner />
         </Providers>
       </body>
     </html>

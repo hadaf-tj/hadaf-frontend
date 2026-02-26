@@ -116,11 +116,14 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
 
             <div className="flex flex-col -space-y-1">
               <span className={cn(
-                "font-black tracking-tight transition-all duration-300",
+                "font-black tracking-tight transition-all duration-300 flex items-center gap-2",
                 isScrolled ? "text-xl md:text-2xl" : "text-2xl md:text-3xl",
                 logoTextColorClass
               )}>
                 Ҳадаф
+                <span className="text-[10px] md:text-xs font-bold px-1.5 py-0.5 rounded bg-[#ffca63] text-[#1e3a8a] tracking-wider uppercase shadow-sm">
+                  Beta
+                </span>
               </span>
             </div>
           </div>
