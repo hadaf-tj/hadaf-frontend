@@ -6,14 +6,23 @@ function normalizeOrigin(origin: string) {
   return origin.replace(/\/$/, "");
 }
 
+// Список разрешённых хостов. Добавь сюда свой домен на VPS.
+const ALLOWED_HOSTS = new Set([
+  "hadaf.tj",
+  "www.hadaf.tj",
+  "localhost:3000",
+]);
+
 export async function getSiteUrl(): Promise<string> {
   const fromEnv = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL;
   if (fromEnv) return normalizeOrigin(fromEnv);
 
   const h = await headers();
-  const proto = h.get("x-forwarded-proto") || "https";
   const host = h.get("x-forwarded-host") || h.get("host");
-  if (host) return `${proto}://${host}`;
+  if (host && ALLOWED_HOSTS.has(host)) {
+    const proto = h.get("x-forwarded-proto") || "https";
+    return `${proto}://${host}`;
+  }
 
   return "http://localhost:3000";
 }

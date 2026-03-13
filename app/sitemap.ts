@@ -39,9 +39,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const json = (await res.json()) as ApiResponse<Array<{ id: number }>>;
       const institutions = Array.isArray(json?.data) ? json.data : [];
       for (const inst of institutions) {
-        if (inst?.id == null) continue;
+        const rawId = inst?.id;
+        if (
+          typeof rawId !== "number" ||
+          !Number.isFinite(rawId) ||
+          rawId <= 0
+        )
+          continue;
         staticRoutes.push({
-          url: `${baseUrl}/institutions/${inst.id}`,
+          url: `${baseUrl}/institutions/${rawId}`,
           lastModified,
         });
       }
