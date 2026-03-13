@@ -9,6 +9,7 @@ interface AuthUser {
   email: string;
   role: string;
   institution_id?: number;
+  is_approved?: boolean;
 }
 
 interface AuthContextType {

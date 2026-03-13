@@ -13,8 +13,8 @@ export default function RegisterPage() {
   const router = useRouter();
   const { refreshUser } = useAuth();
   
-  // Steps: 'form' | 'otp'
-  const [step, setStep] = useState<'form' | 'otp'>('form');
+  // Steps: 'form' | 'otp' | 'pendingApproval'
+  const [step, setStep] = useState<'form' | 'otp' | 'pendingApproval'>('form');
   
   // Данные формы
   const [role, setRole] = useState<'volunteer' | 'employee'>('volunteer');
@@ -85,7 +85,12 @@ export default function RegisterPage() {
           router.push('/dashboard');
       } catch(err: unknown) {
           const message = err instanceof Error ? err.message : 'Неверный код';
-          setError(message);
+          
+          if (message === 'Ваш аккаунт ожидает подтверждения администратором') {
+              setStep('pendingApproval');
+          } else {
+              setError(message);
+          }
       } finally {
           setIsLoading(false);
       }
@@ -155,6 +160,34 @@ export default function RegisterPage() {
                     <RefreshCw size={14} />
                     {resendCooldown > 0 ? `Повторно через ${resendCooldown}с` : 'Отправить код повторно'}
                 </button>
+            </div>
+        </div>
+      )
+  }
+
+  // --- РЕНДЕР: ШАГ 3 (ОЖИДАНИЕ АПРУВА ОТ АДМИНА) ---
+  if (step === 'pendingApproval') {
+      return (
+        <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 font-sans">
+            <div className="w-full max-w-[420px] bg-white rounded-[2rem] shadow-xl p-10 text-center border-t-4 border-amber-400">
+                <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+                </div>
+                <h2 className="text-2xl font-black text-gray-900 mb-2">Аккаунт проверяется</h2>
+                <p className="text-gray-500 mb-8 mt-2 text-sm leading-relaxed">
+                    Регистрация прошла успешно, и ваш email <b>{email}</b> подтвержден.
+                    <br/><br/>
+                    Из соображений безопасности профили учреждений проходят ручную модерацию. 
+                    Ожидайте подтверждения от супер-администратора, после чего вы сможете войти в систему.
+                </p>
+
+                <div className="space-y-4">
+                  <Link href="/">
+                      <Button className="w-full h-14 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl text-lg">
+                          Вернуться на главную
+                      </Button>
+                  </Link>
+                </div>
             </div>
         </div>
       )

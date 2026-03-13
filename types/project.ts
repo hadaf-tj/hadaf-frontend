@@ -34,4 +34,5 @@ export type User = {
   email: string;
   role: 'employee' | 'super_admin' | 'volunteer';
   institutionId?: string; // Привязка к учреждению, если не SuperAdmin
+  is_approved?: boolean;
 };
