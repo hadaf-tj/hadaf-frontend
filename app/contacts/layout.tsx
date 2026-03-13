@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Контакты — Ҳадаф",
+  title: "Контакты",
   description:
     "Контакты команды проекта и способы связи по вопросам сотрудничества и поддержки.",
   alternates: { canonical: "/contacts" },

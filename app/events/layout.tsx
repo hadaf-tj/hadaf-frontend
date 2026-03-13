@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "События — Ҳадаф",
+  title: "События",
   description:
     "События и активности волонтёров: присоединяйтесь и помогайте вместе.",
   alternates: { canonical: "/events" },
