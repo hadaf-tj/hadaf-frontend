@@ -19,9 +19,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
-  // Добавляем стейт для экрана ожидания модерации
-  const [showPendingApproval, setShowPendingApproval] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,12 +37,7 @@ export default function LoginPage() {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Ошибка входа. Проверьте данные.';
       console.error(err);
-      
-      if (message === 'Ваш аккаунт ожидает подтверждения администратором') {
-          setShowPendingApproval(true);
-      } else {
-          setError(message);
-      }
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -64,38 +56,15 @@ export default function LoginPage() {
       </Link>
 
       {/* Логотип и заголовок */}
-      {!showPendingApproval && (
-         <div className="mb-8 flex flex-col items-center">
-           <div className="w-12 h-12 bg-[#1e3a8a] rounded-xl flex items-center justify-center text-white mb-3 shadow-lg shadow-blue-900/20">
-             <HeartHandshake size={28} />
-           </div>
-           <h1 className="text-2xl font-black text-gray-900">С возвращением в Hadaf</h1>
-         </div>
-      )}
+      <div className="mb-8 flex flex-col items-center">
+        <div className="w-12 h-12 bg-[#1e3a8a] rounded-xl flex items-center justify-center text-white mb-3 shadow-lg shadow-blue-900/20">
+          <HeartHandshake size={28} />
+        </div>
+        <h1 className="text-2xl font-black text-gray-900">С возвращением в Hadaf</h1>
+      </div>
 
-      {showPendingApproval ? (
-         <div className="w-full max-w-[420px] bg-white rounded-[2rem] shadow-xl p-10 text-center border-t-4 border-amber-400">
-             <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
-             </div>
-             <h2 className="text-2xl font-black text-gray-900 mb-2">Доступ ограничен</h2>
-             <p className="text-gray-500 mb-8 mt-2 text-sm leading-relaxed">
-                 Ваш аккаунт ожидает проверки администратором. Из соображений безопасности вы не можете войти в систему до одобрения вашей заявки.
-             </p>
-
-             <div className="space-y-4">
-               <Button onClick={() => setShowPendingApproval(false)} className="w-full h-14 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl text-lg">
-                   Назад ко входу
-               </Button>
-             </div>
-         </div>
-      ) : (
-        <div className="w-full max-w-[420px] bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-8 md:p-10 border border-gray-100">
-
-          {/* Форма входа */}
+      <div className="w-full max-w-[420px] bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-8 md:p-10 border border-gray-100">
         <form onSubmit={handleLogin} className="space-y-4">
-
-          {/* Блок ошибки */}
           {error && (
             <div className="p-3 bg-red-50 text-red-600 text-sm font-bold rounded-xl text-center border border-red-100 animate-in fade-in slide-in-from-top-2">
               {error}
@@ -137,7 +106,6 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        {/* Разделитель */}
         <div className="mt-6">
           <div className="relative flex items-center justify-center mb-6">
             <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-gray-100"></span></div>
@@ -145,7 +113,6 @@ export default function LoginPage() {
           </div>
 
           <button type="button" disabled className="w-full h-12 bg-white border border-gray-200 text-gray-400 font-bold rounded-xl flex items-center justify-center gap-3 cursor-not-allowed opacity-60">
-            {/* Google Icon SVG */}
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
@@ -161,9 +128,7 @@ export default function LoginPage() {
             Нет аккаунта? <Link href="/register" className="text-[#1e3a8a] font-black hover:underline">Зарегистрироваться</Link>
           </p>
         </div>
-
       </div>
-      )}
     </div>
   );
 }
