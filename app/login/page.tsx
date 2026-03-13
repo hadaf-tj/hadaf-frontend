@@ -1,19 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { ArrowLeft, HeartHandshake, Loader2 } from 'lucide-react';
+import { ArrowLeft, HeartHandshake, Loader2, Clock } from 'lucide-react';
 import { login } from '@/lib/api';
 import { useAuth } from '@/lib/AuthContext';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const { refreshUser } = useAuth();
-
-
-  // Состояния
+  const searchParams = useSearchParams();
+  const isPending = searchParams.get('pending') === 'true';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,13 +25,8 @@ export default function LoginPage() {
     setError('');
 
     try {
-      // 1. Запрос к API (backend sets httpOnly cookies)
       await login(email, password);
-
-      // 2. Обновляем глобальное состояние авторизации
       await refreshUser();
-
-      // 3. Редирект
       router.push('/dashboard');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Ошибка входа. Проверьте данные.';
@@ -64,6 +58,21 @@ export default function LoginPage() {
       </div>
 
       <div className="w-full max-w-[420px] bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-8 md:p-10 border border-gray-100">
+
+        {/* Баннер ожидания одобрения (показывается только для employee после регистрации) */}
+        {isPending && (
+          <div className="mb-5 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+            <Clock className="text-amber-500 mt-0.5 shrink-0" size={20} />
+            <div>
+              <p className="text-amber-800 font-bold text-sm">Аккаунт на рассмотрении</p>
+              <p className="text-amber-700 text-xs mt-0.5">
+                Ваш аккаунт сотрудника ожидает подтверждения администратором. 
+                Как только вы получите доступ — войдите здесь.
+              </p>
+            </div>
+          </div>
+        )}
+
         <form onSubmit={handleLogin} className="space-y-4">
           {error && (
             <div className="p-3 bg-red-50 text-red-600 text-sm font-bold rounded-xl text-center border border-red-100 animate-in fade-in slide-in-from-top-2">
@@ -130,5 +139,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }
