@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Отчёты — Ҳадаф",
+  title: "Отчёты",
   description: "Отчётные материалы проекта и результаты адресной помощи.",
   alternates: { canonical: "/reports" },
 };

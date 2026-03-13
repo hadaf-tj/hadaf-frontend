@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Карта — Ҳадаф",
+  title: "Карта",
   description:
     "Карта социальных учреждений: найдите ближайшие и помогите адресно.",
   alternates: { canonical: "/map" },
