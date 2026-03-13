@@ -1,21 +1,59 @@
 /* FILE: app/layout.tsx */
-import '../styles/globals.css';
-import { Montserrat } from 'next/font/google';
-import SplashScreen from '@/components/ui/SplashScreen';
-import Providers from '@/components/Providers';
-import CookieBanner from '@/components/ui/CookieBanner';
+import "../styles/globals.css";
+import { Montserrat } from "next/font/google";
+import type { Metadata } from "next";
+import SplashScreen from "@/components/ui/SplashScreen";
+import Providers from "@/components/Providers";
+import CookieBanner from "@/components/ui/CookieBanner";
 
 const montserrat = Montserrat({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['400', '600', '700', '800'],
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "600", "700", "800"],
 });
 
 export const metadata = {
-  title: 'Ҳадаф: Адресная Помощь',
-  description: 'Платформа для прозрачной помощи социальным учреждениям Таджикистана.',
-};
+  metadataBase: new URL(
+    (
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      process.env.SITE_URL ||
+      "http://localhost:3000"
+    ).replace(/\/$/, ""),
+  ),
+  title: {
+    default: "Ҳадаф: Адресная помощь",
+    template: "%s — Ҳадаф",
+  },
+  description:
+    "Платформа для прозрачной адресной помощи социальным учреждениям Таджикистана.",
+  alternates: {
+    canonical: "/",
+  },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "Ҳадаф: Адресная помощь",
+    description:
+      "Платформа для прозрачной адресной помощи социальным учреждениям Таджикистана.",
+    type: "website",
+    locale: "ru_RU",
+    images: [{ url: "/hero.webp" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ҳадаф: Адресная помощь",
+    description:
+      "Платформа для прозрачной адресной помощи социальным учреждениям Таджикистана.",
+    images: ["/hero.webp"],
+  },
+} satisfies Metadata;
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="ru" suppressHydrationWarning>
       <body className={montserrat.className}>
