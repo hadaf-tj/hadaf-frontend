@@ -1,19 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { ArrowLeft, HeartHandshake, Loader2 } from 'lucide-react';
+import { ArrowLeft, HeartHandshake, Loader2, Clock } from 'lucide-react';
 import { login } from '@/lib/api';
 import { useAuth } from '@/lib/AuthContext';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const { refreshUser } = useAuth();
-
-
-  // Состояния
+  const searchParams = useSearchParams();
+  const isPending = searchParams.get('pending') === 'true';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,13 +25,8 @@ export default function LoginPage() {
     setError('');
 
     try {
-      // 1. Запрос к API (backend sets httpOnly cookies)
       await login(email, password);
-
-      // 2. Обновляем глобальное состояние авторизации
       await refreshUser();
-
-      // 3. Редирект
       router.push('/dashboard');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Ошибка входа. Проверьте данные.';
@@ -65,12 +59,21 @@ export default function LoginPage() {
 
       <div className="w-full max-w-[420px] bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-8 md:p-10 border border-gray-100">
 
+        {/* Баннер ожидания одобрения (показывается только для employee после регистрации) */}
+        {isPending && (
+          <div className="mb-5 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+            <Clock className="text-amber-500 mt-0.5 shrink-0" size={20} />
+            <div>
+              <p className="text-amber-800 font-bold text-sm">Аккаунт на рассмотрении</p>
+              <p className="text-amber-700 text-xs mt-0.5">
+                Ваш аккаунт сотрудника ожидает подтверждения администратором. 
+                Как только вы получите доступ — войдите здесь.
+              </p>
+            </div>
+          </div>
+        )}
 
-
-        {/* Форма входа */}
         <form onSubmit={handleLogin} className="space-y-4">
-
-          {/* Блок ошибки */}
           {error && (
             <div className="p-3 bg-red-50 text-red-600 text-sm font-bold rounded-xl text-center border border-red-100 animate-in fade-in slide-in-from-top-2">
               {error}
@@ -112,7 +115,6 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        {/* Разделитель */}
         <div className="mt-6">
           <div className="relative flex items-center justify-center mb-6">
             <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-gray-100"></span></div>
@@ -120,7 +122,6 @@ export default function LoginPage() {
           </div>
 
           <button type="button" disabled className="w-full h-12 bg-white border border-gray-200 text-gray-400 font-bold rounded-xl flex items-center justify-center gap-3 cursor-not-allowed opacity-60">
-            {/* Google Icon SVG */}
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
@@ -136,8 +137,15 @@ export default function LoginPage() {
             Нет аккаунта? <Link href="/register" className="text-[#1e3a8a] font-black hover:underline">Зарегистрироваться</Link>
           </p>
         </div>
-
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

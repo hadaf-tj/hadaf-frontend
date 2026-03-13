@@ -45,6 +45,47 @@ interface TokenResponse {
 
 // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
 
+export async function refreshTokens(): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/refresh`, {
+    method: "POST",
+    credentials: "include",
+  });
+  if (!res.ok) {
+    throw new Error("Session expired");
+  }
+}
+
+async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
+  const headers = {
+    ...options.headers,
+    "Content-Type": "application/json",
+  };
+
+  let res = await fetch(url, {
+    ...options,
+    headers,
+    credentials: "include",
+  });
+
+  // If unauthorized, try to refresh once
+  if (res.status === 401 && !url.includes("/login") && !url.includes("/refresh")) {
+    try {
+      await refreshTokens();
+      // Retry request
+      res = await fetch(url, {
+        ...options,
+        headers,
+        credentials: "include",
+      });
+    } catch {
+      // Refresh failed, user needs to login again
+      return res;
+    }
+  }
+
+  return res;
+}
+
 const getAuthHeaders = () => {
   return {
     "Content-Type": "application/json",
@@ -76,7 +117,7 @@ const mapNeed = (item: BackendNeed): Need => ({
   requiredQuantity: item.required_qty,
   receivedQuantity: item.received_qty,
   bookedQuantity: item.booked_qty || 0,
-  urgency: item.urgency || 'medium',
+  urgency: item.urgency || "medium",
 });
 
 // --- API МЕТОДЫ ---
@@ -85,7 +126,7 @@ const mapNeed = (item: BackendNeed): Need => ({
 export async function login(
   email: string,
   password: string
-): Promise<TokenResponse> {
+): Promise<void> {
   const res = await fetch(`${API_BASE_URL}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -97,9 +138,7 @@ export async function login(
     const errorData = await res.json();
     throw new Error(errorData.message || "Login error");
   }
-
-  const json: ApiResponse<TokenResponse> = await res.json();
-  return json.data;
+  // Tokens are set as cookies by backend
 }
 
 // 2. Регистрация (НОВОЕ)
@@ -111,19 +150,17 @@ export async function register(
   role: "volunteer" | "employee",
   institutionId: number | null // null для волонтеров
 ): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({
-      email,
-      phone,
-      password,
-      full_name: fullName,
-      role: role,
-      institution_id: institutionId, // Может быть null
-    }),
-  });
+  const res = await fetchWithAuth(`${API_BASE_URL}/register`, {
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        phone,
+        password,
+        full_name: fullName,
+        role: role,
+        institution_id: institutionId,
+      }),
+    });
 
   if (!res.ok) {
     const errorData = await res.json();
@@ -137,10 +174,8 @@ export async function confirmOTP(
   receiver: string,
   otp: string
 ): Promise<TokenResponse> {
-  const res = await fetch(`${API_BASE_URL}/confirm_otp`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/confirm_otp`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
     body: JSON.stringify({ receiver, otp }),
   });
 
@@ -252,10 +287,8 @@ export async function fetchInstitutionById(
 
 // 4. Управление нуждами
 export async function createNeed(data: Record<string, unknown>) {
-  const res = await fetch(`${API_BASE_URL}/needs`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/needs`, {
     method: "POST",
-    headers: getAuthHeaders(),
-    credentials: "include",
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Ошибка создания нужды");
@@ -263,10 +296,8 @@ export async function createNeed(data: Record<string, unknown>) {
 }
 
 export async function deleteNeed(id: string) {
-  const res = await fetch(`${API_BASE_URL}/needs/${id}`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/needs/${id}`, {
     method: "DELETE",
-    headers: getAuthHeaders(),
-    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка удаления");
   return res.json();
@@ -279,10 +310,8 @@ export async function getProfile(): Promise<{
   role: string;
   institution_id?: number;
 }> {
-  const res = await fetch(`${API_BASE_URL}/me`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/me`, {
     method: "GET",
-    headers: getAuthHeaders(),
-    credentials: "include",
     cache: "no-store",
   });
 
@@ -318,10 +347,8 @@ export async function updateNeed(id: string, data: Partial<{
   received_qty: number;
   urgency: string;
 }>) {
-  const res = await fetch(`${API_BASE_URL}/needs/${id}`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/needs/${id}`, {
     method: "PUT",
-    headers: getAuthHeaders(),
-    credentials: "include",
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Ошибка обновления нужды");
@@ -334,10 +361,8 @@ export async function createBooking(
   quantity: number,
   note?: string
 ): Promise<{ id: number }> {
-  const res = await fetch(`${API_BASE_URL}/bookings`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/bookings`, {
     method: "POST",
-    headers: getAuthHeaders(),
-    credentials: "include",
     body: JSON.stringify({
       need_id: needId,
       quantity: quantity,
@@ -356,20 +381,15 @@ export async function createBooking(
 
 // 9. Мои бронирования (для волонтера)
 export async function fetchMyBookings(): Promise<Record<string, unknown>[]> {
-  const res = await fetch(`${API_BASE_URL}/bookings/my`, {
-    headers: getAuthHeaders(),
-    credentials: "include",
-  });
+  const res = await fetchWithAuth(`${API_BASE_URL}/bookings/my`);
   if (!res.ok) throw new Error("Ошибка загрузки обещаний");
   const json: ApiResponse<Record<string, unknown>[]> = await res.json();
   return json.data || [];
 }
 
 export async function cancelMyBooking(bookingId: number): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/bookings/my/${bookingId}/cancel`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/bookings/my/${bookingId}/cancel`, {
     method: "PUT",
-    headers: getAuthHeaders(),
-    credentials: "include",
   });
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({ message: "Ошибка отмены" }));
@@ -378,10 +398,8 @@ export async function cancelMyBooking(bookingId: number): Promise<void> {
 }
 
 export async function updateMyBooking(bookingId: number, quantity: number): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/bookings/my/${bookingId}`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/bookings/my/${bookingId}`, {
     method: "PUT",
-    headers: getAuthHeaders(),
-    credentials: "include",
     body: JSON.stringify({ quantity }),
   });
   if (!res.ok) {
@@ -392,38 +410,29 @@ export async function updateMyBooking(bookingId: number, quantity: number): Prom
 
 // 10. Booking management (для менеджера)
 export async function fetchInstitutionBookings(institutionId: number | string): Promise<Record<string, unknown>[]> {
-  const res = await fetch(`${API_BASE_URL}/institutions/${institutionId}/bookings`, {
-    headers: getAuthHeaders(),
-    credentials: "include",
-  });
+  const res = await fetchWithAuth(`${API_BASE_URL}/institutions/${institutionId}/bookings`);
   if (!res.ok) throw new Error("Ошибка загрузки бронирований");
   const json: ApiResponse<Record<string, unknown>[]> = await res.json();
   return json.data || [];
 }
 
 export async function approveBooking(bookingId: number): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/bookings/${bookingId}/approve`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/bookings/${bookingId}/approve`, {
     method: "PUT",
-    headers: getAuthHeaders(),
-    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка подтверждения");
 }
 
 export async function rejectBooking(bookingId: number): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/bookings/${bookingId}/reject`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/bookings/${bookingId}/reject`, {
     method: "PUT",
-    headers: getAuthHeaders(),
-    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка отклонения");
 }
 
 export async function completeBooking(bookingId: number): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/bookings/${bookingId}/complete`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/bookings/${bookingId}/complete`, {
     method: "PUT",
-    headers: getAuthHeaders(),
-    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка завершения");
 }
@@ -438,10 +447,7 @@ export async function fetchStats(): Promise<{ closed_needs: number; people_helpe
 
 // 11. События (Events)
 export async function fetchEvents(): Promise<Record<string, unknown>[]> {
-  const res = await fetch(`${API_BASE_URL}/events`, {
-    headers: getAuthHeaders(),
-    credentials: "include",
-  });
+  const res = await fetchWithAuth(`${API_BASE_URL}/events`);
   if (!res.ok) throw new Error("Ошибка загрузки событий");
   const json: ApiResponse<Record<string, unknown>[]> = await res.json();
   return json.data || [];
@@ -453,10 +459,8 @@ export async function createEvent(data: {
   event_date: string;
   institution_id: number;
 }): Promise<{ id: number }> {
-  const res = await fetch(`${API_BASE_URL}/events`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/events`, {
     method: "POST",
-    headers: getAuthHeaders(),
-    credentials: "include",
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error("Ошибка создания события");
@@ -465,19 +469,15 @@ export async function createEvent(data: {
 }
 
 export async function joinEvent(eventId: number): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/events/${eventId}/join`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/events/${eventId}/join`, {
     method: "POST",
-    headers: getAuthHeaders(),
-    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка записи на событие");
 }
 
 export async function leaveEvent(eventId: number): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/events/${eventId}/leave`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/events/${eventId}/leave`, {
     method: "DELETE",
-    headers: getAuthHeaders(),
-    credentials: "include",
   });
   if (!res.ok) throw new Error("Ошибка отмены записи");
 }

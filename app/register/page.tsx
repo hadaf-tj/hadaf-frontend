@@ -85,6 +85,13 @@ export default function RegisterPage() {
           router.push('/dashboard');
       } catch(err: unknown) {
           const message = err instanceof Error ? err.message : 'Неверный код';
+          
+          // Если сотрудник не одобрен — перенаправляем на логин с объяснением
+          if (message.includes('подтверждения администратором') || message.includes('ожидает')) {
+              router.push('/login?pending=true');
+              return;
+          }
+          
           setError(message);
       } finally {
           setIsLoading(false);
@@ -159,6 +166,8 @@ export default function RegisterPage() {
         </div>
       )
   }
+
+  // --- REGISTER FORM RENDER ---
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 relative font-sans">
