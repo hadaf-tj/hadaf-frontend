@@ -83,6 +83,19 @@ async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Re
     }
   }
 
+  // GLOBAL ERROR HANDLER
+  if (!res.ok) {
+    const clone = res.clone();
+    clone.json().then(errData => {
+      // Distinguish system level errors from form validation errors if possible
+      if (res.status === 401 || res.status === 403 || res.status === 429 || res.status >= 500) {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('api-error', { detail: errData.message || 'Системная ошибка' }));
+        }
+      }
+    }).catch(() => {});
+  }
+
   return res;
 }
 
@@ -480,4 +493,94 @@ export async function leaveEvent(eventId: number): Promise<void> {
     method: "DELETE",
   });
   if (!res.ok) throw new Error("Ошибка отмены записи");
+}
+
+export interface EventItem {
+  id: number;
+  title: string;
+  description: string;
+  event_date: string;
+  institution_id: number;
+  institution_name: string;
+  creator_name: string;
+  participants_count: number;
+  is_joined: boolean;
+  status: string;
+}
+
+export interface Vacancy {
+  id: number;
+  title: string;
+  description: string;
+  type: string;
+  experience: string;
+  workload: string;
+  is_active: boolean;
+}
+
+export async function fetchVacancies(): Promise<Vacancy[]> {
+  const res = await fetch(`${API_BASE_URL}/vacancies`, {
+    next: { revalidate: 60 }
+  });
+  if (!res.ok) throw new Error('Fetch vacancies error');
+  const json: ApiResponse<Vacancy[]> = await res.json();
+  return json.data;
+}
+
+export interface TeamMember {
+  id: number;
+  full_name: string;
+  role: string;
+  photo_url: string | null;
+  quote: string | null;
+  telegram: string;
+  linkedin: string;
+  sort_order: number;
+  is_active: boolean;
+}
+
+export async function fetchTeamMembers(): Promise<TeamMember[]> {
+  const res = await fetch(`${API_BASE_URL}/team`, {
+    next: { revalidate: 60 }
+  });
+  if (!res.ok) throw new Error('Fetch team members error');
+  const json: ApiResponse<TeamMember[]> = await res.json();
+  return json.data;
+}
+
+export async function fetchTeamMemberById(id: number): Promise<TeamMember> {
+  const res = await fetch(`${API_BASE_URL}/team/${id}`);
+  if (!res.ok) throw new Error('Fetch team member error');
+  const json: ApiResponse<TeamMember> = await res.json();
+  return json.data;
+}
+
+export async function fetchVacancyById(id: number): Promise<Vacancy> {
+  const res = await fetch(`${API_BASE_URL}/vacancies/${id}`);
+  if (!res.ok) throw new Error('Fetch vacancy error');
+  const json: ApiResponse<Vacancy> = await res.json();
+  return json.data;
+}
+
+// --- EVENT MODERATION ---
+export async function fetchInstitutionEvents(institutionId: number | string): Promise<EventItem[]> {
+  const res = await fetchWithAuth(`${API_BASE_URL}/institutions/${institutionId}/events`, {
+    headers: { 'Accept': 'application/json' },
+  });
+  if (!res.ok) {
+    const errorStr = await res.text();
+    throw new Error(errorStr || 'Fetch institution events error');
+  }
+  const json: ApiResponse<EventItem[]> = await res.json();
+  return json.data;
+}
+
+export async function approveEvent(id: number | string): Promise<void> {
+  const res = await fetchWithAuth(`${API_BASE_URL}/events/${id}/approve`, { method: 'PUT' });
+  if (!res.ok) throw new Error('Approve event error');
+}
+
+export async function rejectEvent(id: number | string): Promise<void> {
+  const res = await fetchWithAuth(`${API_BASE_URL}/events/${id}/reject`, { method: 'PUT' });
+  if (!res.ok) throw new Error('Reject event error');
 }

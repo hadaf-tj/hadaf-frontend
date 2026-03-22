@@ -1,115 +1,92 @@
-/* FILE: app/faq/page.tsx */
 'use client';
 
 import { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
-import { ChevronDown, HelpCircle, Heart, ShieldCheck } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { HelpCircle, ChevronDown, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
-// Вопросы и ответы
-const FAQ_ITEMS = [
-  {
-    category: 'Общие вопросы',
-    items: [
-      { q: 'Как работает платформа Ҳадаф?', a: 'Мы напрямую соединяем доноров (волонтеров) с государственными учреждениями. Учреждения публикуют списки нужд, а вы выбираете, что именно хотите купить и привезти. Мы не собираем деньги на свои счета — помощь передается из рук в руки.' },
-      { q: 'Берете ли вы комиссию?', a: 'Нет. Платформа полностью бесплатна для волонтеров и учреждений. Проект существует за счет грантов и поддержки партнеров.' },
-    ]
-  },
-  {
-    category: 'Для волонтеров',
-    items: [
-      { q: 'Нужно ли регистрироваться, чтобы помочь?', a: 'Вы можете просматривать список нужд без регистрации. Но чтобы забронировать нужду (нажать "Я привезу"), регистрация необходима. Это нужно, чтобы избежать дублирования помощи.' },
-      { q: 'Могу ли я помочь деньгами?', a: 'Мы фокусируемся на вещевой помощи (продукты, одежда, техника). Однако некоторые учреждения могут принимать оплату счетов. Свяжитесь с директором учреждения через контакты в профиле.' },
-    ]
-  },
-  {
-    category: 'Для учреждений',
-    items: [
-      { q: 'Как зарегистрировать учреждение?', a: 'Нажмите кнопку "Регистрация", выберите "Учреждение" и заполните форму. Наш модератор свяжется с вами для проверки документов в течение 24 часов.' },
-    ]
-  }
+export const FAQ_ITEMS = [
+  { q: 'Как работает платформа?', a: 'Вы выбираете учреждение из проверенного реестра, видите конкретные нужды (продукты, вещи, лекарства) и нажимаете «Я привезу». Учреждение получает уведомление и ждёт вашу помощь.' },
+  { q: 'Можно ли помогать анонимно?', a: 'Да, вы можете помогать без регистрации. Однако аккаунт позволяет отслеживать историю помощи и получать благодарности от учреждений.' },
+  { q: 'Как попасть в реестр учреждений?', a: 'Государственные учреждения (детские дома и дома престарелых) могут подать заявку через раздел «Контакты». Мы проверяем документы и добавляем учреждение в реестр.' },
+  { q: 'Кто проверяет учреждения?', a: 'Команда Ҳадаф верифицирует каждое учреждение: проверяет регистрационные документы, связывается с администрацией и при необходимости проводит выездную проверку.' },
+  { q: 'Куда ушла моя помощь?', a: 'В личном кабинете вы видите статус каждого обещания. После доставки учреждение подтверждает получение, и вы получаете уведомление.' },
 ];
 
 export default function FAQPage() {
-  const [openIndex, setOpenIndex] = useState<string | null>(null);
-
-  const toggle = (id: string) => {
-    setOpenIndex(openIndex === id ? null : id);
-  };
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-[#f8fafc] pb-20 font-sans">
-        
-        {/* Header */}
-        <div className="bg-[#1e3a8a] pt-24 pb-16 rounded-b-[3rem] text-center relative overflow-hidden">
-           <div className="container mx-auto px-6 relative z-10">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-full mb-6 backdrop-blur-md text-[#ffca63]">
-                 <HelpCircle size={32} />
-              </div>
-              <h1 className="text-4xl md:text-5xl font-black text-white mb-4">
-                 Частые вопросы
-              </h1>
-              <p className="text-white/80 text-lg max-w-2xl mx-auto">
-                 Все, что вы хотели знать о том, как работает благотворительность по-новому.
-              </p>
-           </div>
+      <div className="bg-[#1e3a8a] pt-32 pb-16 md:pb-20 rounded-b-[2rem] md:rounded-b-[3rem] relative overflow-hidden shadow-xl mb-12">
+        <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat bg-[length:300px] opacity-[0.1] mix-blend-overlay"></div>
+        <div className="container mx-auto max-w-4xl px-5 sm:px-6 relative z-10 text-center">
+          <div className="w-16 h-16 mx-auto rounded-3xl bg-white/10 flex items-center justify-center text-white mb-6 backdrop-blur-md border border-white/20 shadow-lg">
+            <HelpCircle size={32} />
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight mb-4 md:mb-6">
+            Часто задаваемые вопросы
+          </h1>
+          <p className="text-white/80 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+            Ответы на самые популярные вопросы о работе платформы адресной помощи «Ҳадаф».
+          </p>
         </div>
-
-        {/* Content */}
-        <div className="container mx-auto max-w-4xl px-6 py-16 relative z-20">
-           
-           <div className="space-y-8">
-              {FAQ_ITEMS.map((section, sIdx) => (
-                <div key={sIdx} className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-6 md:p-10 border border-gray-100">
-                   <h2 className="text-2xl font-black text-[#1e3a8a] mb-6 flex items-center gap-3">
-                      {sIdx === 0 && <ShieldCheck size={28} className="text-[#ffca63]" />}
-                      {sIdx === 1 && <Heart size={28} className="text-[#ffca63]" />}
-                      {section.category}
-                   </h2>
-                   
-                   <div className="space-y-4">
-                      {section.items.map((item, iIdx) => {
-                        const id = `${sIdx}-${iIdx}`;
-                        const isOpen = openIndex === id;
-                        
-                        return (
-                          <div key={iIdx} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
-                             <button 
-                               onClick={() => toggle(id)}
-                               className="w-full flex justify-between items-start text-left py-2 hover:text-[#1e3a8a] transition-colors group"
-                             >
-                                <span className="font-bold text-lg text-gray-800 group-hover:text-[#1e3a8a] pr-4">
-                                   {item.q}
-                                </span>
-                                <ChevronDown 
-                                  className={cn("text-gray-400 transition-transform duration-300 shrink-0 mt-1", isOpen && "rotate-180 text-[#ffca63]")} 
-                                />
-                             </button>
-                             <div 
-                               className={cn(
-                                 "overflow-hidden transition-all duration-300 ease-in-out text-gray-600 leading-relaxed pr-8",
-                                 isOpen ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0"
-                               )}
-                             >
-                                {item.a}
-                             </div>
-                          </div>
-                        );
-                      })}
-                   </div>
+      </div>
+      
+      <div className="container mx-auto max-w-4xl px-5 sm:px-6 pb-20 lg:pb-24">
+        
+        <Link href="/" className="inline-flex items-center gap-2 text-[#1e3a8a] font-bold hover:translate-x-[-4px] transition-transform mb-8 bg-[#1e3a8a]/5 px-4 py-2 rounded-xl">
+          <ArrowLeft size={18} />
+          На главную
+        </Link>
+        
+        <div className="flex flex-col gap-4">
+          {FAQ_ITEMS.map((item, idx) => {
+            const isOpen = openFaq === idx;
+            return (
+              <div 
+                key={idx} 
+                className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
+                  isOpen 
+                    ? 'bg-white shadow-lg shadow-[#1e3a8a]/5 border-[#1e3a8a]/20' 
+                    : 'bg-white/60 border-gray-200 hover:bg-white hover:border-[#1e3a8a]/30'
+                }`}
+              >
+                <button
+                  onClick={() => setOpenFaq(isOpen ? null : idx)}
+                  className="w-full text-left p-5 sm:p-6 md:p-8 flex items-center justify-between gap-6"
+                >
+                  <span className="flex items-start sm:items-center gap-4">
+                    <span className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#1e3a8a]/5 text-[#1e3a8a] flex items-center justify-center font-black text-lg sm:text-xl">
+                      ?
+                    </span>
+                    <span className="font-bold text-lg sm:text-xl text-[#1e3a8a] mt-0.5 sm:mt-0 leading-tight">
+                      {item.q}
+                    </span>
+                  </span>
+                  <ChevronDown 
+                    size={24} 
+                    className={`flex-shrink-0 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#1e3a8a]' : ''}`} 
+                  />
+                </button>
+                
+                <div 
+                  className={`grid transition-all duration-300 ease-in-out ${
+                    isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="px-5 sm:px-6 md:px-8 pb-5 sm:pb-6 md:pb-8 pt-0 flex">
+                      <div className="w-8 sm:w-10 mr-4 flex-shrink-0 hidden sm:block"></div>
+                      <p className="text-gray-600 leading-relaxed text-sm sm:text-base border-t border-gray-100 pt-5 w-full">
+                        {item.a}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              ))}
-           </div>
-
-           {/* Если нет ответа */}
-           <div className="text-center mt-12">
-              <p className="text-gray-500 font-medium">Не нашли ответ?</p>
-              <a href="mailto:support@hadaf.tj" className="text-[#1e3a8a] font-black hover:underline text-lg">
-                 Напишите нам в поддержку
-              </a>
-           </div>
-
+              </div>
+            );
+          })}
         </div>
       </div>
     </MainLayout>

@@ -1,6 +1,6 @@
 'use client';
 
-import { HeartHandshake, Send, Phone, Mail, MapPin, ArrowRight, Heart, Linkedin } from 'lucide-react';
+import { HeartHandshake, Send, Phone, Mail, MapPin, ArrowRight, Heart, Linkedin, Instagram } from 'lucide-react';
 import Link from 'next/link';
 
 const Footer: React.FC = () => {
@@ -29,25 +29,6 @@ const Footer: React.FC = () => {
               Благотворительная платформа адресной помощи социальным учреждениям Таджикистана. Помогаем честно, прозрачно и напрямую.
             </p>
 
-            {/* Социальные сети - стильные иконки */}
-            <div className="flex gap-3">
-              {[
-                { icon: <Send size={20} />, href: 'https://t.me/hadaftj', label: 'Telegram' },
-                { icon: <Linkedin size={20} />, href: 'https://www.linkedin.com/company/hadaftj', label: 'LinkedIn' },
-                { icon: <Mail size={20} />, href: 'mailto:info@hadaf.tj', label: 'Email' },
-              ].map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="group relative w-12 h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center hover:bg-white hover:text-[#1e3a8a] transition-all border border-white/20 hover:scale-110 hover:rotate-6 shadow-lg"
-                >
-                  <div className="absolute inset-0 rounded-xl bg-white opacity-0 group-hover:opacity-20 blur-xl transition-opacity"></div>
-                  {social.icon}
-                </a>
-              ))}
-            </div>
-
             {/* Статистика в футере */}
 
           </div>
@@ -60,6 +41,8 @@ const Footer: React.FC = () => {
                 { name: 'О нас', href: '/about' },
                 { name: 'Учреждения', href: '/institutions' },
                 { name: 'События', href: '/events' },
+                { name: 'Вакансии', href: '/vacancies' },
+                { name: 'FAQ', href: '/faq' },
                 { name: 'Контакты', href: '/contacts' },
               ].map((item) => (
                 <li key={item.name}>
@@ -79,39 +62,33 @@ const Footer: React.FC = () => {
           <div className="lg:col-span-3">
             <h3 className="font-black text-lg sm:text-xl mb-4 sm:mb-8 text-white/95">Контакты</h3>
             <div className="space-y-4 sm:space-y-6 text-sm sm:text-base">
-              <div className="flex items-start gap-3 sm:gap-4 group cursor-pointer">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-all border border-white/20">
-                  <MapPin size={20} />
+              <a href="https://t.me/hadaf_tjk" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 sm:gap-4 group cursor-pointer hover:bg-white/5 p-2 -m-2 rounded-xl transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#229ED9]/20 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#229ED9]/40 transition-all border border-[#229ED9]/30">
+                  <Send size={20} className="text-white relative right-0.5" />
                 </div>
                 <div className="text-white/80 group-hover:text-white transition-colors">
-                  <div className="font-bold text-white mb-1">Адрес офиса</div>
-                  <span>Душанбе, Таджикистан<br />пр. Рудаки, 100</span>
+                  <span className="font-bold text-base sm:text-lg text-white group-hover:text-[#ffca63] transition-colors">Telegram</span>
+                </div>
+              </a>
+
+              <a href="https://www.linkedin.com/company/hadaftj/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 sm:gap-4 group cursor-pointer hover:bg-white/5 p-2 -m-2 rounded-xl transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#0a66c2]/20 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#0a66c2]/40 transition-all border border-[#0a66c2]/30">
+                  <Linkedin size={20} className="text-white" />
+                </div>
+                <div className="text-white/80 group-hover:text-white transition-colors">
+                  <span className="font-bold text-base sm:text-lg text-white group-hover:text-[#ffca63] transition-colors">LinkedIn</span>
+                </div>
+              </a>
+
+              <div className="flex items-center gap-3 sm:gap-4 group cursor-not-allowed opacity-60 p-2 -m-2 rounded-xl">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-500 backdrop-blur-xl flex items-center justify-center flex-shrink-0 border border-pink-500/30">
+                  <Instagram size={20} className="text-white" />
+                </div>
+                <div className="text-white/80">
+                  <span className="font-bold text-base sm:text-lg text-white">Instagram (Скоро)</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 sm:gap-4 group cursor-pointer">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-all border border-white/20">
-                  <Mail size={20} />
-                </div>
-                <div>
-                  <div className="text-xs text-white/60 font-bold uppercase tracking-wider mb-1">Email</div>
-                  <a href="mailto:info@hadaf.tj" className="font-bold text-white hover:text-[#ffca63] transition-colors">
-                    info@hadaf.tj
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 sm:gap-4 group cursor-pointer">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-all border border-white/20">
-                  <Phone size={20} />
-                </div>
-                <div>
-                  <div className="text-xs text-white/60 font-bold uppercase tracking-wider mb-1">Телефон</div>
-                  <a href="tel:+992000000000" className="font-black text-white hover:text-[#ffca63] transition-colors">
-                    +992 901643003
-                  </a>
-                </div>
-              </div>
             </div>
           </div>
         </div>

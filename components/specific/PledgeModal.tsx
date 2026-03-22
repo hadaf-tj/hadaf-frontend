@@ -24,7 +24,7 @@ interface PledgeModalProps {
 }
 
 export default function PledgeModal({ isOpen, onClose, need, institutionName, onSuccess }: PledgeModalProps) {
-  const [amount, setAmount] = useState<number>(1);
+  const [amount, setAmount] = useState<number | ''>(1);
   const [date, setDate] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -36,7 +36,7 @@ export default function PledgeModal({ isOpen, onClose, need, institutionName, on
     e.preventDefault();
     setError('');
 
-    if (amount <= 0 || amount > remaining) {
+    if (amount === '' || Number(amount) <= 0 || Number(amount) > remaining) {
       setError('Неверное количество');
       return;
     }
@@ -77,7 +77,7 @@ export default function PledgeModal({ isOpen, onClose, need, institutionName, on
            </div>
            <button 
              onClick={onClose}
-             className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors p-1"
+             className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center text-white/70 hover:text-white transition-colors"
            >
              <X size={24} />
            </button>
@@ -117,14 +117,36 @@ export default function PledgeModal({ isOpen, onClose, need, institutionName, on
                    min="1" 
                    max={remaining}
                    value={amount}
-                   onChange={(e) => setAmount(parseInt(e.target.value) || 0)}
+                   onChange={(e) => {
+                     // Убираем ведущие нули (если перед цифрой есть '0', например 005 -> 5)
+                     const val = e.target.value.replace(/^0+/, '');
+                     if (val === '') {
+                       setAmount('');
+                       return;
+                     }
+                     const num = parseInt(val, 10);
+                     if (isNaN(num)) {
+                       setAmount('');
+                       return;
+                     }
+                     if (num > remaining) {
+                       setAmount(remaining);
+                     } else {
+                       setAmount(num);
+                     }
+                   }}
+                   onBlur={() => {
+                     if (amount === '' || Number(amount) < 1) {
+                       setAmount(1);
+                     }
+                   }}
                    className="w-full h-14 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-black text-2xl text-[#1e3a8a] text-center"
                  />
                  <span className="text-gray-500 font-bold text-lg shrink-0">
                     из {remaining} {need.measure || 'шт.'}
                  </span>
               </div>
-              {amount > remaining && (
+              {Number(amount) > remaining && (
                   <p className="text-red-500 text-sm font-bold mt-1">Нельзя указать больше, чем требуется.</p>
               )}
            </div>
@@ -137,6 +159,7 @@ export default function PledgeModal({ isOpen, onClose, need, institutionName, on
                 <input 
                   type="date" 
                   required
+                  min={new Date().toISOString().split('T')[0]}
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   className="w-full h-14 pl-12 pr-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900"
@@ -149,12 +172,12 @@ export default function PledgeModal({ isOpen, onClose, need, institutionName, on
 
            {/* Footer buttons */}
            <div className="pt-4 flex gap-3">
-              <Button type="button" variant="outline" onClick={onClose} className="flex-1 h-14 rounded-xl border-2 font-bold border-gray-100 text-gray-500 hover:bg-gray-50 bg-transparent">
+              <Button type="button" variant="outline" onClick={onClose} className="flex-1 h-14 rounded-xl border-2 font-bold border-gray-100 text-gray-500 hover:text-gray-900 hover:bg-gray-50 bg-transparent">
                  Отмена
               </Button>
               <Button 
                 type="submit" 
-                disabled={amount <= 0 || amount > remaining || !date || isSubmitting}
+                disabled={amount === '' || Number(amount) <= 0 || Number(amount) > remaining || !date || isSubmitting}
                 className="flex-1 h-14 rounded-xl bg-[#1e3a8a] hover:bg-[#2a4ec2] text-white font-bold text-lg shadow-xl shadow-[#1e3a8a]/20 disabled:opacity-50 disabled:shadow-none"
               >
                  {isSubmitting ? (

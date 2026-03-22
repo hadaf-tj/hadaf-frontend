@@ -1,22 +1,10 @@
 /* FILE: app/contacts/page.tsx */
 'use client';
 
-import { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
-import { Button } from '@/components/ui/Button';
-import { MapPin, Phone, Mail, Send, CheckCircle2 } from 'lucide-react';
+import { Send, MessageCircle } from 'lucide-react';
 
 export default function ContactsPage() {
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // В будущем: отправка на бэкенд
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 4000);
-    (e.target as HTMLFormElement).reset();
-  };
-
   return (
     <MainLayout>
       <div className="min-h-screen font-sans bg-[#f8fafc]">
@@ -44,49 +32,21 @@ export default function ContactsPage() {
                  </p>
               </div>
 
-              {/* Карточки контактов */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                 <div className="bg-white p-6 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm text-center flex flex-col items-center">
-                    <div className="w-12 h-12 bg-blue-100 text-[#1e3a8a] rounded-xl flex items-center justify-center mb-4">
-                       <Phone size={24} />
-                    </div>
-                    <h3 className="font-bold text-gray-900 mb-2">Телефон / Те Telegram</h3>
-                    <a href="tel:+992901643003" className="text-[#1e3a8a] font-black text-xl hover:underline">+992 901 643 003</a>
-                 </div>
-
-                 <div className="bg-white p-6 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm text-center flex flex-col items-center">
-                    <div className="w-12 h-12 bg-blue-100 text-[#1e3a8a] rounded-xl flex items-center justify-center mb-4">
-                       <Mail size={24} />
-                    </div>
-                    <h3 className="font-bold text-gray-900 mb-2">Email</h3>
-                    <a href="mailto:info@hadaf.tj" className="text-[#1e3a8a] font-black text-xl hover:underline">info@hadaf.tj</a>
-                 </div>
-              </div>
-
-              {/* Форма обратной связи */}
-              <div className="bg-white p-6 sm:p-10 rounded-2xl sm:rounded-[2.5rem] shadow-xl border border-gray-100 mt-8">
-                 <h3 className="text-2xl font-black text-[#1e3a8a] mb-6 text-center">Напишите нам</h3>
-
-                 {submitted && (
-                   <div className="mb-6 flex items-center gap-2 px-4 py-4 bg-green-50 text-green-700 rounded-xl text-sm font-bold">
-                     <CheckCircle2 size={20} />
-                     Сообщение отправлено! Мы свяжемся с вами в ближайшее время.
+              {/* Telegram карточка */}
+              <a href="https://t.me/hadaf_tjk" target="_blank" rel="noopener noreferrer" className="block outline-none pt-4">
+                <div className="bg-gradient-to-r from-[#229ED9] to-[#1E88E5] p-8 sm:p-12 rounded-2xl sm:rounded-[2.5rem] shadow-xl text-center transform hover:scale-[1.02] transition-transform duration-300">
+                   <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner">
+                      <MessageCircle size={40} className="text-white fill-white" />
                    </div>
-                 )}
+                   <h3 className="text-2xl sm:text-3xl font-black text-white mb-3">Наш Telegram-канал</h3>
+                   <p className="text-white/90 font-medium text-base sm:text-lg mb-8 max-w-lg mx-auto leading-relaxed">Главный источник новостей и прямая связь с командой волонтеров проекта.</p>
+                   <div className="inline-flex items-center gap-3 bg-white text-[#229ED9] px-8 py-4 rounded-xl font-black text-lg hover:bg-gray-50 transition-colors shadow-lg">
+                     <Send size={24} className="mr-1 relative right-0.5" />
+                     Подписаться в Telegram
+                   </div>
+                </div>
+              </a>
 
-                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                       <input type="text" name="name" placeholder="Ваше Имя" required className="w-full h-14 px-5 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 font-medium" />
-                       <input type="tel" name="phone" placeholder="Ваш Телефон" className="w-full h-14 px-5 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 font-medium" />
-                    </div>
-                    <textarea name="message" placeholder="Ваше сообщение, идея или вопрос..." rows={5} required className="w-full p-5 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 font-medium resize-none"></textarea>
-                    <Button type="submit" className="w-full h-14 bg-[#1e3a8a] hover:bg-[#2a4ec2] text-white text-lg font-bold rounded-xl shadow-lg shadow-[#1e3a8a]/20 mt-2">
-                       <Send size={20} className="mr-2" />
-                       Отправить сообщение
-                    </Button>
-                 </form>
-              </div>
-              
            </div>
         </div>
 

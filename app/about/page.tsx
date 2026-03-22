@@ -1,21 +1,49 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/Button';
+import { Target, Heart, Shield, Users, CheckCircle2, Linkedin, Send, Loader2 } from 'lucide-react';
+import { fetchTeamMembers, TeamMember } from '@/lib/api';
 
-import { Target, Heart, Shield, Users, CheckCircle2 } from 'lucide-react';
+const GRADIENT_COLORS = [
+  'from-blue-500 to-indigo-600',
+  'from-orange-400 to-red-500',
+  'from-green-400 to-emerald-500',
+  'from-cyan-400 to-blue-500',
+  'from-fuchsia-400 to-purple-500',
+  'from-indigo-400 to-violet-500',
+  'from-rose-400 to-pink-500',
+  'from-violet-400 to-fuchsia-500',
+  'from-sky-400 to-blue-500',
+  'from-yellow-400 to-amber-500',
+];
+
+function getInitials(name: string) {
+  return name.split(' ').map(w => w[0]).join('').slice(0, 2);
+}
 
 export default function AboutPage() {
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTeamMembers()
+      .then(data => setMembers(data || []))
+      .catch(() => setMembers([]))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <MainLayout>
       <div className="font-sans overflow-hidden bg-[#f8fafc]">
 
-        {/* 1. HERO SECTION (Верхний баннер) */}
+        {/* 1. HERO SECTION */}
         <section className="relative w-full h-[350px] sm:h-[400px] lg:h-[500px]">
           <Image
-            src="/hero_about.webp" // Основной баннер (можно оставить тот же или поменять)
+            src="/hero_about.webp"
             alt="About Hero"
             fill
             className="object-cover"
@@ -24,7 +52,6 @@ export default function AboutPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-[#1e3a8a]/90 to-[#1e3a8a]/40"></div>
 
           <div className="absolute inset-0 flex items-center">
-            {/* Контейнер по вашим стандартам */}
             <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28">
               <div className="max-w-3xl space-y-4 sm:space-y-6 animate-in slide-in-from-bottom-10 duration-700">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md text-white rounded-full text-sm font-bold border border-white/20">
@@ -49,8 +76,6 @@ export default function AboutPage() {
         <section className="py-7 bg-white relative z-20">
           <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28">
             <div className="flex flex-col lg:flex-row items-center gap-8 sm:gap-10 lg:gap-20">
-
-              {/* Левая часть - Текст */}
               <div className="flex-1 space-y-4 sm:space-y-6">
                 <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-[#1e3a8a] leading-tight">
                   Почему мы <br />
@@ -83,7 +108,6 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              {/* Правая часть - Визуал (hero_about.webp) */}
               <div className="flex-1 relative w-full h-[280px] sm:h-[350px] lg:h-[500px]">
                 <div className="absolute inset-0 bg-[#1e3a8a] rounded-2xl sm:rounded-[3rem] rotate-3 transform translate-x-4 translate-y-4 opacity-10"></div>
                 <div className="relative h-full w-full rounded-2xl sm:rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white">
@@ -99,83 +123,79 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* 3. ОРНАМЕНТ + ЦЕННОСТИ (Секция с наложением) */}
-        <section className="py-7 md:py-12">
+        {/* 4. КОМАНДА */}
+        <section className="py-12 sm:py-20 lg:py-24 bg-white relative z-20">
           <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28">
-            <div className="bg-[#1e3a8a] rounded-2xl sm:rounded-[3rem] p-6 sm:p-8 md:p-16 text-center relative overflow-hidden shadow-2xl">
-              <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-                <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat mix-blend-overlay"></div>
-              </div>
-
-              <div className="relative z-10 max-w-3xl mx-auto space-y-8">
-                <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-white">
-                  Хотите стать частью изменений?
-                </h2>
-                <p className="text-base sm:text-lg md:text-xl text-white/90">
-                  Мы всегда ищем волонтеров, партнеров и просто неравнодушных людей, готовых развивать культуру помощи в Таджикистане.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-4">
-                  <Button asChild className="bg-[#ffca63] text-[#1e3a8a] hover:bg-white font-bold h-12 sm:h-14 px-8 sm:px-10 rounded-full text-base sm:text-lg">
-                    <Link href="/institutions">Начать помогать</Link>
-                  </Button>
-                  <Button asChild variant="outline" className="border-2 border-white/30 text-white hover:bg-white hover:text-[#1e3a8a] bg-transparent font-bold h-12 sm:h-14 px-8 sm:px-10 rounded-full text-base sm:text-lg">
-                    <Link href="mailto:team@hadaf.tj">Написать нам</Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        {/* Орнамент высокий и прозрачный */}
-        {/* Секция наезжает на орнамент (-mt-80) */}
-        <section className="py-7 relative overflow-hidden z-10">
-          <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28">
-            <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <div className="text-center mb-10 sm:mb-16">
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-[#1e3a8a] mb-4 sm:mb-6">
-                Наши принципы
+                Команда Ҳадаф
               </h2>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto font-medium">
-                Три кита, на которых строится работа платформы
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto font-medium leading-relaxed">
+                Люди, которые создали и продолжают развивать эту платформу. Мы объединились ради общей идеи прозрачной благотворительности.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-              {[
-                {
-                  icon: <Shield size={40} />,
-                  title: 'Безопасность',
-                  desc: 'Мы проверяем каждое учреждение и заявку на помощь. Никаких мошенников, только верифицированные нужды.',
-                  color: 'bg-blue-50 text-blue-600'
-                },
-                {
-                  icon: <Target size={40} />,
-                  title: 'Адресность',
-                  desc: 'Помощь работает лучше всего, когда она точечная. Мы помогаем закрывать конкретные нужды конкретных учреждений.',
-                  color: 'bg-yellow-50 text-yellow-600'
-                },
-                {
-                  icon: <Heart size={40} />,
-                  title: 'Открытость',
-                  desc: 'Мы верим, что добрые дела должны быть видны. Публичные отчеты вдохновляют других присоединиться.',
-                  color: 'bg-green-50 text-green-600'
-                }
-              ].map((item, idx) => (
-                <div key={idx} className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg border border-gray-100 hover:-translate-y-2 transition-transform duration-300">
-                  <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 ${item.color}`}>
-                    {item.icon}
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-20 text-[#1e3a8a]">
+                <Loader2 size={48} className="animate-spin mb-4" />
+                <p className="font-bold text-lg">Загрузка...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                {members.map((member, idx) => (
+                  <div key={member.id} className="bg-[#f8fafc] border border-gray-100/50 rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center hover:shadow-xl hover:border-blue-100 transition-all duration-300 group h-full">
+                    {member.photo_url ? (
+                      <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden shadow-lg mb-6 border-4 border-white ring-2 ring-gray-100">
+                        <Image src={member.photo_url} alt={member.full_name} width={144} height={144} className="object-cover w-full h-full" />
+                      </div>
+                    ) : (
+                      <div className={`w-32 h-32 sm:w-36 sm:h-36 rounded-full bg-gradient-to-br ${GRADIENT_COLORS[idx % GRADIENT_COLORS.length]} text-white flex items-center justify-center text-4xl font-black shadow-lg mb-6`}>
+                        {getInitials(member.full_name)}
+                      </div>
+                    )}
+                    <h3 className="text-xl font-black text-gray-900 mb-1">{member.full_name}</h3>
+                    <div className="inline-block bg-[#1e3a8a]/5 text-[#1e3a8a] px-4 py-1.5 rounded-full text-sm font-bold mb-4">
+                      {member.role}
+                    </div>
+
+                    {member.quote && (
+                      <p className="text-gray-500 text-sm font-medium leading-relaxed italic mb-5 max-w-xs">
+                        «{member.quote}»
+                      </p>
+                    )}
+
+                    <div className="mt-auto flex gap-2.5">
+                      {member.linkedin && (
+                        <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center w-10 h-10 bg-white text-[#0a66c2] rounded-full shadow-sm hover:shadow-md hover:bg-[#0a66c2] hover:text-white transition-all">
+                          <Linkedin size={19} />
+                        </a>
+                      )}
+                      {member.telegram && (
+                        <a href={member.telegram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center w-10 h-10 bg-white text-[#229ED9] rounded-full shadow-sm hover:shadow-md hover:bg-[#229ED9] hover:text-white transition-all">
+                          <Send size={17} className="relative right-0.5" />
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-black text-[#1e3a8a] mb-2 sm:mb-4">{item.title}</h3>
-                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed font-medium">
-                    {item.desc}
+                ))}
+
+                {/* CTA Card */}
+                <Link href="/vacancies" className="bg-white border-2 border-dashed border-blue-300 rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center hover:shadow-xl hover:border-blue-500 hover:-translate-y-1 transition-all duration-300 group cursor-pointer h-full">
+                  <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full bg-gradient-to-br from-blue-50 to-indigo-100 text-[#1e3a8a] flex items-center justify-center text-5xl sm:text-6xl shadow-sm mb-6 group-hover:scale-105 transition-transform duration-500">
+                    👋
+                  </div>
+                  <h3 className="text-xl font-black text-[#1e3a8a] mb-1">Возможно, это вы?</h3>
+                  <p className="text-gray-500 text-sm font-medium leading-relaxed mb-5 mt-2 max-w-xs">
+                    Присоединяйтесь к команде и меняйте мир к лучшему
                   </p>
-                </div>
-              ))}
-            </div>
+                  <div className="mt-auto px-6 py-2.5 bg-[#ffca63]/20 text-[#1e3a8a] font-bold rounded-full group-hover:bg-[#ffca63] transition-colors">
+                    Посмотреть вакансии
+                  </div>
+                </Link>
+              </div>
+            )}
           </div>
-        </section>
-
-        {/* 4. CTA - JOIN TEAM */}
-
+        </section>    
 
       </div>
     </MainLayout>

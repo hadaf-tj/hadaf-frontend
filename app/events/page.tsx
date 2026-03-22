@@ -12,23 +12,16 @@ import {
   UserPlus, 
   Clock,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  ChevronRight, 
+  Search,
+  CheckCircle2,
+  AlertTriangle
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import MainLayout from '@/components/layout/MainLayout';
-import { fetchEvents, createEvent, joinEvent, leaveEvent, fetchInstitutions } from '@/lib/api';
+import { fetchEvents, createEvent, joinEvent, leaveEvent, EventItem, fetchInstitutions, getProfile } from '@/lib/api';
 import { Institution } from '@/types/project';
-
-interface EventItem {
-  id: number;
-  title: string;
-  description?: string;
-  event_date: string;
-  institution_name?: string;
-  creator_name?: string;
-  participants_count?: number;
-  is_joined?: boolean;
-}
 
 export default function EventsPage() {
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -41,6 +34,17 @@ export default function EventsPage() {
   // Create form
   const [form, setForm] = useState({ title: '', description: '', event_date: '', institution_id: 0 });
   const [creating, setCreating] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [formSuccess, setFormSuccess] = useState<string | null>(null);
+  const [isAuth, setIsAuth] = useState(false);
+
+  const getMinDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(8, 0, 0, 0);
+    // return format YYYY-MM-DDTHH:mm
+    return tomorrow.toISOString().slice(0, 16);
+  };
 
   const showMsg = (type: 'success' | 'error', msg: string) => {
     setFeedback({ type, msg });
@@ -61,6 +65,10 @@ export default function EventsPage() {
   useEffect(() => {
     loadEvents();
     fetchInstitutions().then(setInstitutions).catch(console.error);
+    // Check auth implicitly (get profile)
+    getProfile()
+      .then(() => setIsAuth(true))
+      .catch(() => setIsAuth(false));
   }, []);
 
   const handleJoin = async (eventId: number) => {
@@ -86,8 +94,9 @@ export default function EventsPage() {
   };
 
   const handleCreate = async () => {
+    setFormError(null);
     if (!form.title || !form.event_date || !form.institution_id) {
-      showMsg('error', 'Заполните все обязательные поля');
+      setFormError('Пожалуйста, заполните все обязательные поля');
       return;
     }
     setCreating(true);
@@ -98,13 +107,11 @@ export default function EventsPage() {
         event_date: new Date(form.event_date).toISOString(),
         institution_id: form.institution_id,
       });
-      showMsg('success', 'Событие создано!');
-      setShowCreate(false);
-      setForm({ title: '', description: '', event_date: '', institution_id: 0 });
+      setFormSuccess('Ваше событие успешно отправлено на модерацию. После одобрения сотрудником учреждения оно появится в ленте событий.');
       loadEvents();
     } catch (e) {
       console.error(e);
-      showMsg('error', 'Ошибка создания события');
+      setFormError('Ошибка создания события. Попробуйте еще раз.');
     } finally {
       setCreating(false);
     }
@@ -150,13 +157,17 @@ export default function EventsPage() {
                 </p>
               </div>
 
-              <Button 
-                onClick={() => setShowCreate(true)}
-                className="bg-[#ffca63] text-[#1e3a8a] hover:bg-white font-bold h-12 px-6 rounded-xl shadow-lg flex items-center gap-2"
-              >
-                <Plus size={20} />
-                Создать событие
-              </Button>
+              <div className="flex flex-col items-end">
+                <Button 
+                  onClick={() => setShowCreate(true)}
+                  disabled={!isAuth}
+                  className="bg-[#ffca63] text-[#1e3a8a] hover:bg-white font-bold h-12 px-6 rounded-xl shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Plus size={20} />
+                  Создать событие
+                </Button>
+                {!isAuth && <span className="text-white/70 text-xs mt-2 font-medium">Только для авторизованных</span>}
+              </div>
             </div>
           </div>
         </div>
@@ -232,13 +243,42 @@ export default function EventsPage() {
         {showCreate && (
           <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between pb-2 border-b border-gray-100">
                 <h3 className="text-xl font-black text-gray-900">Новое событие</h3>
-                <button onClick={() => setShowCreate(false)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+                <button onClick={() => { setShowCreate(false); setFormError(null); setFormSuccess(null); }} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
                   <X size={20} />
                 </button>
               </div>
 
+              {formError && (
+                <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-2">
+                  <AlertTriangle size={18} />
+                  {formError}
+                </div>
+              )}
+
+              {formSuccess && (
+                <div className="bg-green-50 text-green-700 px-4 py-4 rounded-xl text-sm font-bold flex items-start gap-3">
+                  <CheckCircle2 size={24} className="mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    {formSuccess}
+                  </div>
+                </div>
+              )}
+              {formSuccess && (
+                <button
+                  onClick={() => {
+                    setShowCreate(false);
+                    setForm({ title: '', description: '', event_date: '', institution_id: 0 });
+                    setFormSuccess(null);
+                  }}
+                  className="w-full h-12 bg-[#1e3a8a] text-white font-bold rounded-xl hover:bg-[#2a4ec2] transition-colors"
+                >
+                  Закрыть
+                </button>
+              )}
+
+              {!formSuccess && (
               <div className="space-y-4">
                 <div>
                   <label className="text-xs font-bold text-gray-500 ml-1 uppercase">Название *</label>
@@ -267,6 +307,7 @@ export default function EventsPage() {
                   <input
                     type="datetime-local"
                     value={form.event_date}
+                    min={getMinDate()}
                     onChange={(e) => setForm({...form, event_date: e.target.value})}
                     className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900"
                   />
@@ -286,10 +327,12 @@ export default function EventsPage() {
                   </select>
                 </div>
               </div>
+              )}
 
-              <div className="flex gap-3 pt-2">
+              {!formSuccess && (
+              <div className="flex gap-3 pt-2 border-t border-gray-100">
                 <Button
-                  onClick={() => setShowCreate(false)}
+                  onClick={() => { setShowCreate(false); setFormError(null); }}
                   className="flex-1 bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold h-12 rounded-xl"
                 >
                   Отмена
@@ -300,9 +343,10 @@ export default function EventsPage() {
                   className="flex-1 bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-bold h-12 rounded-xl disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {creating ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
-                  Создать
+                  Предложить
                 </Button>
               </div>
+              )}
             </div>
           </div>
         )}

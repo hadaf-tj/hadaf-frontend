@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import PledgeModal, { NeedItem } from '@/components/specific/PledgeModal';
 import { fetchInstitutionById, fetchNeedsByInstitution, NeedsFilters } from '@/lib/api';
+import { useAuth } from '@/lib/AuthContext';
+import { useRouter } from 'next/navigation';
 import { Institution, Need } from '@/types/project';
 
 const STATUS_OPTIONS = [
@@ -46,6 +48,9 @@ export default function InstitutionDetailPage() {
   // Состояния модалки
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNeed, setSelectedNeed] = useState<NeedItem | null>(null);
+
+  const { user } = useAuth();
+  const router = useRouter();
 
   // Загрузка нужд с фильтрами  
   const loadNeeds = useCallback(async (institutionId: string) => {
@@ -108,6 +113,10 @@ export default function InstitutionDetailPage() {
 
   // Хендлер для открытия модалки
   const handlePledgeClick = (need: Need) => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
     setSelectedNeed({
       id: need.id,
       title: need.name,

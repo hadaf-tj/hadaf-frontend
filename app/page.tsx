@@ -56,14 +56,7 @@ const HOW_IT_WORKS = [
   },
 ];
 
-/* ──────────────── FAQ ──────────────── */
-const FAQ_ITEMS = [
-  { q: 'Как работает платформа?', a: 'Вы выбираете учреждение из проверенного реестра, видите конкретные нужды (продукты, вещи, лекарства) и нажимаете «Я привезу». Учреждение получает уведомление и ждёт вашу помощь.' },
-  { q: 'Можно ли помогать анонимно?', a: 'Да, вы можете помогать без регистрации. Однако аккаунт позволяет отслеживать историю помощи и получать благодарности от учреждений.' },
-  { q: 'Как попасть в реестр учреждений?', a: 'Государственные учреждения (детские дома и дома престарелых) могут подать заявку через раздел «Контакты». Мы проверяем документы и добавляем учреждение в реестр.' },
-  { q: 'Кто проверяет учреждения?', a: 'Команда Ҳадаф верифицирует каждое учреждение: проверяет регистрационные документы, связывается с администрацией и при необходимости проводит выездную проверку.' },
-  { q: 'Куда ушла моя помощь?', a: 'В личном кабинете вы видите статус каждого обещания. После доставки учреждение подтверждает получение, и вы получаете уведомление.' },
-];
+
 
 /* ──────────────── AnimatedCounter ──────────────── */
 function AnimatedCounter({ target, duration = 2000 }: { target: number; duration?: number }) {
@@ -191,44 +184,27 @@ const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({ closed_needs: 0, people_helped: 0, institutions_count: 0 });
 
-  // Hero slider Ring Topology
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
-  const [isTransitioning, setIsTransitioning] = useState(true);
+  // Mouse and Scroll Parallax
+  const [scrollY, setScrollY] = useState(0);
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Hero slider Cross-fade Topology
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
   const slideInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Fake array to enable infinite scroll (length 5: Last, Slide1, Slide2, Slide3, First)
-  const infiniteSlides = [HERO_SLIDES[HERO_SLIDES.length - 1], ...HERO_SLIDES, HERO_SLIDES[0]];
-
   const nextSlide = useCallback(() => {
-    if (!isTransitioning) return;
-    setCurrentSlideIndex(prev => prev + 1);
-  }, [isTransitioning]);
+    setCurrentSlideIndex(prev => (prev + 1) % HERO_SLIDES.length);
+  }, []);
 
   const prevSlide = useCallback(() => {
-    if (!isTransitioning) return;
-    setCurrentSlideIndex(prev => prev - 1);
-  }, [isTransitioning]);
-
-  // Handle transparent loop resets
-  useEffect(() => {
-    if (currentSlideIndex === 0) {
-      const timeout = setTimeout(() => {
-        setIsTransitioning(false);
-        setCurrentSlideIndex(HERO_SLIDES.length);
-      }, 700); // match duration
-      return () => clearTimeout(timeout);
-    } else if (currentSlideIndex === HERO_SLIDES.length + 1) {
-      const timeout = setTimeout(() => {
-        setIsTransitioning(false);
-        setCurrentSlideIndex(1);
-      }, 700);
-      return () => clearTimeout(timeout);
-    } else {
-      setIsTransitioning(true);
-    }
-  }, [currentSlideIndex]);
+    setCurrentSlideIndex(prev => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+  }, []);
 
   // Auto-advance hero slides
   useEffect(() => {
@@ -243,23 +219,16 @@ const HomePage: React.FC = () => {
 
   // Events Deck State
   const [currentEventIdx, setCurrentEventIdx] = useState(0);
-  
-  // Default to mock if API returns empty
-  const fallbackEvents = [
-    { id: 'm1', title: 'Мастер-класс по рисованию', description: 'Поможем детям раскрыть свои таланты. Ждем волонтеров, кто хочет порисовать с детьми!', event_date: '12 Мая 2026', location: 'Детский дом №1', imageUrl: '/master_klass.webp' },
-    { id: 'm2', title: 'Субботник в пансионате', description: 'Устроим весеннюю уборку территории дома престарелых. Инвентарь выдадим на месте.', event_date: '20 Мая 2026', location: 'Дом престарелых "Орзу"', imageUrl: '/hero.webp' },
-    { id: 'm3', title: 'Лекция о кибербезопасности', description: 'Расскажем старшему поколению как не попасться на уловки мошенников в интернете.', event_date: '05 Июня 2026', location: 'Дом престарелых "Орзу"', imageUrl: '/hero_about.webp' }
-  ];
-
-  const displayEvents = events.length > 0 ? events : fallbackEvents;
 
   const nextEventDeck = useCallback(() => {
-    setCurrentEventIdx(prev => (prev + 1) % displayEvents.length);
-  }, [displayEvents.length]);
+    if (events.length === 0) return;
+    setCurrentEventIdx(prev => (prev + 1) % events.length);
+  }, [events.length]);
   
   const prevEventDeck = useCallback(() => {
-    setCurrentEventIdx(prev => (prev - 1 + displayEvents.length) % displayEvents.length);
-  }, [displayEvents.length]);
+    if (events.length === 0) return;
+    setCurrentEventIdx(prev => (prev - 1 + events.length) % events.length);
+  }, [events.length]);
 
   useEffect(() => {
     const evInterval = setInterval(nextEventDeck, 5000); // Auto-advance deck every 5s
@@ -304,8 +273,6 @@ const HomePage: React.FC = () => {
   const helpReveal = useScrollReveal();
   const ctaReveal = useScrollReveal();
   const howItWorksReveal = useScrollReveal();
-  const faqReveal = useScrollReveal();
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
     <MainLayout>
@@ -335,23 +302,27 @@ const HomePage: React.FC = () => {
             <ArrowRight size={24} className="lg:w-6 lg:h-6" />
           </button>
 
-          {/* Flex Track for ring topology sliding */}
+          {/* Opacity Track for cross-fade topology */}
           <div 
-            className={cn("flex w-full h-full", isTransitioning ? "transition-transform duration-700 ease-in-out" : "transition-none")}
-            style={{ transform: `translateX(-${currentSlideIndex * 100}%)` }}
+            className="relative w-full h-full"
           >
-            {infiniteSlides.map((slide, idx) => (
+            {HERO_SLIDES.map((slide, idx) => (
               <div
                 key={idx}
-                className="w-full h-full flex-shrink-0 relative"
+                className={cn(
+                  "absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out",
+                  currentSlideIndex === idx ? "opacity-100 z-10" : "opacity-0 z-0"
+                )}
               >
-                <Image
-                  src={slide.image}
-                  alt=""
-                  fill
-                  priority={idx === 1} // First real slide
-                  className="object-cover"
-                />
+                <div className="absolute inset-0 w-full h-full" style={{ transform: `translateY(${scrollY * 0.4}px)` }}>
+                  <Image
+                    src={slide.image}
+                    alt=""
+                    fill
+                    priority={idx === 0} 
+                    className={cn("object-cover transition-transform duration-[10000ms] ease-out", currentSlideIndex === idx ? "scale-105" : "scale-100")}
+                  />
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
                 <div className="absolute inset-0 flex items-center">
                   <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28">
@@ -431,13 +402,6 @@ const HomePage: React.FC = () => {
                     Проверенные государственные учреждения с реальными нуждами
                   </p>
                 </div>
-                <Link
-                  href="/institutions"
-                  className="hidden sm:flex items-center gap-2 text-[#1e3a8a] font-bold hover:gap-3 transition-all text-sm sm:text-base whitespace-nowrap"
-                >
-                  Все учреждения
-                  <ArrowRight size={18} />
-                </Link>
               </div>
             </div>
 
@@ -460,7 +424,7 @@ const HomePage: React.FC = () => {
                       <InstitutionCard institution={inst} />
                     </div>
                   ))}
-                  {/* "View all" card */}
+                  {/* "View all" card restored per user request */}
                   <Link
                     href="/institutions"
                     className="flex-shrink-0 w-[200px] sm:w-[240px] flex flex-col items-center justify-center bg-[#1e3a8a]/5 rounded-2xl border-2 border-dashed border-[#1e3a8a]/20 hover:border-[#1e3a8a]/40 hover:bg-[#1e3a8a]/10 transition-all group mr-8"
@@ -475,20 +439,13 @@ const HomePage: React.FC = () => {
                 <div className="text-center py-12 text-gray-500">Учреждения не найдены</div>
               )}
             </div>
-
-            {/* Mobile "see all" link */}
-            <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28 mt-6 sm:hidden">
-              <Link href="/institutions" className="flex items-center justify-center gap-2 text-[#1e3a8a] font-bold">
-                Все учреждения <ArrowRight size={18} />
-              </Link>
-            </div>
           </div>
         </section>
 
         {/* ──── 4. CTA БЛОК (События со смыслом) ──── */}
         <section className="relative py-16 md:py-24 bg-[#1e3a8a] overflow-hidden">
           {/* Suzani background canvas */}
-          <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-repeat bg-[length:300px] opacity-[0.1] pointer-events-none mix-blend-overlay"></div>
+          <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-fixed bg-repeat bg-[length:300px] opacity-[0.15] pointer-events-none mix-blend-overlay"></div>
           
           <div
             ref={ctaReveal.ref}
@@ -499,94 +456,96 @@ const HomePage: React.FC = () => {
             <div className="flex flex-col lg:flex-row items-center gap-10 md:gap-16">
               
               {/* ЛЕВАЯ ЧАСТЬ: Интерактивный Слайдер карточек событий */}
-              <div className="flex-1 w-full max-w-[340px] sm:max-w-md mx-auto lg:max-w-none relative mt-8 lg:mt-0">
-                <div className="relative h-[520px] sm:h-[550px] md:h-[600px] flex items-center justify-center perspective-[1200px]">
-                  {displayEvents.map((ev, idx) => {
-                    let diff = idx - currentEventIdx;
-                    
-                    // Handle ring topology gracefully for a deck
-                    const len = displayEvents.length;
-                    
-                    if (diff > Math.floor(len / 2)) diff -= len;
-                    else if (diff < -Math.floor(len / 2)) diff += len;
+              {events.length > 0 ? (
+                <div className="flex-1 w-full max-w-[340px] sm:max-w-md mx-auto lg:max-w-none relative mt-8 lg:mt-0">
+                  <div className="relative h-[520px] sm:h-[550px] md:h-[600px] flex items-center justify-center perspective-[1200px]">
+                    {events.map((ev, idx) => {
+                      let diff = idx - currentEventIdx;
+                      
+                      const len = events.length;
+                      
+                      if (diff > Math.floor(len / 2)) diff -= len;
+                      else if (diff < -Math.floor(len / 2)) diff += len;
 
-                    // Only show 3 cards: current (0), next (1), next-next (2), previous (-1 is animated out)
-                    if (diff < -1 || diff > 2) return null;
+                      if (diff < -1 || diff > 2) return null;
 
-                    const isDismissed = diff < 0; 
-                    
-                    // Local stack offsets
-                    // diff === 0: top card exactly in center.
-                    // diff === 1: slight left and down
-                    // diff === 2: further left and down
-                    // diff < 0 (dismissed): slide right temporarily, before circling back
-                    
-                    const translateX = isDismissed ? '100%' : `${-diff * 1.5}rem`; 
-                    const translateY = isDismissed ? '10%' : `${diff * 0.75}rem`;
-                    const scale = isDismissed ? 1.05 : Math.max(0.85, 1 - (diff * 0.05));
-                    
-                    const zIndex = isDismissed ? 40 : 30 - diff;
-                    const opacity = isDismissed ? 0 : diff === 2 ? 0.3 : diff === 1 ? 0.7 : 1;
-                    const isInteractive = diff === 0;
+                      const isDismissed = diff < 0; 
+                      
+                      const translateX = isDismissed ? '100%' : `${-diff * 1.5}rem`; 
+                      const translateY = isDismissed ? '10%' : `${diff * 0.75}rem`;
+                      const scale = isDismissed ? 1.05 : Math.max(0.85, 1 - (diff * 0.05));
+                      
+                      const zIndex = isDismissed ? 40 : 30 - diff;
+                      const opacity = isDismissed ? 0 : diff === 2 ? 0.3 : diff === 1 ? 0.7 : 1;
+                      const isInteractive = diff === 0;
 
-                    const formattedDate = ev.event_date ? new Date(ev.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Даты уточняются';
-                    const locationName = ev.institution?.name || ev.institution_name || 'Учреждение не указано';
+                      const formattedDate = ev.event_date ? new Date(ev.event_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Даты уточняются';
+                      const locationName = ev.institution?.name || ev.institution_name || 'Учреждение не указано';
 
-                    return (
-                      <div
-                        key={ev.id}
-                        onClick={() => isInteractive && nextEventDeck()}
-                        className={`absolute left-0 right-0 top-0 bottom-0 bg-white rounded-3xl shadow-2xl border border-gray-100 flex flex-col transform transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] ${isInteractive ? 'cursor-pointer sm:hover:-translate-translate-y-2' : 'pointer-events-none'}`}
-                        style={{
-                          transform: `translate(${translateX}, ${translateY}) scale(${scale}) rotate(${isDismissed ? 5 : -diff * 2}deg)`,
-                          zIndex,
-                          opacity,
-                          transformOrigin: 'bottom center',
-                          boxShadow: diff === 0 ? '-10px 25px 40px -12px rgba(0, 0, 0, 0.4)' : '-5px 10px 15px -3px rgba(0, 0, 0, 0.2)'
-                        }}
-                      >
-                        <div className="relative h-[45%] sm:h-[55%] w-full shrink-0">
-                          <Image src={ev.imageUrl || '/master_klass.webp'} alt="Event" fill className="object-cover rounded-t-3xl" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-t-3xl"></div>
-                          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[#1e3a8a] font-bold text-xs shadow-sm flex items-center gap-2">
-                             {formattedDate}
+                      return (
+                        <div
+                          key={ev.id}
+                          onClick={() => isInteractive && nextEventDeck()}
+                          className={`absolute left-0 right-0 top-0 bottom-0 bg-white rounded-3xl shadow-2xl border border-gray-100 flex flex-col transform transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] ${isInteractive ? 'cursor-pointer sm:hover:-translate-translate-y-2' : 'pointer-events-none'}`}
+                          style={{
+                            transform: `translate(${translateX}, ${translateY}) scale(${scale}) rotate(${isDismissed ? 5 : -diff * 2}deg)`,
+                            zIndex,
+                            opacity,
+                            transformOrigin: 'bottom center',
+                            boxShadow: diff === 0 ? '-10px 25px 40px -12px rgba(0, 0, 0, 0.4)' : '-5px 10px 15px -3px rgba(0, 0, 0, 0.2)'
+                          }}
+                        >
+                          <div className="relative h-[45%] sm:h-[55%] w-full shrink-0">
+                            <Image src={ev.imageUrl || '/master_klass.webp'} alt="Event" fill className="object-cover rounded-t-3xl" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-t-3xl"></div>
+                            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[#1e3a8a] font-bold text-xs shadow-sm flex items-center gap-2">
+                               {formattedDate}
+                            </div>
+                          </div>
+                          
+                          <div className={`p-4 sm:p-5 md:p-7 flex-1 flex flex-col justify-between bg-white rounded-b-3xl transition-opacity duration-300 ${isInteractive ? 'opacity-100' : 'opacity-0 sm:opacity-100'}`}>
+                            <div>
+                              <h3 className="text-lg sm:text-xl md:text-2xl font-black text-[#1e3a8a] mb-2 line-clamp-1">{ev.title}</h3>
+                              <p className="text-gray-600 line-clamp-3 text-xs sm:text-sm md:text-base leading-relaxed">{ev.description}</p>
+                            </div>
+                            <div className="font-bold text-[#ffca63] text-xs sm:text-sm flex items-center justify-between mt-3 sm:mt-4">
+                               <span className="bg-[#1e3a8a] px-3 py-1.5 rounded-full truncate max-w-[50%] sm:max-w-[60%] inline-block">
+                                 {locationName}
+                               </span>
+                               {isInteractive && (
+                                 <div className="flex items-center justify-end gap-2 shrink-0">
+                                   <button 
+                                     onClick={(e) => { e.stopPropagation(); prevEventDeck(); }}
+                                     className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-100 text-[#1e3a8a] flex items-center justify-center hover:bg-[#ffca63] hover:text-[#1e3a8a] transition-colors"
+                                     aria-label="Предыдущее событие"
+                                   >
+                                      <ArrowLeft size={18} />
+                                   </button>
+                                   <button 
+                                     onClick={(e) => { e.stopPropagation(); nextEventDeck(); }}
+                                     className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-100 text-[#1e3a8a] flex items-center justify-center hover:bg-[#ffca63] hover:text-[#1e3a8a] transition-colors"
+                                     aria-label="Следующее событие"
+                                   >
+                                      <ArrowRight size={18} />
+                                   </button>
+                                 </div>
+                               )}
+                            </div>
                           </div>
                         </div>
-                        
-                        <div className={`p-4 sm:p-5 md:p-7 flex-1 flex flex-col justify-between bg-white rounded-b-3xl transition-opacity duration-300 ${isInteractive ? 'opacity-100' : 'opacity-0 sm:opacity-100'}`}>
-                          <div>
-                            <h3 className="text-lg sm:text-xl md:text-2xl font-black text-[#1e3a8a] mb-2 line-clamp-1">{ev.title}</h3>
-                            <p className="text-gray-600 line-clamp-3 text-xs sm:text-sm md:text-base leading-relaxed">{ev.description}</p>
-                          </div>
-                          <div className="font-bold text-[#ffca63] text-xs sm:text-sm flex items-center justify-between mt-3 sm:mt-4">
-                             <span className="bg-[#1e3a8a] px-3 py-1.5 rounded-full truncate max-w-[50%] sm:max-w-[60%] inline-block">
-                               {locationName}
-                             </span>
-                             {isInteractive && (
-                               <div className="flex items-center justify-end gap-2 shrink-0">
-                                 <button 
-                                   onClick={(e) => { e.stopPropagation(); prevEventDeck(); }}
-                                   className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-100 text-[#1e3a8a] flex items-center justify-center hover:bg-[#ffca63] hover:text-[#1e3a8a] transition-colors"
-                                   aria-label="Предыдущее событие"
-                                 >
-                                    <ArrowLeft size={18} />
-                                 </button>
-                                 <button 
-                                   onClick={(e) => { e.stopPropagation(); nextEventDeck(); }}
-                                   className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-100 text-[#1e3a8a] flex items-center justify-center hover:bg-[#ffca63] hover:text-[#1e3a8a] transition-colors"
-                                   aria-label="Следующее событие"
-                                 >
-                                    <ArrowRight size={18} />
-                                 </button>
-                               </div>
-                             )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 text-center relative mt-8 lg:mt-0 shadow-2xl h-full min-h-[400px]">
+                  <Sparkles size={48} className="text-[#ffca63] mb-6 opacity-90" />
+                  <h3 className="text-2xl sm:text-3xl font-black text-white mb-3">Событий пока нет</h3>
+                  <p className="text-white/80 text-sm sm:text-lg max-w-sm leading-relaxed">
+                    Но вы можете стать первым, кто создаст благотворительное событие и подаст пример другим!
+                  </p>
+                </div>
+              )}
 
               {/* ПРАВАЯ ЧАСТЬ: Текст призыва */}
               <div className="flex-1 space-y-5 sm:space-y-6 lg:space-y-8 text-center lg:text-left z-10 mt-6 sm:mt-8 lg:mt-0 order-first lg:order-last">
@@ -628,10 +587,6 @@ const HomePage: React.FC = () => {
             }`}
           >
             <div className="text-center mb-12 md:mb-20">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#ffca63]/10 text-[#1e3a8a] rounded-full text-sm font-bold mb-4">
-                <Sparkles size={16} className="text-[#ffca63]" />
-                Просто и прозрачно
-              </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#1e3a8a]">
                 Как это работает
               </h2>
@@ -697,96 +652,7 @@ const HomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* ──── 6. FAQ — horizontal scrollable cards ──── */}
-        <section className="py-6 sm:py-16 md:py-20">
-          <div
-            ref={faqReveal.ref}
-            className={`transition-all duration-700 ${
-              faqReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-          >
-            {/* Section header */}
-            <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28 mb-6 sm:mb-8 md:mb-10">
-              <div className="flex items-end justify-between">
-                <div>
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#1e3a8a]/5 text-[#1e3a8a] rounded-full text-sm font-bold mb-3 sm:mb-4">
-                    <HelpCircle size={16} />
-                    FAQ
-                  </div>
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900">
-                    Есть вопросы?
-                  </h2>
-                </div>
-                <Link
-                  href="/faq"
-                  className="hidden sm:flex items-center gap-2 text-[#1e3a8a] font-bold hover:gap-3 transition-all text-sm sm:text-base whitespace-nowrap"
-                >
-                  Все вопросы
-                  <ArrowRight size={18} />
-                </Link>
-              </div>
-            </div>
 
-            {/* Vertical FAQ Accordion */}
-            <div className="container mx-auto max-w-4xl px-5 sm:px-6 mt-8">
-              <div className="flex flex-col gap-4">
-                {FAQ_ITEMS.map((item, idx) => {
-                  const isOpen = openFaq === idx;
-                  return (
-                    <div 
-                      key={idx} 
-                      className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
-                        isOpen 
-                          ? 'bg-white shadow-lg shadow-[#1e3a8a]/5 border-[#1e3a8a]/20' 
-                          : 'bg-white/60 border-gray-200 hover:bg-white hover:border-[#1e3a8a]/30'
-                      }`}
-                    >
-                      <button
-                        onClick={() => setOpenFaq(isOpen ? null : idx)}
-                        className="w-full text-left p-5 sm:p-6 md:p-8 flex items-center justify-between gap-6"
-                      >
-                        <span className="flex items-start sm:items-center gap-4">
-                          <span className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#1e3a8a]/5 text-[#1e3a8a] flex items-center justify-center font-black text-lg sm:text-xl">
-                            ?
-                          </span>
-                          <span className="font-bold text-lg sm:text-xl text-[#1e3a8a] mt-0.5 sm:mt-0 leading-tight">
-                            {item.q}
-                          </span>
-                        </span>
-                        <ChevronDown 
-                          size={24} 
-                          className={`flex-shrink-0 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#1e3a8a]' : ''}`} 
-                        />
-                      </button>
-                      
-                      <div 
-                        className={`grid transition-all duration-300 ease-in-out ${
-                          isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-                        }`}
-                      >
-                        <div className="overflow-hidden">
-                          <div className="px-5 sm:px-6 md:px-8 pb-5 sm:pb-6 md:pb-8 pt-0 flex">
-                            {/* Visual indent aligning with text */}
-                            <div className="w-8 sm:w-10 mr-4 flex-shrink-0 hidden sm:block"></div>
-                            <p className="text-gray-600 leading-relaxed text-sm sm:text-base border-t border-gray-100 pt-5 w-full">
-                              {item.a}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="mt-8 text-center sm:hidden">
-                <Link href="/faq" className="inline-flex items-center justify-center gap-2 text-[#1e3a8a] font-bold">
-                  Все вопросы <ArrowRight size={18} />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
 
       </div>
     </MainLayout>
