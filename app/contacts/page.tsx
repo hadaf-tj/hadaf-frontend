@@ -50,7 +50,7 @@ export default function ContactsPage() {
                     <div className="w-12 h-12 bg-blue-100 text-[#1e3a8a] rounded-xl flex items-center justify-center mb-4">
                        <Phone size={24} />
                     </div>
-                    <h3 className="font-bold text-gray-900 mb-2">Телефон / Те Telegram</h3>
+                    <h3 className="font-bold text-gray-900 mb-2">Телефон / Telegram</h3>
                     <a href="tel:+992901643003" className="text-[#1e3a8a] font-black text-xl hover:underline">+992 901 643 003</a>
                  </div>
 
@@ -77,7 +77,7 @@ export default function ContactsPage() {
                  <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                        <input type="text" name="name" placeholder="Ваше Имя" required className="w-full h-14 px-5 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 font-medium" />
-                       <input type="tel" name="phone" placeholder="Ваш Телефон" className="w-full h-14 px-5 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 font-medium" />
+                       <input type="tel" name="phone" placeholder=""+992 XX XXX XX XX"" className="w-full h-14 px-5 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 font-medium" />
                     </div>
                     <textarea name="message" placeholder="Ваше сообщение, идея или вопрос..." rows={5} required className="w-full p-5 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 font-medium resize-none"></textarea>
                     <Button type="submit" className="w-full h-14 bg-[#1e3a8a] hover:bg-[#2a4ec2] text-white text-lg font-bold rounded-xl shadow-lg shadow-[#1e3a8a]/20 mt-2">
