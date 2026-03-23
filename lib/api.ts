@@ -19,6 +19,7 @@ interface BackendInstitution {
   created_at: string;
   updated_at?: string;
   needs_count?: number;
+  wards_count?: number;
 }
 
 interface BackendNeed {
@@ -114,6 +115,7 @@ const mapInstitution = (item: BackendInstitution): Institution => ({
   contactPhone: item.phone,
   contactEmail: item.email,
   needsCount: item.needs_count || 0,
+  wardsCount: item.wards_count || 0,
   lastUpdated: item.updated_at
     ? new Date(item.updated_at).toLocaleDateString("ru-RU")
     : new Date(item.created_at).toLocaleDateString("ru-RU"),

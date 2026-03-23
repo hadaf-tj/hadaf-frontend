@@ -21,6 +21,7 @@ export type Institution = {
   contactPhone: string;
   contactEmail: string;
   needsCount: number;
+  wardsCount?: number;
   lastUpdated: string;
   needs: Need[];
   activityHours?: string;
