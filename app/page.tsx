@@ -16,21 +16,21 @@ import { fetchInstitutions, fetchStats } from '@/lib/api';
 const HERO_SLIDES = [
   {
     image: '/hero.webp',
-    title: <>От доброго намерения<br /><span className="text-[#ffca63]">к реальной помощи</span></>,
+    title: <>От доброго намерения<br /><span className="text-[#ffca63]">К реальной помощи</span></>,
      
     subtitle: 'Мы показываем точные нужды детских домов и домов престарелых, чтобы вы сразу понимали, кому помочь и как сделать это напрямую.',
     cta: { label: 'Хочу помочь', href: '/institutions' },
   },
   {
     image: '/hero_help.webp',
-    title: <>Доверие без сомнений<br /></>,
-    subtitle: 'Каждое учреждение в реестре проверено. Вы видите реальные нужды и можете помочь адресно.',
+    title: <>Помощь без догадок<br /><span className="text-[#ffca63]">Только нужное</span></>,
+    subtitle: 'Каждое учреждение проверено. Вы видите конкретные запросы и помогаете именно тем, чем нужно — напрямую.',
     cta: { label: 'Все учреждения', href: '/institutions' },
   },
   {
     image: '/hero_events.webp',
-    title: <>Вместе мы сильнее<br /></>,
-    subtitle: 'Создавайте события, объединяйтесь с волонтёрами и меняйте жизни уже сегодня.',
+    title: <>Мы сделаем больше<br /><span className="text-[#ffca63]">Если мы вместе</span></>,
+    subtitle: 'Создавайте события, присоединяйтесь к волонтёрам и помогайте вместе.',
     cta: { label: 'События', href: '/events' },
   },
 ];
@@ -140,6 +140,12 @@ function HorizontalScroller({ children, className = '' }: { children: React.Reac
     const amount = el.clientWidth * 0.7;
     el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = 0;
+    }
+  }, []);
 
   return (
     <div className={`relative group/scroller ${className}`}>
@@ -352,10 +358,11 @@ const HomePage: React.FC = () => {
            ══════════════════════════════════════════════════════════════ */}
         <section className="relative bg-gradient-to-b from-[#0f2557] to-[#1e3a8a] overflow-hidden">
           {/* Fixed ornament background */}
-          <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-fixed bg-repeat bg-[length:300px] opacity-[0.06] pointer-events-none mix-blend-overlay"></div>
+          <div className="absolute inset-0 bg-[url('/ornament.webp')] bg-fixed bg-repeat bg-[length:300px] opacity-[0.08] pointer-events-none mix-blend-overlay"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0f2557]/60 via-transparent to-[#1e3a8a]/40 pointer-events-none"></div>
           {/* Ambient glow */}
-          <div className="absolute -top-20 left-1/4 w-[600px] h-[300px] bg-[#ffca63]/8 rounded-full blur-[120px] pointer-events-none"></div>
-          <div className="absolute -bottom-20 right-1/4 w-[400px] h-[200px] bg-white/5 rounded-full blur-[100px] pointer-events-none"></div>
+          <div className="absolute top-0 right-1/4 w-[500px] h-[400px] bg-[#ffca63]/[0.06] rounded-full blur-[120px] pointer-events-none"></div>
+          <div className="absolute bottom-0 left-1/4 w-[400px] h-[300px] bg-white/[0.03] rounded-full blur-[100px] pointer-events-none"></div>
 
           <div
             ref={missionReveal.ref}
@@ -366,7 +373,7 @@ const HomePage: React.FC = () => {
             {/* Section label */}
             <div className="text-center mb-10 md:mb-16">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
-                Добрые дела {' '}<span className="text-[#ffca63]">в цифрах</span>
+                Реальная помощь в цифрах
               </h2>
             </div>
 
@@ -579,12 +586,13 @@ const HomePage: React.FC = () => {
             </div>
 
             {/* Mobile horizontal scroll */}
-            <div className="md:hidden relative w-[100vw] -ml-6 pr-6">
+            <div className="md:hidden w-screen relative left-[50%] right-[50%] -ml-[50vw] -mr-[50vw]">
               <HorizontalScroller>
+                <div className="flex-shrink-0 w-2"></div>
                 {HOW_IT_WORKS.map((step, idx) => (
                   <div 
                     key={step.id} 
-                    className="flex-shrink-0 w-[280px] sm:w-[320px] ml-6 mr-2 pt-2"
+                    className="flex-shrink-0 w-[280px] sm:w-[320px] ml-4 mr-2 pt-2"
                   >
                     <div className="relative bg-gradient-to-b from-[#f8fafc] to-white rounded-[2rem] p-6 sm:p-8 border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-500 group h-full">
                       {/* Step number badge — inside card, not overflowing */}

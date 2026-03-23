@@ -1,76 +1,110 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { HeartHandshake } from 'lucide-react';
-import { cn } from '@/lib/utils'; // Assuming cn utility is available based on previous file reads
 
 const SplashScreen: React.FC = () => {
-    const [shouldRender, setShouldRender] = useState(true);
-    const [opacity, setOpacity] = useState(1);
+  const [shouldRender, setShouldRender] = useState(true);
+  const [phase, setPhase] = useState<'visible' | 'fading'>('visible');
 
-    useEffect(() => {
-        // Check if splash screen has already been shown in this session
-        const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+  useEffect(() => {
+    // В Next.js использовать sessionStorage безопасно в useEffect, так как это выполняется только на клиенте.
+    // Если нужно абсолютно исключить загрузку React перед сплеш-экраном (как в чистом HTML), 
+    // это делается через хардкод в app/layout.tsx и удаление элемента скриптом.
+    // Но для Next.js текущий подход — оптимальный баланс между UX и hydration.
+    const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
 
-        if (hasSeenSplash) {
-            setShouldRender(false);
-            return;
+    if (hasSeenSplash) {
+      setShouldRender(false);
+      return;
+    }
+
+    sessionStorage.setItem('hasSeenSplash', 'true');
+
+    // Даем 3.5 секунды на всю анимацию контура, затем плавно скрываем
+    const fadeTimer = setTimeout(() => setPhase('fading'), 3500);
+    const unmountTimer = setTimeout(() => setShouldRender(false), 4000);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(unmountTimer);
+    };
+  }, []);
+
+  if (!shouldRender) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#f8fafc] transition-opacity duration-500 ease-out"
+      style={{ opacity: phase === 'fading' ? 0 : 1 }}
+    >
+      <div className="relative flex flex-col items-center">
+        {/* Анимация "Мост доверия" */}
+        <svg viewBox="0 0 400 120" className="w-[300px] sm:w-[450px] stroke-[#1e3a8a] fill-none stroke-[3px] stroke-linecap-round stroke-linejoin-round overflow-visible">
+          
+          {/* 1. Сердце (донор) - рисуется первым */}
+          <g transform="translate(40, 45) scale(1.5)">
+            <path 
+              pathLength="100" 
+              className="animate-draw-1" 
+              d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" 
+            />
+          </g>
+
+          {/* 2. Мост (линия) - рисуется вторым */}
+          <path 
+            pathLength="100" 
+            className="animate-draw-2" 
+            d="M 95 70 Q 200 20 305 70" 
+          />
+
+          {/* 3. Домик (учреждение) - рисуется третьим */}
+          <g transform="translate(315, 45) scale(1.5)">
+            <path pathLength="100" className="animate-draw-3" d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline pathLength="100" className="animate-draw-3" points="9 22 9 12 15 12 15 22" />
+          </g>
+        </svg>
+
+        {/* Название появляется в конце */}
+        <h1 className="mt-8 text-2xl sm:text-3xl font-black text-[#1e3a8a] tracking-[0.2em] opacity-0 animate-fade-in-up uppercase">
+          Ҳадаф
+        </h1>
+      </div>
+
+      <style jsx>{`
+        .animate-draw-1 {
+          stroke-dasharray: 100;
+          stroke-dashoffset: 100;
+          animation: draw 1s ease-in-out forwards;
         }
-
-        // Mark as seen immediately so it doesn't show on reload if we wanted strict "once per tab"
-        // However, the logic here is: Show on first load, then fade out.
-        // If user reloads, hasSeenSplash will be true.
-        sessionStorage.setItem('hasSeenSplash', 'true');
-
-        // Sequence:
-        // 1. Show (already visible by default)
-        // 2. Wait a bit (e.g. 1.5s)
-        // 3. Fade out
-        // 4. Unmount
-
-        const fadeTimer = setTimeout(() => {
-            setOpacity(0);
-        }, 2000); // Show for 2 seconds
-
-        const unmountTimer = setTimeout(() => {
-            setShouldRender(false);
-        }, 2500); // Wait for fade out (0.5s transition)
-
-        return () => {
-            clearTimeout(fadeTimer);
-            clearTimeout(unmountTimer);
-        };
-    }, []);
-
-    if (!shouldRender) return null;
-
-    return (
-        <div
-            className={cn(
-                "fixed inset-0 z-[9999] flex items-center justify-center bg-[#1e3a8a] transition-opacity duration-500 ease-in-out",
-            )}
-            style={{ opacity }}
-        >
-            {/* Container with heartbeat animation */}
-            <div className="flex flex-col items-center animate-heartbeat">
-                <style jsx>{`
-                    @keyframes heartbeat {
-                        0%, 100% { transform: scale(1); }
-                        50% { transform: scale(1.05); }
-                    }
-                    .animate-heartbeat {
-                        animation: heartbeat 3s ease-in-out infinite;
-                    }
-                `}</style>
-                <div className="bg-white p-4 rounded-2xl shadow-2xl mb-4">
-                    <HeartHandshake size={64} className="text-[#1e3a8a]" />
-                </div>
-                <h1 className="text-4xl md:text-5xl font-black text-white tracking-wide drop-shadow-lg">
-                    Ҳадаф
-                </h1>
-            </div>
-        </div>
-    );
+        .animate-draw-2 {
+          stroke-dasharray: 100;
+          stroke-dashoffset: 100;
+          animation: draw 1s ease-in-out 0.8s forwards;
+        }
+        .animate-draw-3 {
+          stroke-dasharray: 100;
+          stroke-dashoffset: 100;
+          animation: draw 1s ease-in-out 1.6s forwards;
+        }
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out 2.2s forwards;
+        }
+        @keyframes draw {
+          to { stroke-dashoffset: 0; }
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
+    </div>
+  );
 };
 
 export default SplashScreen;

@@ -3,6 +3,7 @@ import "../styles/globals.css";
 import { Montserrat } from "next/font/google";
 import type { Metadata } from "next";
 import SplashScreen from "@/components/ui/SplashScreen";
+import ScrollToTop from "@/components/ui/ScrollToTop";
 import Providers from "@/components/Providers";
 import CookieBanner from "@/components/ui/CookieBanner";
 
@@ -58,6 +59,7 @@ export default function RootLayout({
     <html lang="ru" suppressHydrationWarning>
       <body className={montserrat.className}>
         <Providers>
+          <ScrollToTop />
           <SplashScreen />
           {children}
           <CookieBanner />

@@ -28,6 +28,11 @@ function getInitials(name: string) {
 export default function AboutPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
+
+  const handleImageError = (id: number) => {
+    setImageErrors(prev => ({ ...prev, [id]: true }));
+  };
 
   useEffect(() => {
     fetchTeamMembers()
@@ -55,12 +60,12 @@ export default function AboutPage() {
             <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28">
               <div className="max-w-3xl space-y-3 sm:space-y-6">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight">
-                  Мы растим новую культуру <br className="hidden sm:block" />
+                  Мы меняем культуру <br className="hidden sm:block" />
                   <span className="text-[#ffca63]">благотворительности</span>
                 </h1>
 
                 <p className="text-sm sm:text-lg md:text-xl text-white/90 font-medium leading-relaxed max-w-2xl">
-                  Ҳадаф — это команда неравнодушных людей, которые сажают семена доверия и прозрачности, чтобы каждый мог помогать эффективно и адресно.
+                  Ҳадаф — команда людей, которые делают помощь прозрачной и адресной. Вы точно знаете, кому помогаете, что нужно и куда идут ваши усилия.
                 </p>
               </div>
             </div>
@@ -157,9 +162,16 @@ export default function AboutPage() {
                     <div className="absolute inset-0 bg-gradient-to-b from-[#1e3a8a]/[0.01] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl"></div>
 
                     {/* Photo with zoom on hover */}
-                    {member.photo_url ? (
+                    {member.photo_url && !imageErrors[member.id] ? (
                       <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full overflow-hidden shadow-lg mb-5 sm:mb-6 border-4 border-white ring-2 ring-gray-100 group-hover:ring-[#ffca63]/30 group-hover:shadow-xl transition-all duration-500 relative z-10">
-                        <Image src={member.photo_url} alt={member.full_name} width={144} height={144} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 ease-out" />
+                        <Image 
+                          src={member.photo_url} 
+                          alt={member.full_name} 
+                          width={144} 
+                          height={144} 
+                          className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 ease-out" 
+                          onError={() => handleImageError(member.id)}
+                        />
                       </div>
                     ) : (
                       <div className={`w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full bg-gradient-to-br ${GRADIENT_COLORS[idx % GRADIENT_COLORS.length]} text-white flex items-center justify-center text-3xl sm:text-4xl font-black shadow-lg mb-5 sm:mb-6 group-hover:scale-105 group-hover:shadow-xl transition-all duration-500 relative z-10`}>

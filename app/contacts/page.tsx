@@ -2,7 +2,7 @@
 'use client';
 
 import MainLayout from '@/components/layout/MainLayout';
-import { Send, MessageCircle } from 'lucide-react';
+import { Send, MessageCircle, Linkedin, Instagram } from 'lucide-react';
 
 export default function ContactsPage() {
   return (
@@ -19,7 +19,7 @@ export default function ContactsPage() {
            </div>
         </div>
 
-        <div className="container mx-auto max-w-3xl px-5 sm:px-6 py-12 sm:py-16">
+        <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28 py-10 sm:py-16">
            <div className="space-y-8">
               
               {/* Объяснение об онлайн-формате */}
@@ -32,20 +32,55 @@ export default function ContactsPage() {
                  </p>
               </div>
 
-              {/* Telegram карточка */}
-              <a href="https://t.me/hadaf_tjk" target="_blank" rel="noopener noreferrer" className="block outline-none pt-4">
-                <div className="bg-gradient-to-r from-[#229ED9] to-[#1E88E5] p-8 sm:p-12 rounded-2xl sm:rounded-[2.5rem] shadow-xl text-center transform hover:scale-[1.02] transition-transform duration-300">
-                   <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner">
-                      <MessageCircle size={40} className="text-white fill-white" />
-                   </div>
-                   <h3 className="text-2xl sm:text-3xl font-black text-white mb-3">Наш Telegram-канал</h3>
-                   <p className="text-white/90 font-medium text-base sm:text-lg mb-8 max-w-lg mx-auto leading-relaxed">Главный источник новостей и прямая связь с командой волонтеров проекта.</p>
-                   <div className="inline-flex items-center gap-3 bg-white text-[#229ED9] px-8 py-4 rounded-xl font-black text-lg hover:bg-gray-50 transition-colors shadow-lg">
-                     <Send size={24} className="mr-1 relative right-0.5" />
-                     Подписаться в Telegram
-                   </div>
-                </div>
-              </a>
+              {/* 3 Social cards — full width grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+                
+                {/* Instagram */}
+                <a href="https://www.instagram.com/hadaf.tajikistan/" target="_blank" rel="noopener noreferrer" className="block outline-none group">
+                  <div className="bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF] p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg text-center transform hover:scale-[1.02] transition-transform duration-300 h-full flex flex-col items-center justify-center">
+                     <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-inner">
+                        <Instagram size={32} className="text-white" />
+                     </div>
+                     <h3 className="text-xl sm:text-2xl font-black text-white mb-2">Instagram</h3>
+                     <p className="text-white/85 font-medium text-sm sm:text-base leading-relaxed mb-5">Посты, истории и публикации о нашей деятельности.</p>
+                     <div className="inline-flex items-center gap-2 bg-white text-[#DD2A7B] px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors shadow-md">
+                       <Instagram size={18} />
+                       Подписаться
+                     </div>
+                  </div>
+                </a>
+
+                {/* Telegram — центральный, главный */}
+                <a href="https://t.me/hadaf_tjk" target="_blank" rel="noopener noreferrer" className="block outline-none group">
+                  <div className="bg-gradient-to-br from-[#229ED9] to-[#1E88E5] p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg text-center transform hover:scale-[1.02] transition-transform duration-300 h-full flex flex-col items-center justify-center ring-2 ring-[#229ED9]/30 ring-offset-2 ring-offset-[#f8fafc]">
+                     <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-inner">
+                        <MessageCircle size={32} className="text-white fill-white" />
+                     </div>
+                     <h3 className="text-xl sm:text-2xl font-black text-white mb-2">Telegram</h3>
+                     <p className="text-white/85 font-medium text-sm sm:text-base leading-relaxed mb-5">Главный источник новостей и прямая связь с командой.</p>
+                     <div className="inline-flex items-center gap-2 bg-white text-[#229ED9] px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors shadow-md">
+                       <Send size={18} className="relative right-0.5" />
+                       Подписаться
+                     </div>
+                  </div>
+                </a>
+
+                {/* LinkedIn */}
+                <a href="https://www.linkedin.com/company/hadaftj/" target="_blank" rel="noopener noreferrer" className="block outline-none group">
+                  <div className="bg-gradient-to-br from-[#0a66c2] to-[#004182] p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg text-center transform hover:scale-[1.02] transition-transform duration-300 h-full flex flex-col items-center justify-center">
+                     <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-inner">
+                        <Linkedin size={32} className="text-white" />
+                     </div>
+                     <h3 className="text-xl sm:text-2xl font-black text-white mb-2">LinkedIn</h3>
+                     <p className="text-white/85 font-medium text-sm sm:text-base leading-relaxed mb-5">Для профессионального сообщества и партнёров.</p>
+                     <div className="inline-flex items-center gap-2 bg-white text-[#0a66c2] px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors shadow-md">
+                       <Linkedin size={18} />
+                       Подписаться
+                     </div>
+                  </div>
+                </a>
+
+              </div>
 
            </div>
         </div>

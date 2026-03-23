@@ -95,7 +95,7 @@ function LoginForm() {
           <div className="space-y-1.5">
             <div className="flex justify-between items-center ml-1">
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Пароль</label>
-              <span className="text-xs font-bold text-gray-400 cursor-not-allowed" title="Скоро">Забыли?</span>
+              <span className="text-xs font-bold text-gray-400 cursor-not-allowed" title="Скоро">Забыли? (скоро)</span>
             </div>
             <input
               type="password"

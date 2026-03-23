@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import MainLayout from '@/components/layout/MainLayout';
+import Link from 'next/link';
 import { fetchEvents, createEvent, joinEvent, leaveEvent, EventItem, fetchInstitutions, getProfile } from '@/lib/api';
 import { Institution } from '@/types/project';
 
@@ -157,16 +158,20 @@ export default function EventsPage() {
                 </p>
               </div>
 
-              <div className="flex flex-col items-end">
+              <div className="flex flex-col items-center sm:items-end">
                 <Button 
                   onClick={() => setShowCreate(true)}
                   disabled={!isAuth}
-                  className="bg-[#ffca63] text-[#1e3a8a] hover:bg-white font-bold h-12 px-6 rounded-xl shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-[#ffca63] text-[#1e3a8a] hover:bg-white font-bold h-12 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                 >
                   <Plus size={20} />
                   Создать событие
                 </Button>
-                {!isAuth && <span className="text-white/70 text-xs mt-2 font-medium">Только для авторизованных</span>}
+                {!isAuth && (
+                  <div className="mt-3 text-center sm:text-right flex flex-col items-center sm:items-end">
+                    <Link href="/login"><span className="text-white text-sm font-bold underline decoration-white/50 hover:decoration-white transition-all">(Нужна авторизация)</span></Link>
+                  </div>
+                )}
               </div>
             </div>
           </div>
