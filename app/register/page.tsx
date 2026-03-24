@@ -285,6 +285,13 @@ export default function RegisterPage() {
             <Button type="submit" disabled={isLoading} className="w-full h-12 bg-[#1e3a8a] hover:bg-[#2a4ec2] text-white font-bold text-base rounded-xl mt-4 shadow-lg shadow-[#1e3a8a]/20 disabled:opacity-70">
               {isLoading ? <Loader2 className="animate-spin" /> : 'Зарегистрироваться'}
             </Button>
+            
+            <p className="mt-4 text-[11px] text-gray-400 text-center leading-relaxed">
+              Регистрируясь на платформе, вы соглашаетесь с{' '}
+              <Link href="/privacy" className="text-[#1e3a8a] font-bold hover:underline">
+                политикой конфиденциальности
+              </Link>
+            </p>
         </form>
 
         <div className="mt-8 text-center pt-6 border-t border-gray-100">

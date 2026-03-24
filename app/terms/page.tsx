@@ -1,54 +1,116 @@
 import MainLayout from '@/components/layout/MainLayout';
+import Link from 'next/link';
 import { FileText } from 'lucide-react';
 
 export default function TermsPage() {
   return (
     <MainLayout>
-      <div className="bg-[#1e3a8a] pt-28 sm:pt-36 pb-8 sm:pb-12 rounded-b-[2rem] sm:rounded-b-[3rem]">
-        <div className="container mx-auto px-5 sm:px-6 md:px-12 xl:px-28">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-2 sm:mb-3">
-            Отказ от ответственности
-          </h1>
-          <p className="text-white/80 text-base sm:text-lg">
-            Пользовательское соглашение и условия использования
-          </p>
+      {/* Header section with deep blue and ornaments */}
+      <div className="relative bg-[#1e3a8a] pt-28 sm:pt-36 pb-12 sm:pb-20 rounded-b-[2.5rem] sm:rounded-b-[4rem] overflow-hidden">
+        {/* Ambient ornaments */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-white/[0.05] to-transparent rounded-full blur-[80px] translate-x-1/3 -translate-y-1/3 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#ffca63]/[0.08] rounded-full blur-[60px] -translate-x-1/4 translate-y-1/4 pointer-events-none"></div>
+
+        <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28 relative z-10">
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-[3px] bg-[#ffca63] rounded-full"></div>
+              <span className="text-[#ffca63] font-bold text-sm uppercase tracking-[0.15em]">Юридическая информация</span>
+            </div>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-[1.1]">
+              Условия <br />
+              <span className="text-[#ffca63]">использования</span>
+            </h1>
+            <p className="text-white/70 text-base sm:text-lg md:text-xl font-medium max-w-xl">
+              Правила работы платформы Ҳадаф на этапе открытого тестирования.
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-5 sm:px-6 md:px-12 xl:px-28 py-12 sm:py-20 max-w-4xl min-h-[50vh]">
-        <div className="bg-white border border-gray-100 shadow-xl rounded-3xl p-8 sm:p-12 -mt-10 sm:-mt-16 relative z-10">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 bg-[#ffca63] text-[#1e3a8a] rounded-2xl flex items-center justify-center shadow-sm">
-              <FileText size={32} />
+      <div className="relative bg-white min-h-screen overflow-hidden">
+        {/* Subtle background ornaments */}
+        <div className="absolute top-1/4 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-[#1e3a8a]/[0.02] to-transparent rounded-full blur-[120px] translate-x-1/2 pointer-events-none"></div>
+        <div className="absolute bottom-1/4 left-0 w-[600px] h-[600px] bg-[#ffca63]/[0.03] rounded-full blur-[100px] -translate-x-1/2 pointer-events-none"></div>
+
+        <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28 py-16 sm:py-24 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 sm:gap-16">
+            
+            {/* Sidebar info */}
+            <div className="lg:col-span-4">
+              <div className="sticky top-32 space-y-8">
+                <div className="bg-gray-50/50 border border-gray-100 rounded-3xl p-8 sm:p-10 shadow-sm">
+                  <div className="w-14 h-14 bg-white text-[#1e3a8a] rounded-2xl flex items-center justify-center shadow-lg shadow-gray-200/50 mb-6">
+                    <FileText size={28} />
+                  </div>
+                  <h3 className="text-xl font-black text-[#1e3a8a] mb-4">Статус MVP</h3>
+                  <div className="space-y-4">
+                    <div className="bg-[#ffca63]/15 border-l-4 border-[#ffca63] p-4 rounded-r-xl">
+                      <p className="text-sm text-[#1e3a8a] font-bold leading-relaxed">
+                        Данный сайт является прототипом (MVP) для демонстрации концепции прозрачной благотворительности.
+                      </p>
+                    </div>
+                    <p className="text-gray-500 text-sm leading-relaxed font-medium">
+                      Все действия на сайте в текущий момент не несут юридических последствий и направлены на сбор обратной связи.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-5 py-2 inline-flex items-center gap-3 bg-[#1e3a8a]/5 rounded-full">
+                  <div className="w-2 h-2 bg-[#ffca63] rounded-full"></div>
+                  <span className="text-[#1e3a8a] font-bold text-xs uppercase tracking-wider">Версия платформы: 0.1.0-alpha</span>
+                </div>
+              </div>
             </div>
-          </div>
-          
-          <div className="prose prose-lg text-gray-700 max-w-none space-y-6">
-            <div className="bg-[#ffca63]/20 border border-[#ffca63] p-4 rounded-xl text-[#1e3a8a] font-medium mb-8 flex items-start gap-3">
-              <span className="text-xl">⚠️</span>
-              <p className="m-0">
-                Внимание: Платформа «Ҳадаф» находится в стадии разработки (Beta-версия). Данный сайт является MVP (минимально жизнеспособным продуктом).
-              </p>
+
+            {/* Main content area (wider) */}
+            <div className="lg:col-span-8">
+              <div className="prose prose-lg prose-slate max-w-none">
+                <h3 className="text-2xl sm:text-3xl font-black text-[#1e3a8a] mt-0 mb-6">Пользовательское соглашение</h3>
+                <p className="text-gray-600 leading-relaxed sm:text-lg">
+                  Платформа «Ҳадаф» разработана группой добровольцев для упрощения процесса адресной помощи. На этапе Beta-тестирования действуют следующие правила.
+                </p>
+
+                <div className="h-px bg-gradient-to-r from-gray-200 via-gray-100 to-transparent my-10"></div>
+
+                <h4 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-tight">1. Статус данных</h4>
+                <p className="text-gray-600 mb-8 sm:text-lg">
+                  Все упоминания учреждений, детских домов или их нужд в текущей версии являются <strong>демонстрационными</strong>. Нажимая кнопку «Помочь», вы тестируете интерфейс, а не берете на себя реальное обязательство по доставке груза.
+                </p>
+
+                <h4 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-tight">2. Финансовая политика</h4>
+                <p className="text-gray-600 mb-8 sm:text-lg">
+                  Мы <strong>никогда не собираем</strong> денежные средства. Смысл нашей концепции — прямая передача вещей от человека к человеку. Если кто-то от имени платформы просит вас перевести деньги — это мошенничество.
+                </p>
+
+                <h4 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-tight">3. Ограничение ответственности</h4>
+                <ul className="space-y-3 list-none pl-0 mb-10">
+                  <li className="flex items-start gap-3 text-gray-600 sm:text-lg">
+                    <div className="w-6 h-6 rounded-full bg-[#ffca63]/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <div className="w-2 h-2 rounded-full bg-[#ffca63]"></div>
+                    </div>
+                    <span>Мы не несем ответственности за точность данных в период тестирования.</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-gray-600 sm:text-lg">
+                    <div className="w-6 h-6 rounded-full bg-[#ffca63]/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <div className="w-2 h-2 rounded-full bg-[#ffca63]"></div>
+                    </div>
+                    <span>База данных может быть очищена без предварительного уведомления.</span>
+                  </li>
+                </ul>
+
+                <h4 className="text-xl font-black text-gray-900 mb-4 uppercase tracking-tight">4. Обратная связь</h4>
+                <p className="text-gray-600 mb-10 sm:text-lg">
+                  Если вы заметили ошибку или у вас есть предложение по улучшению дизайна или логики, пожалуйста, свяжитесь с нашей командой разработки через раздел <Link href="/contacts" className="text-[#1e3a8a] font-bold border-b border-[#1e3a8a]/30 hover:border-[#1e3a8a] transition-all">Контакты</Link>.
+                </p>
+
+                <div className="bg-gray-50 border border-gray-100 rounded-3xl p-8 sm:p-10 mt-16">
+                  <p className="text-gray-500 text-sm sm:text-base italic m-0 font-medium leading-relaxed">
+                    Если вы являетесь представителем реального социального учреждения в Таджикистане и хотите стать нашим первым официальным партнером, мы будем рады обсудить интеграцию.
+                  </p>
+                </div>
+              </div>
             </div>
-
-            <h3 className="text-xl font-bold text-[#1e3a8a] mt-8 mb-4">1. Статус платформы</h3>
-            <p>
-              Платформа является исключительно информационной и разработана группой волонтеров на безвозмездной основе для демонстрации концепции. Все упоминания учреждений, детских домов или их нужд в текущей версии являются <strong>выдуманными (демонстрационными)</strong> данными.
-            </p>
-
-            <h3 className="text-xl font-bold text-[#1e3a8a] mt-8 mb-4">2. Финансовые операции</h3>
-            <p>
-              Мы <strong>не собираем</strong> финансовые пожертвования. Платформа не принимает, не обрабатывает и не осуществляет денежные переводы. Смысл концепции заключается в личной передаче необходимых вещей от волонтера напрямую в учреждение.
-            </p>
-
-            <h3 className="text-xl font-bold text-[#1e3a8a] mt-8 mb-4">3. Ответственность</h3>
-            <p>
-              Администрация сайта не несет юридической или финансовой ответственности за точность информации, размещенной на сайте в период бета-тестирования, а также за любые действия пользователей. Нажимая кнопку «Помочь» в демо-версии, вы не берете на себя никаких реальных обязательств.
-            </p>
-
-            <p className="text-sm text-gray-500 mt-12 pt-6 border-t border-gray-200">
-              Если вы являетесь представителем реального учреждения и хотели бы стать нашим первым официальным партнером после полноценного запуска, пожалуйста, свяжитесь с нами через раздел Контакты.
-            </p>
           </div>
         </div>
       </div>
