@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { name: 'О нас', href: '/about' },
   { name: 'Учреждения', href: '/institutions' },
   { name: 'События', href: '/events' },
+  { name: 'Документы', href: '/documents' },
   { name: 'Контакты', href: '/contacts' },
 ];
 
