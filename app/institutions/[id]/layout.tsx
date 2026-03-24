@@ -53,7 +53,7 @@ export async function generateMetadata({
       description,
       url: canonical,
       type: "website",
-      images: [{ url: "/hero_institution_id.webp" }],
+      images: [{ url: "/institution_id_hero.webp" }],
     },
   };
 }

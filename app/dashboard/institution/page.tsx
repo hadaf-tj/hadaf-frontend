@@ -25,11 +25,15 @@ import {
   fetchInstitutionBookings, 
   approveBooking, 
   rejectBooking, 
-  completeBooking 
+  completeBooking,
+  fetchInstitutionEvents,
+  approveEvent,
+  rejectEvent,
+  EventItem
 } from '@/lib/api';
 import { Need } from '@/types/project';
 
-type Tab = 'needs' | 'bookings';
+type Tab = 'needs' | 'bookings' | 'events';
 
 interface Booking {
   id: number;
@@ -43,6 +47,7 @@ export default function InstitutionDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('needs');
   const [needs, setNeeds] = useState<Need[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [institutionId, setInstitutionId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -83,6 +88,14 @@ export default function InstitutionDashboard() {
         setBookings(bookingsData as unknown as Booking[]);
       } catch (e) {
         console.error('Bookings load error:', e);
+      }
+      
+      // Load events
+      try {
+        const eventsData = await fetchInstitutionEvents(user.institution_id);
+        setEvents(eventsData);
+      } catch (e) {
+        console.error('Events load error:', e);
       }
     } catch (e) {
       console.error(e);
@@ -172,6 +185,31 @@ export default function InstitutionDashboard() {
     }
   };
 
+  // Event moderation
+  const handleApproveEvent = async (id: number) => {
+    if(!confirm("Одобрить это событие? Оно появится в публичной ленте.")) return;
+    try {
+      await approveEvent(id);
+      showFeedback('success', 'Событие одобрено');
+      loadData();
+    } catch (e) {
+      console.error(e);
+      showFeedback('error', 'Ошибка одобрения события');
+    }
+  };
+
+  const handleRejectEvent = async (id: number) => {
+    if(!confirm("Отклонить это событие?")) return;
+    try {
+      await rejectEvent(id);
+      showFeedback('success', 'Событие отклонено');
+      loadData();
+    } catch (e) {
+      console.error(e);
+      showFeedback('error', 'Ошибка отклонения события');
+    }
+  };
+
   if (loading) {
     return <div className="flex h-screen items-center justify-center text-[#1e3a8a]"><Loader2 className="animate-spin" size={40}/></div>;
   }
@@ -180,6 +218,7 @@ export default function InstitutionDashboard() {
   const activeCount = needs.filter(n => n.receivedQuantity < n.requiredQuantity).length;
   const completedCount = needs.length - activeCount;
   const pendingBookings = bookings.filter(b => b.status === 'pending').length;
+  const pendingEvents = events.filter(e => e.status === 'pending').length;
 
   const statusLabel = (s: string) => {
     switch(s) {
@@ -244,7 +283,7 @@ export default function InstitutionDashboard() {
          </div>
          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
             <div>
-               <div className="text-3xl font-black text-gray-900">{pendingBookings}</div>
+               <div className="text-3xl font-black text-gray-900">{pendingBookings + pendingEvents}</div>
                <div className="text-xs font-bold text-gray-400 uppercase">Ожидают решения</div>
             </div>
             <div className="w-12 h-12 bg-yellow-50 text-yellow-600 rounded-xl flex items-center justify-center">
@@ -279,6 +318,22 @@ export default function InstitutionDashboard() {
           {pendingBookings > 0 && (
             <span className="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-black bg-red-500 text-white rounded-full">
               {pendingBookings}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('events')}
+          className={`px-6 py-2.5 rounded-lg font-bold text-sm transition-all ${
+            activeTab === 'events' 
+              ? 'bg-white text-[#1e3a8a] shadow-sm' 
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <Clock size={16} className="inline mr-2 -mt-0.5" />
+          События ({events.length})
+          {pendingEvents > 0 && (
+            <span className="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-black bg-red-500 text-white rounded-full">
+              {pendingEvents}
             </span>
           )}
         </button>
@@ -487,6 +542,73 @@ export default function InstitutionDashboard() {
                                 >
                                   <PackageCheck size={18} />
                                 </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                 </tbody>
+              </table>
+           </div>
+        </div>
+      )}
+
+      {/* === EVENTS TAB === */}
+      {activeTab === 'events' && (
+        <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+           <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                 <thead>
+                    <tr className="bg-gray-50 border-b border-gray-100">
+                       <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider">ID</th>
+                       <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider">Событие</th>
+                       <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider">Дата</th>
+                       <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider text-center">Статус</th>
+                       <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider text-right">Действия</th>
+                    </tr>
+                 </thead>
+                 <tbody className="divide-y divide-gray-50">
+                    {events.length === 0 ? (
+                      <tr><td colSpan={5} className="p-8 text-center text-gray-500">Нет событий для модерации</td></tr>
+                    ) : events.map((ev) => {
+                      const st = statusLabel(ev.status);
+                      
+                      return (
+                        <tr key={ev.id} className="hover:bg-[#f8fafc] transition-colors">
+                          <td className="py-5 px-6 font-bold text-gray-900">#{ev.id}</td>
+                          <td className="py-5 px-6">
+                            <div className="font-bold text-gray-900">{ev.title}</div>
+                            <div className="text-xs text-gray-500 max-w-[250px] truncate">{ev.description}</div>
+                            <div className="text-xs text-gray-400 mt-1">Организатор: {ev.creator_name}</div>
+                          </td>
+                          <td className="py-5 px-6 font-medium text-gray-700">
+                            {new Date(ev.event_date).toLocaleString('ru-RU')}
+                          </td>
+                          <td className="py-5 px-6 text-center">
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase ${st.cls}`}>
+                              {st.text}
+                            </span>
+                          </td>
+                          <td className="py-5 px-6 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              {ev.status === 'pending' && (
+                                <>
+                                  <button 
+                                    onClick={() => handleApproveEvent(ev.id)} 
+                                    className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors" 
+                                    title="Одобрить"
+                                  >
+                                    <Check size={18} />
+                                  </button>
+                                  <button 
+                                    onClick={() => handleRejectEvent(ev.id)} 
+                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" 
+                                    title="Отклонить"
+                                  >
+                                    <X size={18} />
+                                  </button>
+                                </>
                               )}
                             </div>
                           </td>

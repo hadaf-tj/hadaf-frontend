@@ -39,8 +39,9 @@ const InstitutionCard: React.FC<InstitutionCardProps> = ({ institution }) => {
   return (
     <Link href={`/institutions/${institution.id}`} className="block group h-full">
       <div className={cn(
-        "relative flex flex-col h-full bg-white rounded-3xl p-6 transition-all duration-300 border border-gray-100",
-        "hover:shadow-2xl hover:-translate-y-2 hover:border-[#1e3a8a]/20", // Эффекты при наведении
+        "relative flex flex-col h-full bg-white rounded-3xl p-6 border border-gray-100 shadow-sm",
+        "transition-all duration-500 ease-out",
+        "hover:shadow-xl hover:shadow-[#1e3a8a]/[0.08] hover:-translate-y-1.5 hover:border-[#1e3a8a]/15",
       )}>
 
         {/* Хедер карточки: Тип и Город */}
@@ -55,13 +56,13 @@ const InstitutionCard: React.FC<InstitutionCardProps> = ({ institution }) => {
         </div>
 
         {/* Название */}
-        <h3 className="text-xl font-black text-gray-900 group-hover:text-[#1e3a8a] transition-colors mb-2 line-clamp-2 leading-tight">
+        <h3 className="text-xl font-black text-gray-900 group-hover:text-[#1e3a8a] transition-colors duration-300 mb-2 line-clamp-2 leading-tight">
           {institution.name}
         </h3>
 
         {/* Адрес */}
         <div className="flex items-center text-gray-500 mb-6 font-medium">
-          <MapPin className="w-4 h-4 mr-2 text-gray-400 group-hover:text-[#ffca63] transition-colors" />
+          <MapPin className="w-4 h-4 mr-2 text-gray-400 group-hover:text-[#ffca63] transition-colors duration-300" />
           {institution.city}
         </div>
 
@@ -76,8 +77,8 @@ const InstitutionCard: React.FC<InstitutionCardProps> = ({ institution }) => {
           </div>
 
           {/* Кнопка-стрелка */}
-          <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#1e3a8a] transition-all duration-300 group-hover:scale-110 shadow-sm">
-            <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-[#ffca63] transition-colors" />
+          <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#1e3a8a] transition-all duration-300 shadow-sm">
+            <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-[#ffca63] transition-colors duration-300" />
           </div>
         </div>
       </div>

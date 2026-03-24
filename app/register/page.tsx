@@ -21,7 +21,8 @@ export default function RegisterPage() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+992');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [selectedInstitutionId, setSelectedInstitutionId] = useState<string>(''); 
   const [institutions, setInstitutions] = useState<Institution[]>([]);
@@ -60,8 +61,8 @@ export default function RegisterPage() {
       }
 
       // Регистрируемся
-      // ВАЖНО: register теперь не возвращает токены, а просто OK
-      await register(email, phone, password, fullName, role, instId);
+      const fullPhone = `${countryCode}${phoneNumber}`.replace(/\s+/g, '');
+      await register(email, fullPhone, password, fullName, role, instId);
       
       // Переходим к вводу кода
       setStep('otp');
@@ -233,9 +234,6 @@ export default function RegisterPage() {
                     {/* Стрелочка для селекта */}
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">▼</div>
                  </div>
-                 <p className="text-[10px] text-gray-400 ml-1">
-                    Вашей организации нет в списке? <a href="#" className="text-[#1e3a8a] hover:underline">Подайте заявку</a>
-                 </p>
                </div>
             )}
 
@@ -246,7 +244,36 @@ export default function RegisterPage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-gray-500 ml-1 uppercase">Телефон</label>
-              <input type="text" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+992..." className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900" />
+              <div className="flex gap-2">
+                {/* Country Code Selector */}
+                <div className="relative w-[110px] sm:w-[130px] flex-shrink-0">
+                  <select
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    className="w-full h-12 pl-3 pr-8 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-bold text-gray-900 appearance-none cursor-pointer text-sm sm:text-base"
+                  >
+                    <option value="+992">🇹🇯 +992</option>
+                    <option value="+7">🇷🇺 +7</option>
+                    <option value="+998">🇺🇿 +998</option>
+                  </select>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-xs">▼</div>
+                </div>
+                {/* Phone Number Input */}
+                <input 
+                  type="tel" 
+                  required 
+                  value={phoneNumber} 
+                  onChange={(e) => {
+                    // Only allow digits
+                    const digits = e.target.value.replace(/\D/g, '');
+                    // Max length usually 10 digits for RU (+7), 9 for TJ/UZ
+                    const maxLen = countryCode === '+7' ? 10 : 9;
+                    setPhoneNumber(digits.slice(0, maxLen));
+                  }} 
+                  placeholder={countryCode === '+7' ? "900 123 4567" : "000 000 000"} 
+                  className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-bold text-gray-900 tracking-wider placeholder:font-medium placeholder:tracking-normal" 
+                />
+              </div>
             </div>
 
             <div className="space-y-1.5">

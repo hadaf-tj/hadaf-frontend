@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import PledgeModal, { NeedItem } from '@/components/specific/PledgeModal';
 import { fetchInstitutionById, fetchNeedsByInstitution, NeedsFilters } from '@/lib/api';
+import { useAuth } from '@/lib/AuthContext';
+import { useRouter } from 'next/navigation';
 import { Institution, Need } from '@/types/project';
 
 const STATUS_OPTIONS = [
@@ -46,6 +48,9 @@ export default function InstitutionDetailPage() {
   // Состояния модалки
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNeed, setSelectedNeed] = useState<NeedItem | null>(null);
+
+  const { user } = useAuth();
+  const router = useRouter();
 
   // Загрузка нужд с фильтрами  
   const loadNeeds = useCallback(async (institutionId: string) => {
@@ -108,6 +113,10 @@ export default function InstitutionDetailPage() {
 
   // Хендлер для открытия модалки
   const handlePledgeClick = (need: Need) => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
     setSelectedNeed({
       id: need.id,
       title: need.name,
@@ -182,19 +191,18 @@ export default function InstitutionDetailPage() {
     <MainLayout>
       <div className="min-h-screen bg-[#f8fafc] font-sans pb-20">
 
-        {/* HEADER IMAGE & BREADCRUMBS */}
-        <div className="relative h-[300px] lg:h-[350px] w-full bg-[#1e3a8a]">
-          {/* Фото учреждения (пока ставим заглушку, так как с бэка фото не приходит) */}
+        {/* HERO IMAGE & BREADCRUMBS */}
+        <div className="relative h-[280px] sm:h-[340px] lg:h-[400px] w-full overflow-hidden">
           <Image
-            src="/hero_institution_id.webp"
+            src="/institution_id_hero.webp"
             alt={data.name}
             fill
-            className="object-cover opacity-40 mix-blend-overlay"
+            className="object-cover"
+            priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#f8fafc] to-transparent"></div>
 
-          <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 relative z-10 h-full flex flex-col justify-between py-32">
-            <Link href="/institutions" className="inline-flex items-center text-white/80 hover:text-white transition-colors font-bold text-sm bg-white/10 backdrop-blur-md px-4 py-2 rounded-full w-fit">
+          <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 relative z-10 pt-28">
+            <Link href="/institutions" className="inline-flex items-center text-white hover:text-white transition-colors font-bold text-sm bg-black/20 backdrop-blur-md px-4 py-2 rounded-full hover:bg-black/30">
               <ChevronLeft size={16} className="mr-1" />
               Назад к списку
             </Link>
@@ -202,7 +210,7 @@ export default function InstitutionDetailPage() {
         </div>
 
         {/* MAIN CONTENT */}
-        <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 -mt-32 relative z-20">
+        <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 -mt-10 lg:-mt-16 relative z-20">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
             {/* ЛЕВАЯ КОЛОНКА */}
@@ -229,9 +237,13 @@ export default function InstitutionDetailPage() {
                 </div>
 
                 {/* Статистика */}
-                <div className="grid grid-cols-1 gap-4 mb-8">
-                  <div className="bg-gray-50 flex items-center justify-between p-4 rounded-2xl w-full">
-                    <div className="text-xs text-gray-500 font-bold uppercase">Открытых нужд</div>
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  <div className="bg-gray-50 flex flex-col justify-center p-4 rounded-2xl w-full">
+                    <div className="text-xs text-gray-500 font-bold uppercase mb-1">Подопечных</div>
+                    <div className="text-xl font-black text-[#1e3a8a]">{data.wardsCount || 0}</div>
+                  </div>
+                  <div className="bg-gray-50 flex flex-col justify-center p-4 rounded-2xl w-full">
+                    <div className="text-xs text-gray-500 font-bold uppercase mb-1">Открытых нужд</div>
                     <div className="text-xl font-black text-[#1e3a8a]">{data.needsCount}</div>
                   </div>
                 </div>

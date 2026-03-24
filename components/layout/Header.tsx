@@ -203,7 +203,7 @@ const Header: React.FC<HeaderProps> = ({ variant = 'default' }) => {
                 "h-16 transition-colors duration-300"
               )}
             >
-              <Link href="/about">Нужна помощь</Link>
+              <Link href="/need-help">Нужна помощь</Link>
             </Button>
           </div>
         </div>

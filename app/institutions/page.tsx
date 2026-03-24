@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import InstitutionCard from '@/components/specific/InstitutionCard';
 import { Button } from '@/components/ui/Button';
-import { Search, Map, Loader2, ArrowUpDown, Navigation, ChevronDown } from 'lucide-react';
+import { Search, Map, Loader2, ArrowUpDown, Navigation, ChevronDown, MapPin } from 'lucide-react';
 import { Institution } from '@/types/project';
 import Link from 'next/link';
 import { fetchInstitutions } from '@/lib/api';
@@ -26,6 +26,7 @@ export default function InstitutionsPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('default');
+  const [cityFilter, setCityFilter] = useState('all');
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isGeoLoading, setIsGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState('');
@@ -89,12 +90,16 @@ export default function InstitutionsPage() {
     return () => clearTimeout(timeoutId);
   }, [activeCategory, searchQuery, sortBy, userLocation]);
 
+  // Получаем уникальные города из загруженных данных
+  const uniqueCities = Array.from(new Set(institutions.map(i => i.city))).sort();
+
   // Фильтрация (работает уже с загруженными данными)
   const filteredData = institutions.filter(item => {
     const matchesCategory = activeCategory === 'all' || item.type === activeCategory;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.city.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    const matchesCity = cityFilter === 'all' || item.city === cityFilter;
+    return matchesCategory && matchesSearch && matchesCity;
   });
 
   return (
@@ -155,6 +160,22 @@ export default function InstitutionsPage() {
                     {cat.label}
                   </button>
                 ))}
+
+                {/* City filter */}
+                <div className="relative">
+                  <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <select
+                    value={cityFilter}
+                    onChange={(e) => setCityFilter(e.target.value)}
+                    className="appearance-none h-11 sm:h-12 pl-9 pr-9 rounded-lg sm:rounded-xl bg-gray-50 text-gray-600 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 cursor-pointer border-none"
+                  >
+                    <option value="all">Все города</option>
+                    {uniqueCities.map(city => (
+                      <option key={city} value={city}>{city}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                </div>
               </div>
             </div>
 
@@ -260,7 +281,7 @@ export default function InstitutionsPage() {
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">Ничего не найдено</h3>
                     <p className="text-gray-500">Попробуйте изменить параметры поиска</p>
                     <button
-                      onClick={() => { setActiveCategory('all'); setSearchQuery('') }}
+                      onClick={() => { setActiveCategory('all'); setSearchQuery(''); setCityFilter('all'); }}
                       className="mt-6 text-[#1e3a8a] font-bold hover:underline"
                     >
                       Сбросить фильтры
