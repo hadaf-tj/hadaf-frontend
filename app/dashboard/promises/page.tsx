@@ -1,11 +1,11 @@
 /* FILE: app/dashboard/promises/page.tsx */
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { HeartHandshake, Loader2, ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { fetchMyBookings, cancelMyBooking, updateMyBooking } from '@/lib/api';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { HeartHandshake, Loader2, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { fetchMyBookings, cancelMyBooking, updateMyBooking } from "@/lib/api";
 
 interface Booking {
   id: number;
@@ -21,7 +21,7 @@ interface Booking {
 export default function PromisesPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editQty, setEditQty] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<number | null>(null);
@@ -30,10 +30,9 @@ export default function PromisesPage() {
     const load = async () => {
       try {
         const data = await fetchMyBookings();
-        setBookings((data as unknown as Booking[]) || []);
+        setBookings(data);
       } catch (err) {
         console.error(err);
-        // API may not exist yet — show empty state gracefully
         setBookings([]);
       } finally {
         setIsLoading(false);
@@ -43,13 +42,15 @@ export default function PromisesPage() {
   }, []);
 
   const handleCancel = async (id: number) => {
-    if (!confirm('Вы уверены, что хотите отменить это обещание?')) return;
+    if (!confirm("Вы уверены, что хотите отменить это обещание?")) return;
     try {
       setIsProcessing(id);
       await cancelMyBooking(id);
-      setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'cancelled' } : b));
+      setBookings((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, status: "cancelled" } : b)),
+      );
     } catch (err: any) {
-      alert(err.message || 'Ошибка отмены');
+      alert(err.message || "Ошибка отмены");
     } finally {
       setIsProcessing(null);
     }
@@ -57,16 +58,18 @@ export default function PromisesPage() {
 
   const handleSaveEdit = async (id: number) => {
     if (editQty <= 0) {
-      alert('Количество должно быть больше 0');
+      alert("Количество должно быть больше 0");
       return;
     }
     try {
       setIsProcessing(id);
       await updateMyBooking(id, editQty);
-      setBookings(prev => prev.map(b => b.id === id ? { ...b, quantity: editQty } : b));
+      setBookings((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, quantity: editQty } : b)),
+      );
       setEditingId(null);
     } catch (err: any) {
-      alert(err.message || 'Ошибка сохранения');
+      alert(err.message || "Ошибка сохранения");
     } finally {
       setIsProcessing(null);
     }
@@ -74,9 +77,10 @@ export default function PromisesPage() {
 
   return (
     <div className="space-y-5 sm:space-y-6">
-
       <div>
-        <h1 className="text-2xl sm:text-3xl font-black text-[#1e3a8a]">Мои обещания</h1>
+        <h1 className="text-2xl sm:text-3xl font-black text-[#1e3a8a]">
+          Мои обещания
+        </h1>
         <p className="text-gray-500 font-medium text-sm sm:text-base">
           Список вещей, которые вы планируете передать учреждениям.
         </p>
@@ -93,7 +97,9 @@ export default function PromisesPage() {
       {!isLoading && error && (
         <div className="text-center py-16">
           <p className="text-red-500 font-bold mb-4">{error}</p>
-          <Button onClick={() => window.location.reload()}>Попробовать снова</Button>
+          <Button onClick={() => window.location.reload()}>
+            Попробовать снова
+          </Button>
         </div>
       )}
 
@@ -103,9 +109,12 @@ export default function PromisesPage() {
           <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
             <HeartHandshake size={40} className="text-[#1e3a8a]" />
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">У вас пока нет обещаний</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
+            У вас пока нет обещаний
+          </h3>
           <p className="text-gray-500 mb-6 max-w-md mx-auto">
-            Перейдите к списку учреждений, чтобы найти тех, кому нужна помощь, и начните помогать.
+            Перейдите к списку учреждений, чтобы найти тех, кому нужна помощь, и
+            начните помогать.
           </p>
           <Link href="/institutions">
             <Button className="bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-bold px-8">
@@ -120,33 +129,52 @@ export default function PromisesPage() {
       {!isLoading && bookings.length > 0 && (
         <div className="space-y-4">
           {bookings.map((b) => (
-            <div key={b.id} className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div
+              key={b.id}
+              className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100"
+            >
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">{b.need_name || 'Неизвестная нужда'}</h3>
+                  <h3 className="text-lg font-bold text-gray-900">
+                    {b.need_name || "Неизвестная нужда"}
+                  </h3>
                   <div className="text-sm text-gray-500 font-medium mt-1 flex items-center gap-1">
                     {b.institution_name ? (
-                      <Link href={`/institutions/${b.institution_id}`} className="hover:text-[#1e3a8a] hover:underline transition-colors">
+                      <Link
+                        href={`/institutions/${b.institution_id}`}
+                        className="hover:text-[#1e3a8a] hover:underline transition-colors"
+                      >
                         {b.institution_name}
                       </Link>
                     ) : (
-                      'Учреждение'
+                      "Учреждение"
                     )}
                     <span>· {b.quantity} шт.</span>
                   </div>
                   {(b.planned_date || b.note) && (
-                    <p className="text-xs text-gray-400 mt-1">Плановая дата: {b.planned_date || b.note}</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Плановая дата: {b.planned_date || b.note}
+                    </p>
                   )}
                 </div>
-                <span className={`text-xs font-bold px-3 py-1 rounded-full shrink-0 ${
-                  b.status === 'completed' ? 'bg-emerald-100 text-emerald-700' :
-                  b.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                  b.status === 'rejected' ? 'bg-orange-100 text-orange-700' :
-                  'bg-blue-100 text-[#1e3a8a]'
-                }`}>
-                  {b.status === 'completed' ? 'Выполнено' :
-                   b.status === 'cancelled' ? 'Отменено' :
-                   b.status === 'rejected' ? 'Отклонено' : 'Активно'}
+                <span
+                  className={`text-xs font-bold px-3 py-1 rounded-full shrink-0 ${
+                    b.status === "completed"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : b.status === "cancelled"
+                        ? "bg-red-100 text-red-700"
+                        : b.status === "rejected"
+                          ? "bg-orange-100 text-orange-700"
+                          : "bg-blue-100 text-[#1e3a8a]"
+                  }`}
+                >
+                  {b.status === "completed"
+                    ? "Выполнено"
+                    : b.status === "cancelled"
+                      ? "Отменено"
+                      : b.status === "rejected"
+                        ? "Отклонено"
+                        : "Активно"}
                 </span>
               </div>
 
@@ -154,9 +182,11 @@ export default function PromisesPage() {
               {editingId === b.id ? (
                 <div className="mt-4 flex items-center gap-3 bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-100">
                   <div className="flex-1">
-                    <label className="text-xs text-gray-500 font-bold mb-1 block uppercase tracking-wider">Новое количество</label>
-                    <input 
-                      type="number" 
+                    <label className="text-xs text-gray-500 font-bold mb-1 block uppercase tracking-wider">
+                      Новое количество
+                    </label>
+                    <input
+                      type="number"
                       min="1"
                       className="w-full border-gray-200 rounded-lg text-sm bg-white"
                       value={editQty}
@@ -165,32 +195,53 @@ export default function PromisesPage() {
                     />
                   </div>
                   <div className="flex gap-2 items-end pt-5">
-                    <Button size="sm" onClick={() => handleSaveEdit(b.id)} disabled={isProcessing === b.id} className="bg-[#1e3a8a]">
-                      {isProcessing === b.id ? <Loader2 className="animate-spin w-4 h-4" /> : 'Сохранить'}
+                    <Button
+                      size="sm"
+                      onClick={() => handleSaveEdit(b.id)}
+                      disabled={isProcessing === b.id}
+                      className="bg-[#1e3a8a]"
+                    >
+                      {isProcessing === b.id ? (
+                        <Loader2 className="animate-spin w-4 h-4" />
+                      ) : (
+                        "Сохранить"
+                      )}
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => setEditingId(null)} disabled={isProcessing === b.id}>Отмена</Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setEditingId(null)}
+                      disabled={isProcessing === b.id}
+                    >
+                      Отмена
+                    </Button>
                   </div>
                 </div>
               ) : (
-                b.status === 'pending' && (
+                b.status === "pending" && (
                   <div className="mt-5 flex gap-3 pt-4 border-t border-gray-100">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={() => { setEditingId(b.id); setEditQty(b.quantity); }}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setEditingId(b.id);
+                        setEditQty(b.quantity);
+                      }}
                       disabled={isProcessing === b.id}
                       className="text-[#1e3a8a] border-[#1e3a8a]/20 hover:bg-[#1e3a8a]/5"
                     >
                       Изменить
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
+                    <Button
+                      size="sm"
+                      variant="ghost"
                       onClick={() => handleCancel(b.id)}
                       disabled={isProcessing === b.id}
                       className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
-                      {isProcessing === b.id && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
+                      {isProcessing === b.id && (
+                        <Loader2 className="animate-spin w-4 h-4 mr-2" />
+                      )}
                       Отменить
                     </Button>
                   </div>
@@ -200,7 +251,6 @@ export default function PromisesPage() {
           ))}
         </div>
       )}
-
     </div>
   );
 }

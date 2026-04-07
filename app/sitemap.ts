@@ -30,21 +30,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/privacy`, lastModified },
   ];
 
-  // Добавляем страницы учреждений (если API доступен)
   try {
     const res = await fetch(`${baseUrl}/api/v1/institutions`, {
       cache: "no-store",
     });
     if (res.ok) {
-      const json = (await res.json()) as ApiResponse<Array<{ id: number }>>;
-      const institutions = Array.isArray(json?.data) ? json.data : [];
+      const json = (await res.json()) as
+        | ApiResponse<Array<{ id: number }>>
+        | ApiResponse<{ items?: Array<{ id: number }> }>;
+      const institutions = Array.isArray(json?.data)
+        ? json.data
+        : json?.data?.items || [];
       for (const inst of institutions) {
         const rawId = inst?.id;
-        if (
-          typeof rawId !== "number" ||
-          !Number.isFinite(rawId) ||
-          rawId <= 0
-        )
+        if (typeof rawId !== "number" || !Number.isFinite(rawId) || rawId <= 0)
           continue;
         staticRoutes.push({
           url: `${baseUrl}/institutions/${rawId}`,
@@ -53,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
     }
   } catch {
-    // no-op: sitemap всё равно отдаём со статическими урлами
+    // no-op: sitemap still returns static routes
   }
 
   return staticRoutes;

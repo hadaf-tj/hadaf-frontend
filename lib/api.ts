@@ -18,6 +18,8 @@ interface BackendInstitution {
   longitude?: number;
   created_at: string;
   updated_at?: string;
+  is_deleted?: boolean;
+  deleted_at?: string | null;
   needs_count?: number;
   wards_count?: number;
 }
@@ -39,6 +41,15 @@ interface ApiResponse<T> {
   data: T;
 }
 
+interface PaginatedData<T> {
+  items: T[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+type ListApiResponse<T> = ApiResponse<PaginatedData<T> | T[]>;
+
 interface TokenResponse {
   access_token: string;
   refresh_token: string;
@@ -56,7 +67,10 @@ export async function refreshTokens(): Promise<void> {
   }
 }
 
-async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Response> {
+async function fetchWithAuth(
+  url: string,
+  options: RequestInit = {},
+): Promise<Response> {
   const headers = {
     ...options.headers,
     "Content-Type": "application/json",
@@ -69,7 +83,11 @@ async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Re
   });
 
   // If unauthorized, try to refresh once
-  if (res.status === 401 && !url.includes("/login") && !url.includes("/refresh")) {
+  if (
+    res.status === 401 &&
+    !url.includes("/login") &&
+    !url.includes("/refresh")
+  ) {
     try {
       await refreshTokens();
       // Retry request
@@ -87,14 +105,26 @@ async function fetchWithAuth(url: string, options: RequestInit = {}): Promise<Re
   // GLOBAL ERROR HANDLER
   if (!res.ok) {
     const clone = res.clone();
-    clone.json().then(errData => {
-      // Distinguish system level errors from form validation errors if possible
-      if (res.status === 401 || res.status === 403 || res.status === 429 || res.status >= 500) {
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('api-error', { detail: errData.message || 'Системная ошибка' }));
+    clone
+      .json()
+      .then((errData) => {
+        // Distinguish system level errors from form validation errors if possible
+        if (
+          res.status === 401 ||
+          res.status === 403 ||
+          res.status === 429 ||
+          res.status >= 500
+        ) {
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(
+              new CustomEvent("api-error", {
+                detail: errData.message || "Системная ошибка",
+              }),
+            );
+          }
         }
-      }
-    }).catch(() => {});
+      })
+      .catch(() => {});
   }
 
   return res;
@@ -135,13 +165,17 @@ const mapNeed = (item: BackendNeed): Need => ({
   urgency: item.urgency || "medium",
 });
 
+function extractItems<T>(json: ListApiResponse<T>): T[] {
+  const data = json.data;
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.items)) return data.items;
+  return [];
+}
+
 // --- API МЕТОДЫ ---
 
 // 1. Авторизация
-export async function login(
-  email: string,
-  password: string
-): Promise<void> {
+export async function login(email: string, password: string): Promise<void> {
   const res = await fetch(`${API_BASE_URL}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -163,19 +197,19 @@ export async function register(
   password: string,
   fullName: string,
   role: "volunteer" | "employee",
-  institutionId: number | null // null для волонтеров
+  institutionId: number | null, // null для волонтеров
 ): Promise<void> {
   const res = await fetchWithAuth(`${API_BASE_URL}/register`, {
-      method: "POST",
-      body: JSON.stringify({
-        email,
-        phone,
-        password,
-        full_name: fullName,
-        role: role,
-        institution_id: institutionId,
-      }),
-    });
+    method: "POST",
+    body: JSON.stringify({
+      email,
+      phone,
+      password,
+      full_name: fullName,
+      role: role,
+      institution_id: institutionId,
+    }),
+  });
 
   if (!res.ok) {
     const errorData = await res.json();
@@ -187,7 +221,7 @@ export async function register(
 // 2b. Подтверждение OTP-кода
 export async function confirmOTP(
   receiver: string,
-  otp: string
+  otp: string,
 ): Promise<TokenResponse> {
   const res = await fetchWithAuth(`${API_BASE_URL}/confirm_otp`, {
     method: "POST",
@@ -218,19 +252,20 @@ export async function fetchInstitutions(filters?: {
       params.append("type", filters.type);
     }
     if (filters?.sort) params.append("sort", filters.sort);
-    if (filters?.lat !== undefined) params.append("lat", filters.lat.toString());
-    if (filters?.lng !== undefined) params.append("lng", filters.lng.toString());
+    if (filters?.lat !== undefined)
+      params.append("lat", filters.lat.toString());
+    if (filters?.lng !== undefined)
+      params.append("lng", filters.lng.toString());
 
     const res = await fetch(
       `${API_BASE_URL}/institutions?${params.toString()}`,
       {
         cache: "no-store",
-      }
+      },
     );
     if (!res.ok) throw new Error("Ошибка загрузки");
-    const json: ApiResponse<BackendInstitution[]> = await res.json();
-    if (!json.data) return [];
-    return json.data.map(mapInstitution);
+    const json: ListApiResponse<BackendInstitution> = await res.json();
+    return extractItems(json).map(mapInstitution);
   } catch (error) {
     console.error(error);
     return [];
@@ -247,23 +282,23 @@ export interface NeedsFilters {
 
 export async function fetchNeedsByInstitution(
   institutionId: string,
-  filters?: NeedsFilters
+  filters?: NeedsFilters,
 ): Promise<Need[]> {
   try {
     const params = new URLSearchParams();
     if (filters?.name) params.append("name", filters.name);
     if (filters?.urgency) params.append("urgency", filters.urgency);
-    if (filters?.is_done !== undefined) params.append("is_done", filters.is_done.toString());
+    if (filters?.is_done !== undefined)
+      params.append("is_done", filters.is_done.toString());
     if (filters?.order_by) params.append("order_by", filters.order_by);
 
     const res = await fetch(
       `${API_BASE_URL}/institutions/${institutionId}/needs?${params.toString()}`,
-      { cache: "no-store" }
+      { cache: "no-store" },
     );
     if (!res.ok) throw new Error("Ошибка загрузки нужд");
-    const json: ApiResponse<BackendNeed[]> = await res.json();
-    if (!json.data) return [];
-    return json.data.map(mapNeed);
+    const json: ListApiResponse<BackendNeed> = await res.json();
+    return extractItems(json).map(mapNeed);
   } catch (error) {
     console.error(error);
     return [];
@@ -271,14 +306,14 @@ export async function fetchNeedsByInstitution(
 }
 
 export async function fetchInstitutionById(
-  id: string
+  id: string,
 ): Promise<Institution | null> {
   try {
     const resInst = await fetch(`${API_BASE_URL}/institutions/${id}`, {
       cache: "no-store",
     });
     if (!resInst.ok) return null;
-    const jsonInst = await resInst.json();
+    const jsonInst: ApiResponse<BackendInstitution> = await resInst.json();
     if (!jsonInst.data) return null;
 
     const institution = mapInstitution(jsonInst.data);
@@ -287,9 +322,10 @@ export async function fetchInstitutionById(
       cache: "no-store",
     });
     if (resNeeds.ok) {
-      const jsonNeeds = await resNeeds.json();
-      if (jsonNeeds.data) {
-        institution.needs = jsonNeeds.data.map(mapNeed);
+      const jsonNeeds: ListApiResponse<BackendNeed> = await resNeeds.json();
+      const needs = extractItems(jsonNeeds).map(mapNeed);
+      if (needs.length > 0) {
+        institution.needs = needs;
         institution.needsCount = institution.needs.length;
       }
     }
@@ -334,7 +370,14 @@ export async function getProfile(): Promise<{
     throw new Error("Не удалось загрузить профиль");
   }
 
-  const json = await res.json();
+  const json: ApiResponse<{
+    id: number;
+    full_name: string;
+    email: string;
+    role: string;
+    institution_id?: number;
+  }> = await res.json();
+  if (!json.data) throw new Error("Не удалось загрузить профиль");
   return json.data;
 }
 
@@ -355,13 +398,16 @@ export async function fetchNeedById(id: string): Promise<Need | null> {
 }
 
 // 7. Обновление нужды
-export async function updateNeed(id: string, data: Partial<{
-  name: string;
-  unit: string;
-  required_qty: number;
-  received_qty: number;
-  urgency: string;
-}>) {
+export async function updateNeed(
+  id: string,
+  data: Partial<{
+    name: string;
+    unit: string;
+    required_qty: number;
+    received_qty: number;
+    urgency: string;
+  }>,
+) {
   const res = await fetchWithAuth(`${API_BASE_URL}/needs/${id}`, {
     method: "PUT",
     body: JSON.stringify(data),
@@ -374,7 +420,7 @@ export async function updateNeed(id: string, data: Partial<{
 export async function createBooking(
   needId: number,
   quantity: number,
-  note?: string
+  note?: string,
 ): Promise<{ id: number }> {
   const res = await fetchWithAuth(`${API_BASE_URL}/bookings`, {
     method: "POST",
@@ -386,7 +432,9 @@ export async function createBooking(
   });
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => ({ message: "Ошибка бронирования" }));
+    const errorData = await res
+      .json()
+      .catch(() => ({ message: "Ошибка бронирования" }));
     throw new Error(errorData.message || "Ошибка бронирования");
   }
 
@@ -395,77 +443,121 @@ export async function createBooking(
 }
 
 // 9. Мои бронирования (для волонтера)
-export async function fetchMyBookings(): Promise<Record<string, unknown>[]> {
+export interface BookingItem {
+  id: number;
+  need_id: number;
+  quantity: number;
+  need_name: string;
+  institution_name: string;
+  institution_id: number;
+  note?: string;
+  planned_date?: string;
+  status: string;
+}
+
+export async function fetchMyBookings(): Promise<BookingItem[]> {
   const res = await fetchWithAuth(`${API_BASE_URL}/bookings/my`);
   if (!res.ok) throw new Error("Ошибка загрузки обещаний");
-  const json: ApiResponse<Record<string, unknown>[]> = await res.json();
-  return json.data || [];
+  const json: ListApiResponse<BookingItem> = await res.json();
+  return extractItems(json);
 }
 
 export async function cancelMyBooking(bookingId: number): Promise<void> {
-  const res = await fetchWithAuth(`${API_BASE_URL}/bookings/my/${bookingId}/cancel`, {
-    method: "PUT",
-  });
+  const res = await fetchWithAuth(
+    `${API_BASE_URL}/bookings/my/${bookingId}/cancel`,
+    {
+      method: "PUT",
+    },
+  );
   if (!res.ok) {
-    const errorData = await res.json().catch(() => ({ message: "Ошибка отмены" }));
+    const errorData = await res
+      .json()
+      .catch(() => ({ message: "Ошибка отмены" }));
     throw new Error(errorData.message || "Ошибка отмены");
   }
 }
 
-export async function updateMyBooking(bookingId: number, quantity: number): Promise<void> {
+export async function updateMyBooking(
+  bookingId: number,
+  quantity: number,
+): Promise<void> {
   const res = await fetchWithAuth(`${API_BASE_URL}/bookings/my/${bookingId}`, {
     method: "PUT",
     body: JSON.stringify({ quantity }),
   });
   if (!res.ok) {
-    const errorData = await res.json().catch(() => ({ message: "Ошибка обновления" }));
+    const errorData = await res
+      .json()
+      .catch(() => ({ message: "Ошибка обновления" }));
     throw new Error(errorData.message || "Ошибка обновления");
   }
 }
 
 // 10. Booking management (для менеджера)
-export async function fetchInstitutionBookings(institutionId: number | string): Promise<Record<string, unknown>[]> {
-  const res = await fetchWithAuth(`${API_BASE_URL}/institutions/${institutionId}/bookings`);
+export async function fetchInstitutionBookings(
+  institutionId: number | string,
+): Promise<BookingItem[]> {
+  const res = await fetchWithAuth(
+    `${API_BASE_URL}/institutions/${institutionId}/bookings`,
+  );
   if (!res.ok) throw new Error("Ошибка загрузки бронирований");
-  const json: ApiResponse<Record<string, unknown>[]> = await res.json();
-  return json.data || [];
+  const json: ListApiResponse<BookingItem> = await res.json();
+  return extractItems(json);
 }
 
 export async function approveBooking(bookingId: number): Promise<void> {
-  const res = await fetchWithAuth(`${API_BASE_URL}/bookings/${bookingId}/approve`, {
-    method: "PUT",
-  });
+  const res = await fetchWithAuth(
+    `${API_BASE_URL}/bookings/${bookingId}/approve`,
+    {
+      method: "PUT",
+    },
+  );
   if (!res.ok) throw new Error("Ошибка подтверждения");
 }
 
 export async function rejectBooking(bookingId: number): Promise<void> {
-  const res = await fetchWithAuth(`${API_BASE_URL}/bookings/${bookingId}/reject`, {
-    method: "PUT",
-  });
+  const res = await fetchWithAuth(
+    `${API_BASE_URL}/bookings/${bookingId}/reject`,
+    {
+      method: "PUT",
+    },
+  );
   if (!res.ok) throw new Error("Ошибка отклонения");
 }
 
 export async function completeBooking(bookingId: number): Promise<void> {
-  const res = await fetchWithAuth(`${API_BASE_URL}/bookings/${bookingId}/complete`, {
-    method: "PUT",
-  });
+  const res = await fetchWithAuth(
+    `${API_BASE_URL}/bookings/${bookingId}/complete`,
+    {
+      method: "PUT",
+    },
+  );
   if (!res.ok) throw new Error("Ошибка завершения");
 }
 
 // 10. Публичная статистика
-export async function fetchStats(): Promise<{ closed_needs: number; people_helped: number; institutions_count: number }> {
+export async function fetchStats(): Promise<{
+  closed_needs: number;
+  people_helped: number;
+  institutions_count: number;
+}> {
   const res = await fetch(`${API_BASE_URL}/stats`);
   if (!res.ok) throw new Error("Ошибка загрузки статистики");
-  const json: ApiResponse<{ closed_needs: number; people_helped: number; institutions_count: number }> = await res.json();
+  const json: ApiResponse<{
+    closed_needs: number;
+    people_helped: number;
+    institutions_count: number;
+  }> = await res.json();
+  if (!json.data) throw new Error("Ошибка загрузки статистики");
   return json.data;
 }
 
 // 11. События (Events)
-export async function fetchEvents(): Promise<Record<string, unknown>[]> {
+export async function fetchEvents(): Promise<EventItem[]> {
   const res = await fetchWithAuth(`${API_BASE_URL}/events`);
   if (!res.ok) throw new Error("Ошибка загрузки событий");
-  const json: ApiResponse<Record<string, unknown>[]> = await res.json();
-  return json.data || [];
+  const json: ListApiResponse<EventItem> = await res.json();
+  return extractItems(json);
 }
 
 export async function createEvent(data: {
@@ -480,6 +572,7 @@ export async function createEvent(data: {
   });
   if (!res.ok) throw new Error("Ошибка создания события");
   const json: ApiResponse<{ id: number }> = await res.json();
+  if (!json.data) throw new Error("Ошибка создания события");
   return json.data;
 }
 
@@ -504,10 +597,13 @@ export interface EventItem {
   event_date: string;
   institution_id: number;
   institution_name: string;
+  creator_id?: number;
   creator_name: string;
+  creator_avatar?: string | null;
   participants_count: number;
   is_joined: boolean;
   status: string;
+  created_at?: string;
 }
 
 export interface Vacancy {
@@ -522,11 +618,11 @@ export interface Vacancy {
 
 export async function fetchVacancies(): Promise<Vacancy[]> {
   const res = await fetch(`${API_BASE_URL}/vacancies`, {
-    next: { revalidate: 60 }
+    next: { revalidate: 60 },
   });
-  if (!res.ok) throw new Error('Fetch vacancies error');
-  const json: ApiResponse<Vacancy[]> = await res.json();
-  return json.data;
+  if (!res.ok) throw new Error("Fetch vacancies error");
+  const json: ListApiResponse<Vacancy> = await res.json();
+  return extractItems(json);
 }
 
 export interface TeamMember {
@@ -543,46 +639,55 @@ export interface TeamMember {
 
 export async function fetchTeamMembers(): Promise<TeamMember[]> {
   const res = await fetch(`${API_BASE_URL}/team`, {
-    next: { revalidate: 60 }
+    next: { revalidate: 60 },
   });
-  if (!res.ok) throw new Error('Fetch team members error');
-  const json: ApiResponse<TeamMember[]> = await res.json();
-  return json.data;
+  if (!res.ok) throw new Error("Fetch team members error");
+  const json: ListApiResponse<TeamMember> = await res.json();
+  return extractItems(json);
 }
 
 export async function fetchTeamMemberById(id: number): Promise<TeamMember> {
   const res = await fetch(`${API_BASE_URL}/team/${id}`);
-  if (!res.ok) throw new Error('Fetch team member error');
+  if (!res.ok) throw new Error("Fetch team member error");
   const json: ApiResponse<TeamMember> = await res.json();
   return json.data;
 }
 
 export async function fetchVacancyById(id: number): Promise<Vacancy> {
   const res = await fetch(`${API_BASE_URL}/vacancies/${id}`);
-  if (!res.ok) throw new Error('Fetch vacancy error');
+  if (!res.ok) throw new Error("Fetch vacancy error");
   const json: ApiResponse<Vacancy> = await res.json();
   return json.data;
 }
 
 // --- EVENT MODERATION ---
-export async function fetchInstitutionEvents(institutionId: number | string): Promise<EventItem[]> {
-  const res = await fetchWithAuth(`${API_BASE_URL}/institutions/${institutionId}/events`, {
-    headers: { 'Accept': 'application/json' },
-  });
+export async function fetchInstitutionEvents(
+  institutionId: number | string,
+): Promise<EventItem[]> {
+  const res = await fetchWithAuth(
+    `${API_BASE_URL}/institutions/${institutionId}/events`,
+    {
+      headers: { Accept: "application/json" },
+    },
+  );
   if (!res.ok) {
     const errorStr = await res.text();
-    throw new Error(errorStr || 'Fetch institution events error');
+    throw new Error(errorStr || "Fetch institution events error");
   }
-  const json: ApiResponse<EventItem[]> = await res.json();
-  return json.data;
+  const json: ListApiResponse<EventItem> = await res.json();
+  return extractItems(json);
 }
 
 export async function approveEvent(id: number | string): Promise<void> {
-  const res = await fetchWithAuth(`${API_BASE_URL}/events/${id}/approve`, { method: 'PUT' });
-  if (!res.ok) throw new Error('Approve event error');
+  const res = await fetchWithAuth(`${API_BASE_URL}/events/${id}/approve`, {
+    method: "PUT",
+  });
+  if (!res.ok) throw new Error("Approve event error");
 }
 
 export async function rejectEvent(id: number | string): Promise<void> {
-  const res = await fetchWithAuth(`${API_BASE_URL}/events/${id}/reject`, { method: 'PUT' });
-  if (!res.ok) throw new Error('Reject event error');
+  const res = await fetchWithAuth(`${API_BASE_URL}/events/${id}/reject`, {
+    method: "PUT",
+  });
+  if (!res.ok) throw new Error("Reject event error");
 }
