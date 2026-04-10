@@ -12,12 +12,17 @@ const montserrat = Montserrat({
   weight: ["400", "600", "700", "800"],
 });
 
+const fallbackSiteUrl =
+  process.env.NODE_ENV === "production"
+    ? "https://hadaf.tj"
+    : "http://localhost:3000";
+
 export const metadata = {
   metadataBase: new URL(
     (
       process.env.NEXT_PUBLIC_SITE_URL ||
       process.env.SITE_URL ||
-      "http://localhost:3000"
+      fallbackSiteUrl
     ).replace(/\/$/, ""),
   ),
   title: {

@@ -2,10 +2,14 @@ export default function Head() {
   const title = "Личный кабинет — Ҳадаф";
   const description =
     "Личный кабинет волонтёра или сотрудника учреждения: управление нуждами, обещаниями и настройками.";
+  const fallbackSiteUrl =
+    process.env.NODE_ENV === "production"
+      ? "https://hadaf.tj"
+      : "http://localhost:3000";
   const baseUrl = (
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.SITE_URL ||
-    "http://localhost:3000"
+    fallbackSiteUrl
   ).replace(/\/$/, "");
   const url = `${baseUrl}/dashboard`;
   const image = `${baseUrl}/hero.webp`;
