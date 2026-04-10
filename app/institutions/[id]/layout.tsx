@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/seo.server";
+import { createPageMetadata } from "@/lib/metadata";
 
 type ApiResponse<T> = { message?: string; data: T };
 
@@ -44,18 +45,14 @@ export async function generateMetadata({
 
   const canonical = `/institutions/${encodeURIComponent(id)}`;
 
-  return {
+  const metadata = createPageMetadata({
     title,
     description,
-    alternates: { canonical },
-    openGraph: {
-      title,
-      description,
-      url: canonical,
-      type: "website",
-      images: [{ url: "/institution_id_hero.webp" }],
-    },
-  };
+    canonical,
+    image: "/institution_id_hero.webp",
+  });
+
+  return metadata;
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {

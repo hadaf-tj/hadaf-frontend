@@ -38,8 +38,17 @@ export const metadata = {
     description:
       "Платформа для прозрачной адресной помощи социальным учреждениям Таджикистана.",
     type: "website",
+    siteName: "Ҳадаф",
     locale: "ru_RU",
-    images: [{ url: "/hero.webp" }],
+    url: "/",
+    images: [
+      {
+        url: "/hero.webp",
+        width: 1200,
+        height: 630,
+        alt: "Ҳадаф: Адресная помощь",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
