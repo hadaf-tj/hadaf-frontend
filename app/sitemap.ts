@@ -1,13 +1,10 @@
 import type { MetadataRoute } from "next";
+import { getSiteBaseUrl } from "@/lib/site-url";
 
 type ApiResponse<T> = { message?: string; data: T };
 
 function getBaseUrl() {
-  return (
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.SITE_URL ||
-    "http://localhost:3000"
-  ).replace(/\/$/, "");
+  return getSiteBaseUrl();
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

@@ -1,21 +1,18 @@
 import "server-only";
 
 import { headers } from "next/headers";
+import { getSiteBaseUrl } from "@/lib/site-url";
 
 function normalizeOrigin(origin: string) {
   return origin.replace(/\/$/, "");
 }
 
 // Список разрешённых хостов. Добавь сюда свой домен на VPS.
-const ALLOWED_HOSTS = new Set([
-  "hadaf.tj",
-  "www.hadaf.tj",
-  "localhost:3000",
-]);
+const ALLOWED_HOSTS = new Set(["hadaf.tj", "www.hadaf.tj", "localhost:3000"]);
 
 export async function getSiteUrl(): Promise<string> {
   const fromEnv = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL;
-  if (fromEnv) return normalizeOrigin(fromEnv);
+  if (fromEnv) return getSiteBaseUrl();
 
   const h = await headers();
   const host = h.get("x-forwarded-host") || h.get("host");
@@ -24,7 +21,7 @@ export async function getSiteUrl(): Promise<string> {
     return `${proto}://${host}`;
   }
 
-  return "http://localhost:3000";
+  return getSiteBaseUrl();
 }
 
 export async function absoluteUrl(pathname: string): Promise<string> {

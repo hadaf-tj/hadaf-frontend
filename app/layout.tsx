@@ -6,25 +6,15 @@ import SplashScreen from "@/components/ui/SplashScreen";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import Providers from "@/components/Providers";
 import CookieBanner from "@/components/ui/CookieBanner";
+import { getSiteBaseUrl } from "@/lib/site-url";
 
 const montserrat = Montserrat({
   subsets: ["latin", "cyrillic"],
   weight: ["400", "600", "700", "800"],
 });
 
-const fallbackSiteUrl =
-  process.env.NODE_ENV === "production"
-    ? "https://hadaf.tj"
-    : "http://localhost:3000";
-
 export const metadata = {
-  metadataBase: new URL(
-    (
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      process.env.SITE_URL ||
-      fallbackSiteUrl
-    ).replace(/\/$/, ""),
-  ),
+  metadataBase: new URL(getSiteBaseUrl()),
   title: {
     default: "Ҳадаф: Адресная помощь",
     template: "%s — Ҳадаф",
