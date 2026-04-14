@@ -13,7 +13,7 @@ This repository contains the web interface for the Hadaf platform. Built with Ne
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository_url>
+   git clone https://github.com/hadaf-tj/hadaf-frontend
    cd hadaf-frontend
    ```
 
