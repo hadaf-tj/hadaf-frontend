@@ -8,7 +8,7 @@ type PageMetadataInput = {
   noIndex?: boolean;
 };
 
-const DEFAULT_IMAGE = "/hero.webp";
+const DEFAULT_IMAGE = "/logo_thumbnail.webp";
 
 export function createPageMetadata({
   title,

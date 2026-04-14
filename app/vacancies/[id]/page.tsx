@@ -89,7 +89,7 @@ export default function VacancyDetailPage() {
                   {/* CTA */}
                   <div className="mt-10 pt-8 border-t border-gray-100">
                     <Button asChild className="w-full sm:w-auto bg-[#ffca63] hover:bg-[#ffe199] text-[#1e3a8a] font-black h-14 px-10 rounded-full text-lg group">
-                      <Link href="https://t.me/hadaf_tjk" target="_blank" rel="noopener noreferrer">
+                      <Link href="https://t.me/hadaf_tajikistan" target="_blank" rel="noopener noreferrer">
                         Откликнуться в Telegram
                         <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform"/>
                       </Link>

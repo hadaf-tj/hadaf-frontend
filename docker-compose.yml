@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: social-housing-frontend
+    container_name: hadaf-frontend
     ports:
       - "3000:3000"
     environment:
@@ -13,8 +13,8 @@ services:
       - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
     restart: unless-stopped
     networks:
-      - social-housing-network
+      - hadaf-network
 
 networks:
-  social-housing-network:
+  hadaf-network:
     driver: bridge

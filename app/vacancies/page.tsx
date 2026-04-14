@@ -45,7 +45,7 @@ export default function VacanciesPage() {
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Пока нет открытых вакансий</h3>
                 <p className="text-gray-500 max-w-md mx-auto font-medium">
                   Мы всегда рады талантам. Вы можете отправить резюме в наш Telegram:{' '}
-                  <Link href="https://t.me/hadaf_tjk" className="text-blue-500 hover:underline">@hadaf_tjk</Link>
+                  <Link href="https://t.me/hadaf_tajikistan" className="text-blue-500 hover:underline">@hadaf_tajikistan</Link>
                 </p>
               </div>
             ) : (

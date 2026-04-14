@@ -6,7 +6,7 @@ export default function Head() {
     "Личный кабинет волонтёра или сотрудника учреждения: управление нуждами, обещаниями и настройками.";
   const baseUrl = getSiteBaseUrl();
   const url = `${baseUrl}/dashboard`;
-  const image = `${baseUrl}/hero.webp`;
+  const image = `${baseUrl}/logo_thumbnail.webp`;
 
   return (
     <>

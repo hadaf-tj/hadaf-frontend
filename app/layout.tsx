@@ -38,7 +38,7 @@ export const metadata = {
     url: "/",
     images: [
       {
-        url: "/hero.webp",
+        url: "/logo_thumbnail.webp",
         width: 1200,
         height: 630,
         alt: "Ҳадаф: Адресная помощь",
@@ -50,7 +50,7 @@ export const metadata = {
     title: "Ҳадаф: Адресная помощь",
     description:
       "Платформа для прозрачной адресной помощи социальным учреждениям Таджикистана.",
-    images: ["/hero.webp"],
+    images: ["/logo_thumbnail.webp"],
   },
 } satisfies Metadata;
 

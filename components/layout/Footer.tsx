@@ -68,21 +68,21 @@ const Footer: React.FC = () => {
               <div>
                 <h3 className="font-black text-lg sm:text-xl mb-4 sm:mb-8 text-white/95">Контакты</h3>
                 <div className="space-y-4 sm:space-y-6 text-sm sm:text-base">
-                  <a href="https://t.me/hadaf_tjk" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -m-2 rounded-xl transition-colors">
+                  <a href="https://t.me/hadaf_tajikistan" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -m-2 rounded-xl transition-colors">
                     <div className="w-10 h-10 rounded-xl bg-[#229ED9]/20 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#229ED9]/40 transition-all border border-[#229ED9]/30">
                       <Send size={18} className="text-white relative right-0.5" />
                     </div>
                     <span className="font-bold text-sm sm:text-base text-white group-hover:text-[#ffca63] transition-colors">Telegram</span>
                   </a>
 
-                  <a href="https://www.linkedin.com/company/hadaftj/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -m-2 rounded-xl transition-colors">
+                  <a href="https://www.linkedin.com/company/hadaftajikistan/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -m-2 rounded-xl transition-colors">
                     <div className="w-10 h-10 rounded-xl bg-[#0a66c2]/20 backdrop-blur-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[#0a66c2]/40 transition-all border border-[#0a66c2]/30">
                       <Linkedin size={18} className="text-white" />
                     </div>
                     <span className="font-bold text-sm sm:text-base text-white group-hover:text-[#ffca63] transition-colors">LinkedIn</span>
                   </a>
 
-                  <a href="https://www.instagram.com/hadaf.tajikistan/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -m-2 rounded-xl transition-colors">
+                  <a href="https://www.instagram.com/hadaf_tajikistan/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-2 -m-2 rounded-xl transition-colors">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-500 backdrop-blur-xl flex items-center justify-center flex-shrink-0 border border-pink-500/30">
                       <Instagram size={18} className="text-white" />
                     </div>

@@ -36,7 +36,7 @@ export default function ContactsPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
                 
                 {/* Instagram */}
-                <a href="https://www.instagram.com/hadaf.tajikistan/" target="_blank" rel="noopener noreferrer" className="block outline-none group">
+                <a href="https://www.instagram.com/hadaf_tajikistan/" target="_blank" rel="noopener noreferrer" className="block outline-none group">
                   <div className="bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF] p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg text-center transform hover:scale-[1.02] transition-transform duration-300 h-full flex flex-col items-center justify-center">
                      <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-inner">
                         <Instagram size={32} className="text-white" />
@@ -51,7 +51,7 @@ export default function ContactsPage() {
                 </a>
 
                 {/* Telegram — центральный, главный */}
-                <a href="https://t.me/hadaf_tjk" target="_blank" rel="noopener noreferrer" className="block outline-none group">
+                <a href="https://t.me/hadaf_tajikistan" target="_blank" rel="noopener noreferrer" className="block outline-none group">
                   <div className="bg-gradient-to-br from-[#229ED9] to-[#1E88E5] p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg text-center transform hover:scale-[1.02] transition-transform duration-300 h-full flex flex-col items-center justify-center ring-2 ring-[#229ED9]/30 ring-offset-2 ring-offset-[#f8fafc]">
                      <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-inner">
                         <MessageCircle size={32} className="text-white fill-white" />
@@ -66,7 +66,7 @@ export default function ContactsPage() {
                 </a>
 
                 {/* LinkedIn */}
-                <a href="https://www.linkedin.com/company/hadaftj/" target="_blank" rel="noopener noreferrer" className="block outline-none group">
+                <a href="https://www.linkedin.com/company/hadaftajikistan/" target="_blank" rel="noopener noreferrer" className="block outline-none group">
                   <div className="bg-gradient-to-br from-[#0a66c2] to-[#004182] p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg text-center transform hover:scale-[1.02] transition-transform duration-300 h-full flex flex-col items-center justify-center">
                      <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-inner">
                         <Linkedin size={32} className="text-white" />

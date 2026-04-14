@@ -6,7 +6,7 @@ export const metadata: Metadata = createPageMetadata({
   description:
     "Реестр проверенных социальных учреждений. Выберите учреждение и помогите адресно.",
   canonical: "/institutions",
-  image: "/hero.webp",
+  image: "/logo_thumbnail.webp",
 });
 
 export default function Layout({ children }: { children: React.ReactNode }) {
