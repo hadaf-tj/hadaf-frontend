@@ -6,9 +6,6 @@
 import {
   HeartHandshake,
   Send,
-  Phone,
-  Mail,
-  MapPin,
   ArrowRight,
   Heart,
   Linkedin,

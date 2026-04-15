@@ -7,17 +7,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import MainLayout from "@/components/layout/MainLayout";
-import { Button } from "@/components/ui/Button";
-import {
-  Target,
-  Heart,
-  Shield,
-  Users,
-  CheckCircle2,
-  Linkedin,
-  Send,
-  Loader2,
-} from "lucide-react";
+import { CheckCircle2, Linkedin, Send } from "lucide-react";
 import { fetchTeamMembers, TeamMember } from "@/lib/api";
 
 const GRADIENT_COLORS = [

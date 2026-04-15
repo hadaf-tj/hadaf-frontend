@@ -5,7 +5,6 @@ const HEADER = `// SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors\n\n`;
 
 function shouldExclude(filePath) {
-  const parts = filePath.split(path.sep);
   return (
     filePath.includes('node_modules') ||
     filePath.includes('.next') ||
