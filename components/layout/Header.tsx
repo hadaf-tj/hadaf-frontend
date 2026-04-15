@@ -11,8 +11,6 @@ import {
   X,
   User,
   HeartHandshake,
-  ChevronDown,
-  ChevronRight,
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
