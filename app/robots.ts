@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 import type { MetadataRoute } from "next";
 import { getSiteBaseUrl } from "@/lib/site-url";
 

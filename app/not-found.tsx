@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 /* FILE: app/not-found.tsx */
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
@@ -25,7 +28,7 @@ export default function NotFound() {
           <div className="absolute inset-0 bg-blue-50 rounded-full scale-90 -z-10"></div>
 
           <Image
-            src="/404.webp" // Используем сгенерированное фото
+            src="/404.webp"
             alt="Заблудившийся волонтер"
             fill
             className="object-contain"

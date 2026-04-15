@@ -1,5 +1,8 @@
 "use client";
 
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 import { useState, useEffect } from "react";
 import {
   Plus,
@@ -52,7 +55,6 @@ export default function InstitutionDashboard() {
   const [institutionId, setInstitutionId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Edit state
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({
     name: "",
@@ -61,7 +63,6 @@ export default function InstitutionDashboard() {
     urgency: "",
   });
 
-  // Feedback
   const [feedback, setFeedback] = useState<{
     type: "success" | "error";
     msg: string;
@@ -72,7 +73,6 @@ export default function InstitutionDashboard() {
     setTimeout(() => setFeedback(null), 3000);
   };
 
-  // Загрузка данных
   const loadData = async () => {
     setLoading(true);
     try {
@@ -90,7 +90,6 @@ export default function InstitutionDashboard() {
         setNeeds(inst.needs);
       }
 
-      // Load bookings
       try {
         const bookingsData = await fetchInstitutionBookings(
           user.institution_id,
@@ -100,7 +99,6 @@ export default function InstitutionDashboard() {
         console.error("Bookings load error:", e);
       }
 
-      // Load events
       try {
         const eventsData = await fetchInstitutionEvents(user.institution_id);
         setEvents(eventsData);
@@ -118,7 +116,6 @@ export default function InstitutionDashboard() {
     loadData();
   }, []);
 
-  // Delete need
   const handleDelete = async (id: string) => {
     if (!confirm("Удалить эту нужду?")) return;
     try {
@@ -131,7 +128,6 @@ export default function InstitutionDashboard() {
     }
   };
 
-  // Start editing
   const startEdit = (need: Need) => {
     setEditingId(need.id);
     setEditForm({
@@ -142,7 +138,6 @@ export default function InstitutionDashboard() {
     });
   };
 
-  // Save edit
   const saveEdit = async () => {
     if (!editingId) return;
     try {
@@ -161,7 +156,6 @@ export default function InstitutionDashboard() {
     }
   };
 
-  // Booking actions
   const handleApprove = async (id: number) => {
     try {
       await approveBooking(id);
@@ -195,7 +189,6 @@ export default function InstitutionDashboard() {
     }
   };
 
-  // Event moderation
   const handleApproveEvent = async (id: number) => {
     if (!confirm("Одобрить это событие? Оно появится в публичной ленте."))
       return;
@@ -229,7 +222,6 @@ export default function InstitutionDashboard() {
     );
   }
 
-  // Stats
   const activeCount =
     needs?.filter((n) => n.receivedQuantity < n.requiredQuantity).length || 0;
   const completedCount = needs?.length - activeCount || 0;
@@ -255,7 +247,7 @@ export default function InstitutionDashboard() {
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      {/* Feedback toast */}
+      {/* toast */}
       {feedback && (
         <div
           className={`fixed top-24 right-6 z-50 px-6 py-3 rounded-xl shadow-lg font-bold text-sm animate-in slide-in-from-right ${
@@ -289,7 +281,7 @@ export default function InstitutionDashboard() {
         )}
       </div>
 
-      {/* Stats */}
+      {/* */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
           <div>

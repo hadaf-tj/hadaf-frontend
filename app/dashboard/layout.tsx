@@ -1,5 +1,8 @@
 "use client";
 
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -19,14 +22,12 @@ import { cn } from "@/lib/utils";
 import { getProfile } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 
-// Меню для ВОЛОНТЕРА
 const VOLUNTEER_MENU = [
   { name: "Обзор", href: "/dashboard", icon: LayoutDashboard },
   { name: "Мои обещания", href: "/dashboard/promises", icon: HeartHandshake },
   { name: "Настройки", href: "/dashboard/settings", icon: Settings },
 ];
 
-// Меню для СОТРУДНИКА
 const INSTITUTION_MENU = [
   { name: "Обзор", href: "/dashboard", icon: LayoutDashboard },
   {
@@ -54,7 +55,6 @@ export default function DashboardLayout({
     }
   }, [user, isLoading, router]);
 
-  // Load collapse state from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("sidebar-collapsed");
     if (saved === "true") setSidebarCollapsed(true);

@@ -1,5 +1,8 @@
 "use client";
 
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 import { useState, useEffect } from "react";
 import {
   Calendar,
@@ -43,7 +46,6 @@ export default function EventsPage() {
     msg: string;
   } | null>(null);
 
-  // Create form
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -59,7 +61,7 @@ export default function EventsPage() {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(8, 0, 0, 0);
-    // return format YYYY-MM-DDTHH:mm
+
     return tomorrow.toISOString().slice(0, 16);
   };
 
@@ -82,7 +84,7 @@ export default function EventsPage() {
   useEffect(() => {
     loadEvents();
     fetchInstitutions().then(setInstitutions).catch(console.error);
-    // Check auth implicitly (get profile)
+
     getProfile()
       .then(() => setIsAuth(true))
       .catch(() => setIsAuth(false));
@@ -155,7 +157,7 @@ export default function EventsPage() {
   return (
     <MainLayout>
       <div className="min-h-screen bg-[#f8fafc] font-sans">
-        {/* Feedback toast */}
+        {/* toast */}
         {feedback && (
           <div
             className={`fixed top-24 right-6 z-50 px-6 py-3 rounded-xl shadow-lg font-bold text-sm ${
