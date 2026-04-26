@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 /* FILE: app/layout.tsx */
 import "../styles/globals.css";
 import { Montserrat } from "next/font/google";
@@ -27,7 +30,11 @@ export const metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico" },
-      { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      {
+        url: "/android-chrome-192x192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
     ],
     apple: "/apple-touch-icon.png",
   },

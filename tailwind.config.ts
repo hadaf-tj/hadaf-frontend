@@ -6,7 +6,7 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  // ИСПРАВЛЕНИЕ 1: darkMode должен быть строкой, а не массивом
+
   darkMode: "class",
   theme: {
     extend: {
@@ -17,12 +17,12 @@ const config: Config = {
           light: "#9851c2",
           DEFAULT: "#1e3a8a",
         },
-        // Добавляем ваш желтый цвет для срочных нужд
+
         urgent: "#ffca63",
       },
     },
   },
-  // ИСПРАВЛЕНИЕ 2: Убрали require("tailwindcss-animate"), так как пакет не установлен
+
   plugins: [],
 };
 export default config;

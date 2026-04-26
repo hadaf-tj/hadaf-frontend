@@ -1,5 +1,8 @@
 "use client";
 
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Institution } from "@/types/project";
@@ -134,7 +137,7 @@ function AnimatedCounter({
           const animate = (now: number) => {
             const elapsed = now - start;
             const progress = Math.min(elapsed / duration, 1);
-            // ease-out cubic
+
             const eased = 1 - Math.pow(1 - progress, 3);
             setCount(Math.round(eased * target));
             if (progress < 1) requestAnimationFrame(animate);
@@ -267,7 +270,6 @@ const HomePage: React.FC = () => {
     institutions_count: 0,
   });
 
-  // Mouse and Scroll Parallax
   const [scrollY, setScrollY] = useState(0);
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -275,7 +277,6 @@ const HomePage: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Hero slider Cross-fade Topology
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
@@ -291,7 +292,6 @@ const HomePage: React.FC = () => {
     );
   }, []);
 
-  // Auto-advance hero slides
   useEffect(() => {
     slideInterval.current = setInterval(nextSlide, 8000);
     return () => {
@@ -304,7 +304,6 @@ const HomePage: React.FC = () => {
     slideInterval.current = setInterval(nextSlide, 8000);
   }, [nextSlide]);
 
-  // Events Deck State
   const [currentEventIdx, setCurrentEventIdx] = useState(0);
 
   const nextEventDeck = useCallback(() => {
@@ -318,11 +317,10 @@ const HomePage: React.FC = () => {
   }, [events.length]);
 
   useEffect(() => {
-    const evInterval = setInterval(nextEventDeck, 5000); // Auto-advance deck every 5s
+    const evInterval = setInterval(nextEventDeck, 5000);
     return () => clearInterval(evInterval);
   }, [nextEventDeck]);
 
-  // Touch handling for hero
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -333,7 +331,7 @@ const HomePage: React.FC = () => {
     const diff = touchStartX.current - touchEndX.current;
     if (Math.abs(diff) > 50) {
       if (diff > 0) nextSlide();
-      else prevSlide(); // swipe left -> next, swipe right -> prev
+      else prevSlide();
       resetAutoplay();
     }
   };

@@ -1,10 +1,11 @@
-'use client'; // Страницы ошибок ОБЯЗАТЕЛЬНО должны быть клиентскими
+"use client";
 
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
-import { Button } from '@/components/ui/Button';
-import Image from 'next/image';
+import { Button } from "@/components/ui/Button";
+import Image from "next/image";
 
-// Страница ошибки принимает специальные пропсы: error и reset
 export default function GlobalError({
   error: _error,
   reset,
@@ -14,20 +15,17 @@ export default function GlobalError({
 }) {
   return (
     <div className="flex flex-col lg:flex-row items-center justify-center min-h-[70vh] text-center lg:text-left px-4 lg:gap-12 max-w-5xl mx-auto">
-      
       {/* ЛЕВАЯ ЧАСТЬ: Изображение 500 */}
-      
 
       {/* ПРАВАЯ ЧАСТЬ: Текст и кнопка */}
       <div className="flex flex-col items-center lg:items-start">
-        
         {/* Лаконичный текст */}
         <h1 className="mt-4 lg:mt-0 text-4xl font-extrabold text-[#1e3a8a]">
           Ой... Что-то пошло не так
         </h1>
 
         <p className="mt-4 text-lg text-gray-700 max-w-md">
-          Это не вы, это мы. На нашей стороне произошла техническая неполадка. 
+          Это не вы, это мы. На нашей стороне произошла техническая неполадка.
           Мы уже знаем о проблеме и работаем над её устранением.
         </p>
 
@@ -42,7 +40,7 @@ export default function GlobalError({
       </div>
       <div className="flex-shrink-0 mb-8 lg:mb-0">
         <Image
-          src="/500.webp" // Ваш файл 500.webp
+          src="/500.webp"
           alt="Ошибка на сервере"
           width={375}
           height={375}

@@ -1,15 +1,22 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 /* FILE: app/map/page.tsx */
-'use client';
+"use client";
 
-import dynamic from 'next/dynamic';
-import Link from 'next/link';
-import { useMemo, useState, useEffect } from 'react';
-import { Search, SlidersHorizontal, List, Map as MapIcon, Loader2 } from 'lucide-react';
-import MainLayout from '@/components/layout/MainLayout';
-import { fetchInstitutions } from '@/lib/api';
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { useMemo, useState, useEffect } from "react";
+import {
+  Search,
+  SlidersHorizontal,
+  List,
+  Map as MapIcon,
+  Loader2,
+} from "lucide-react";
+import MainLayout from "@/components/layout/MainLayout";
+import { fetchInstitutions } from "@/lib/api";
 
-
-// Тип для локаций на карте
 interface MapLocation {
   id: string;
   name: string;
@@ -21,50 +28,52 @@ interface MapLocation {
 }
 
 const CATEGORIES = [
-  { id: 'all', label: 'Все' },
-  { id: 'Children', label: 'Детям' },
-  { id: 'Elderly', label: 'Пожилым' },
+  { id: "all", label: "Все" },
+  { id: "Children", label: "Детям" },
+  { id: "Elderly", label: "Пожилым" },
 ];
 
 const MapPage = () => {
-  // Динамический импорт карты (обязательно для Leaflet в Next.js)
-  const MapView = useMemo(() => dynamic(() => import('@/components/specific/MapView'), {
-    ssr: false,
-    loading: () => (
-      <div className="h-full w-full bg-[#f7f9fe] flex flex-col items-center justify-center text-[#869cb9]">
-        <Loader2 size={40} className="mb-2 animate-spin text-[#1e3a8a]" />
-        <p className="font-medium animate-pulse">Загрузка карты...</p>
-      </div>
-    ),
-  }), []);
+  const MapView = useMemo(
+    () =>
+      dynamic(() => import("@/components/specific/MapView"), {
+        ssr: false,
+        loading: () => (
+          <div className="h-full w-full bg-[#f7f9fe] flex flex-col items-center justify-center text-[#869cb9]">
+            <Loader2 size={40} className="mb-2 animate-spin text-[#1e3a8a]" />
+            <p className="font-medium animate-pulse">Загрузка карты...</p>
+          </div>
+        ),
+      }),
+    [],
+  );
 
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [locations, setLocations] = useState<MapLocation[]>([]);
   const [, setIsLoading] = useState(true);
 
-  // Загрузка учреждений из API
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       try {
         const institutions = await fetchInstitutions();
-        // Преобразуем в формат для карты
-        // Пока используем координаты Душанбе по умолчанию, если нет в API
+
+        // Fallback to Dushanbe geo-coordinates
         const mapLocations: MapLocation[] = institutions
           .filter((inst) => inst.latitude && inst.longitude)
           .map((inst) => ({
-          id: inst.id,
-          name: inst.name,
-          type: inst.type,
-          lat: inst.latitude!,
-          lng: inst.longitude!,
-          needsCount: inst.needsCount,
-          address: inst.city,
-        }));
+            id: inst.id,
+            name: inst.name,
+            type: inst.type,
+            lat: inst.latitude!,
+            lng: inst.longitude!,
+            needsCount: inst.needsCount,
+            address: inst.city,
+          }));
         setLocations(mapLocations);
       } catch (error) {
-        console.error('Error loading institutions:', error);
+        console.error("Error loading institutions:", error);
       } finally {
         setIsLoading(false);
       }
@@ -72,10 +81,11 @@ const MapPage = () => {
     loadData();
   }, []);
 
-  // Логика фильтрации
-  const filteredLocations = locations.filter(loc => {
-    const matchesCategory = activeCategory === 'all' || loc.type === activeCategory;
-    const matchesSearch = loc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredLocations = locations.filter((loc) => {
+    const matchesCategory =
+      activeCategory === "all" || loc.type === activeCategory;
+    const matchesSearch =
+      loc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       loc.address.toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchesCategory && matchesSearch;
@@ -84,7 +94,6 @@ const MapPage = () => {
   return (
     <MainLayout>
       <div className="min-h-screen bg-[#f8fafc] font-sans">
-
         {/* 1. HERO HEADER (Точно такой же, как в Institutions) */}
         <div className="bg-[#1e3a8a] pt-32 pb-12 rounded-b-[3rem]">
           <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
@@ -116,7 +125,10 @@ const MapPage = () => {
             {/* Блок поиска и фильтров (Нависает над контентом) */}
             <div className="bg-white p-2 rounded-2xl shadow-xl flex flex-col md:flex-row gap-2 relative z-20">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                <Search
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
                 <input
                   type="text"
                   placeholder="Найти по названию или городу..."
@@ -134,9 +146,11 @@ const MapPage = () => {
                     onClick={() => setActiveCategory(cat.id)}
                     className={`
                       whitespace-nowrap px-6 h-12 rounded-xl font-bold transition-all text-sm
-                      ${activeCategory === cat.id
-                        ? 'bg-[#1e3a8a] text-white shadow-md'
-                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}
+                      ${
+                        activeCategory === cat.id
+                          ? "bg-[#1e3a8a] text-white shadow-md"
+                          : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                      }
                     `}
                   >
                     {cat.label}
@@ -155,10 +169,12 @@ const MapPage = () => {
         {/* 2. ОБЛАСТЬ КАРТЫ */}
         <section className="py-12 -mt-4 relative z-10">
           <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
-
             {/* Счетчик */}
             <div className="mb-4 text-gray-500 font-medium pl-2">
-              Найдено на карте: <span className="text-gray-900 font-bold">{filteredLocations.length}</span>
+              Найдено на карте:{" "}
+              <span className="text-gray-900 font-bold">
+                {filteredLocations.length}
+              </span>
             </div>
 
             {/* Контейнер карты */}
@@ -170,12 +186,11 @@ const MapPage = () => {
 
             {/* Подсказка */}
             <div className="mt-6 text-center text-gray-400 text-sm font-medium">
-              Нажмите на метку, чтобы увидеть подробности и перейти к странице помощи
+              Нажмите на метку, чтобы увидеть подробности и перейти к странице
+              помощи
             </div>
-
           </div>
         </section>
-
       </div>
     </MainLayout>
   );

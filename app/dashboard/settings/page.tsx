@@ -1,12 +1,21 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/Button';
-import { getProfile, fetchInstitutionById } from '@/lib/api';
-import { User, Mail, Phone, Building } from 'lucide-react';
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { getProfile, fetchInstitutionById } from "@/lib/api";
+import { User, Mail, Phone, Building } from "lucide-react";
 
 export default function SettingsPage() {
-  const [user, setUser] = useState<{ full_name: string; role: string; email: string; phone?: string; institution_id?: number } | null>(null);
+  const [user, setUser] = useState<{
+    full_name: string;
+    role: string;
+    email: string;
+    phone?: string;
+    institution_id?: number;
+  } | null>(null);
   const [institutionName, setInstitutionName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -16,7 +25,6 @@ export default function SettingsPage() {
         const data = await getProfile();
         setUser(data);
 
-        // Загружаем название учреждения, если привязано
         if (data.institution_id) {
           const inst = await fetchInstitutionById(String(data.institution_id));
           if (inst) setInstitutionName(inst.name);
@@ -31,89 +39,103 @@ export default function SettingsPage() {
   }, []);
 
   if (loading) {
-    return <div className="p-8 text-[#1e3a8a] font-bold">Загрузка настроек...</div>;
+    return (
+      <div className="p-8 text-[#1e3a8a] font-bold">Загрузка настроек...</div>
+    );
   }
 
   return (
     <div className="space-y-5 sm:space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-black text-[#1e3a8a]">Настройки профиля</h1>
+        <h1 className="text-2xl sm:text-3xl font-black text-[#1e3a8a]">
+          Настройки профиля
+        </h1>
         <p className="text-gray-500 font-medium text-sm sm:text-base">
           Просмотр личной информации.
         </p>
       </div>
 
       <div className="bg-white rounded-2xl p-5 sm:p-8 shadow-sm border border-gray-100">
-         <form className="space-y-6">
-            
-            {/* Аватар (Заглушка) */}
-            <div className="flex items-center gap-3 sm:gap-4 mb-6">
-                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[#1e3a8a] to-[#3b5cb8] text-white flex items-center justify-center border-2 border-blue-100">
-                    <User size={28} />
-                </div>
-                <div>
-                    <h3 className="font-bold text-base sm:text-lg text-gray-900">{user?.full_name}</h3>
-                    <p className="text-sm text-gray-500">{user?.role === 'employee' ? 'Сотрудник учреждения' : 'Волонтер'}</p>
-                </div>
+        <form className="space-y-6">
+          {/* Аватар (Заглушка) */}
+          <div className="flex items-center gap-3 sm:gap-4 mb-6">
+            <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-[#1e3a8a] to-[#3b5cb8] text-white flex items-center justify-center border-2 border-blue-100">
+              <User size={28} />
+            </div>
+            <div>
+              <h3 className="font-bold text-base sm:text-lg text-gray-900">
+                {user?.full_name}
+              </h3>
+              <p className="text-sm text-gray-500">
+                {user?.role === "employee"
+                  ? "Сотрудник учреждения"
+                  : "Волонтер"}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                <User size={14} /> ФИО
+              </label>
+              <input
+                type="text"
+                value={user?.full_name || ""}
+                disabled
+                className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 font-medium cursor-not-allowed"
+              />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                        <User size={14}/> ФИО
-                    </label>
-                    <input 
-                        type="text" 
-                        value={user?.full_name || ''} 
-                        disabled 
-                        className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 font-medium cursor-not-allowed"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                        <Mail size={14}/> Email
-                    </label>
-                    <input 
-                        type="email" 
-                        value={user?.email || ''} 
-                        disabled 
-                        className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 font-medium cursor-not-allowed"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                        <Phone size={14}/> Телефон
-                    </label>
-                    <input 
-                        type="text" 
-                        value={user?.phone || 'Не указан'} 
-                        disabled 
-                        className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 font-medium cursor-not-allowed"
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                        <Building size={14}/> Организация
-                    </label>
-                    <input 
-                        type="text" 
-                        value={institutionName || (user?.institution_id ? 'Загрузка...' : 'Не привязан')} 
-                        disabled 
-                        className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 font-medium cursor-not-allowed"
-                    />
-                </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                <Mail size={14} /> Email
+              </label>
+              <input
+                type="email"
+                value={user?.email || ""}
+                disabled
+                className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 font-medium cursor-not-allowed"
+              />
             </div>
 
-            <div className="pt-4 border-t border-gray-100 flex justify-end">
-                <Button disabled className="opacity-50 cursor-not-allowed bg-[#1e3a8a] text-white">
-                    Сохранить изменения (Скоро)
-                </Button>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                <Phone size={14} /> Телефон
+              </label>
+              <input
+                type="text"
+                value={user?.phone || "Не указан"}
+                disabled
+                className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 font-medium cursor-not-allowed"
+              />
             </div>
 
-         </form>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                <Building size={14} /> Организация
+              </label>
+              <input
+                type="text"
+                value={
+                  institutionName ||
+                  (user?.institution_id ? "Загрузка..." : "Не привязан")
+                }
+                disabled
+                className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 font-medium cursor-not-allowed"
+              />
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-gray-100 flex justify-end">
+            <Button
+              disabled
+              className="opacity-50 cursor-not-allowed bg-[#1e3a8a] text-white"
+            >
+              Сохранить изменения (Скоро)
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );
