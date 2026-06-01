@@ -172,10 +172,10 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
         </nav>
 
         {/* --- ПРАВАЯ ЧАСТЬ (DESKTOP) --- */}
-        <div className="hidden lg:flex items-center justify-end ml-auto h-full">
+        <div className="hidden lg:flex items-center justify-end ml-auto gap-5 h-full -mr-3 lg:-mr-6 xl:-mr-14">
           <div
             className={cn(
-              "flex items-center gap-4 transition-colors z-50 mr-[calc(220px+6vw)] xl:mr-[calc(250px+6vw)] 2xl:mr-[calc(300px+6vw)] absolute right-0 top-1/2 -translate-y-1/2",
+              "flex items-center gap-4 transition-colors",
               textColorClass,
             )}
           >
@@ -210,40 +210,45 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
             )}
           </div>
 
-          <div className={cn("fixed top-0 right-0 flex items-start z-40")}>
-            <Button
-              asChild
+          {/* Split Capsule CTA */}
+          <div
+            className={cn(
+              "flex items-center rounded-full overflow-hidden transition-all duration-300",
+              useDarkColors
+                ? "shadow-md ring-1 ring-black/5"
+                : "shadow-lg shadow-black/10 ring-1 ring-white/20",
+            )}
+          >
+            <Link
+              href="/institutions"
               className={cn(
-                "bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold relative z-10",
-                "rounded-t-none rounded-r-none rounded-bl-[2rem] md:rounded-bl-[2.5rem]",
-                "text-sm xl:text-base 2xl:text-lg",
-                "px-6 xl:px-6 2xl:px-6",
-                "pr-10 xl:pr-14 2xl:pr-18",
-                "h-16",
-                "transition-all duration-300",
+                "font-bold text-[#1e3a8a] px-5 xl:px-6 h-12 flex items-center",
+                "text-sm xl:text-base",
+                "bg-[#ffca63] hover:bg-[#ffd685]",
+                "transition-colors duration-200",
               )}
             >
-              <Link href="/institutions">Помочь</Link>
-            </Button>
-
-            <Button
-              asChild
+              Помочь
+            </Link>
+            <div
               className={cn(
-                "font-bold relative z-20",
+                "w-px h-6 shrink-0",
+                useDarkColors ? "bg-[#1e3a8a]/10" : "bg-white/30",
+              )}
+            />
+            <Link
+              href="/need-help"
+              className={cn(
+                "font-bold text-[#1e3a8a] px-5 xl:px-6 h-12 flex items-center",
+                "text-sm xl:text-base",
+                "transition-colors duration-200",
                 useDarkColors
-                  ? "bg-gray-100 text-[#1e3a8a] hover:bg-gray-200 border-l border-white/50"
-                  : "bg-white text-[#1e3a8a] hover:bg-gray-100",
-                "rounded-t-none rounded-r-none rounded-bl-[2rem] md:rounded-bl-[2.5rem]",
-                "-ml-8 xl:-ml-12 2xl:-ml-14",
-                "pl-4 xl:pl-4 2xl:pl-8",
-                "pr-1 xl:pr-4 2xl:pr-8",
-                "min-w-[160px] xl:min-w-[200px] 2xl:min-w-[240px]",
-                "text-sm xl:text-base 2xl:text-lg",
-                "h-16 transition-colors duration-300",
+                  ? "bg-white hover:bg-gray-50"
+                  : "bg-white/90 hover:bg-white backdrop-blur-sm",
               )}
             >
-              <Link href="/need-help">Нужна помощь</Link>
-            </Button>
+              Нужна помощь
+            </Link>
           </div>
         </div>
 
