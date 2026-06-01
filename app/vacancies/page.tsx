@@ -10,10 +10,8 @@ import {
   MapPin,
   Clock,
   ArrowRight,
-  ArrowLeft,
   Loader2,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { fetchVacancies, Vacancy } from "@/lib/api";
 
