@@ -1,5 +1,8 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 const PROD_SITE_URL = "https://hadaf.tj";
-const DEV_SITE_URL = "http://localhost:3000";
+const DEV_SITE_URL = "http:////localhost:3000";
 
 function normalizeOrigin(origin: string) {
   return origin.replace(/\/$/, "");

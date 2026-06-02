@@ -1,8 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 import { Institution, Need } from "@/types/project";
 
 const API_BASE_URL = "/api/v1";
 
-// --- ТИПЫ ---
 interface BackendInstitution {
   id: number;
   name: string;
@@ -55,8 +57,6 @@ interface TokenResponse {
   refresh_token: string;
 }
 
-// --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
-
 export async function refreshTokens(): Promise<void> {
   const res = await fetch(`${API_BASE_URL}/refresh`, {
     method: "POST",
@@ -82,7 +82,7 @@ async function fetchWithAuth(
     credentials: "include",
   });
 
-  // If unauthorized, try to refresh once
+  // Attempt token refresh on 401 Unauthorized
   if (
     res.status === 401 &&
     !url.includes("/login") &&
@@ -90,25 +90,25 @@ async function fetchWithAuth(
   ) {
     try {
       await refreshTokens();
-      // Retry request
+      // Retry original request with refreshed token
       res = await fetch(url, {
         ...options,
         headers,
         credentials: "include",
       });
     } catch {
-      // Refresh failed, user needs to login again
+      // Terminal auth failure, prompt login
       return res;
     }
   }
 
-  // GLOBAL ERROR HANDLER
+  // Global API Error Dispatcher
   if (!res.ok) {
     const clone = res.clone();
     clone
       .json()
       .then((errData) => {
-        // Distinguish system level errors from form validation errors if possible
+        // Differentiate system errors from validation errors
         if (
           res.status === 401 ||
           res.status === 403 ||
@@ -172,9 +172,6 @@ function extractItems<T>(json: ListApiResponse<T>): T[] {
   return [];
 }
 
-// --- API МЕТОДЫ ---
-
-// 1. Авторизация
 export async function login(email: string, password: string): Promise<void> {
   const res = await fetch(`${API_BASE_URL}/login`, {
     method: "POST",
@@ -187,17 +184,16 @@ export async function login(email: string, password: string): Promise<void> {
     const errorData = await res.json();
     throw new Error(errorData.message || "Login error");
   }
-  // Tokens are set as cookies by backend
+  // Auth tokens handled via backend Set-Cookie
 }
 
-// 2. Регистрация (НОВОЕ)
 export async function register(
   email: string,
   phone: string,
   password: string,
   fullName: string,
   role: "volunteer" | "employee",
-  institutionId: number | null, // null для волонтеров
+  institutionId: number | null,
 ): Promise<void> {
   const res = await fetchWithAuth(`${API_BASE_URL}/register`, {
     method: "POST",
@@ -215,10 +211,9 @@ export async function register(
     const errorData = await res.json();
     throw new Error(errorData.message || "Register error");
   }
-  // Backend returns { message: "verification_required", email } — no tokens yet
+  // Awaits OTP verification
 }
 
-// 2b. Подтверждение OTP-кода
 export async function confirmOTP(
   receiver: string,
   otp: string,
@@ -237,11 +232,10 @@ export async function confirmOTP(
   return json.data;
 }
 
-// 3. Учреждения
 export async function fetchInstitutions(filters?: {
   search?: string;
   type?: string;
-  sort?: string; // 'needs_desc' | 'distance'
+  sort?: string; // Sorting parameter options: 'needs_desc', 'distance'
   lat?: number;
   lng?: number;
 }): Promise<Institution[]> {
@@ -272,12 +266,11 @@ export async function fetchInstitutions(filters?: {
   }
 }
 
-// Фильтры для нужд
 export interface NeedsFilters {
   name?: string;
   urgency?: string;
   is_done?: boolean;
-  order_by?: string; // 'date_asc' | 'urgency' | default (date_desc)
+  order_by?: string; // Sorting parameter options: 'date_asc', 'urgency', 'date_desc'
 }
 
 export async function fetchNeedsByInstitution(
@@ -336,7 +329,6 @@ export async function fetchInstitutionById(
   }
 }
 
-// 4. Управление нуждами
 export async function createNeed(data: Record<string, unknown>) {
   const res = await fetchWithAuth(`${API_BASE_URL}/needs`, {
     method: "POST",
@@ -353,7 +345,7 @@ export async function deleteNeed(id: string) {
   if (!res.ok) throw new Error("Ошибка удаления");
   return res.json();
 }
-// 5. Получение профиля (НОВОЕ)
+
 export async function getProfile(): Promise<{
   id: number;
   full_name: string;
@@ -381,7 +373,6 @@ export async function getProfile(): Promise<{
   return json.data;
 }
 
-// 6. Получение нужды по ID
 export async function fetchNeedById(id: string): Promise<Need | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/needs/${id}`, {
@@ -397,7 +388,6 @@ export async function fetchNeedById(id: string): Promise<Need | null> {
   }
 }
 
-// 7. Обновление нужды
 export async function updateNeed(
   id: string,
   data: Partial<{
@@ -416,7 +406,6 @@ export async function updateNeed(
   return res.json();
 }
 
-// 8. Бронирование (Я привезу)
 export async function createBooking(
   needId: number,
   quantity: number,
@@ -442,7 +431,6 @@ export async function createBooking(
   return json.data;
 }
 
-// 9. Мои бронирования (для волонтера)
 export interface BookingItem {
   id: number;
   need_id: number;
@@ -493,7 +481,6 @@ export async function updateMyBooking(
   }
 }
 
-// 10. Booking management (для менеджера)
 export async function fetchInstitutionBookings(
   institutionId: number | string,
 ): Promise<BookingItem[]> {
@@ -535,7 +522,6 @@ export async function completeBooking(bookingId: number): Promise<void> {
   if (!res.ok) throw new Error("Ошибка завершения");
 }
 
-// 10. Публичная статистика
 export async function fetchStats(): Promise<{
   closed_needs: number;
   people_helped: number;
@@ -552,7 +538,6 @@ export async function fetchStats(): Promise<{
   return json.data;
 }
 
-// 11. События (Events)
 export async function fetchEvents(): Promise<EventItem[]> {
   const res = await fetchWithAuth(`${API_BASE_URL}/events`);
   if (!res.ok) throw new Error("Ошибка загрузки событий");
@@ -660,7 +645,6 @@ export async function fetchVacancyById(id: number): Promise<Vacancy> {
   return json.data;
 }
 
-// --- EVENT MODERATION ---
 export async function fetchInstitutionEvents(
   institutionId: number | string,
 ): Promise<EventItem[]> {

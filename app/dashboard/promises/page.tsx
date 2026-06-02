@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 /* FILE: app/dashboard/promises/page.tsx */
 "use client";
 
@@ -6,6 +9,7 @@ import Link from "next/link";
 import { HeartHandshake, Loader2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { fetchMyBookings, cancelMyBooking, updateMyBooking } from "@/lib/api";
+import { getLocalizedError } from "@/lib/errorMessages";
 
 interface Booking {
   id: number;
@@ -50,7 +54,11 @@ export default function PromisesPage() {
         prev.map((b) => (b.id === id ? { ...b, status: "cancelled" } : b)),
       );
     } catch (err: any) {
-      alert(err.message || "Ошибка отмены");
+      alert(
+        err instanceof Error
+          ? getLocalizedError(err.message)
+          : getLocalizedError(""),
+      );
     } finally {
       setIsProcessing(null);
     }
@@ -69,7 +77,11 @@ export default function PromisesPage() {
       );
       setEditingId(null);
     } catch (err: any) {
-      alert(err.message || "Ошибка сохранения");
+      alert(
+        err instanceof Error
+          ? getLocalizedError(err.message)
+          : getLocalizedError(""),
+      );
     } finally {
       setIsProcessing(null);
     }
@@ -103,7 +115,7 @@ export default function PromisesPage() {
         </div>
       )}
 
-      {/* Empty State */}
+      {/* */}
       {!isLoading && !error && bookings.length === 0 && (
         <div className="text-center py-14 sm:py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
           <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 import "server-only";
 
 import { headers } from "next/headers";
@@ -7,7 +10,7 @@ function normalizeOrigin(origin: string) {
   return origin.replace(/\/$/, "");
 }
 
-// Список разрешённых хостов. Добавь сюда свой домен на VPS.
+// Allowed host domains array
 const ALLOWED_HOSTS = new Set(["hadaf.tj", "www.hadaf.tj", "localhost:3000"]);
 
 export async function getSiteUrl(): Promise<string> {

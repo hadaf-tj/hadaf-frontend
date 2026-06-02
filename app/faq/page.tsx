@@ -1,16 +1,34 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import MainLayout from '@/components/layout/MainLayout';
-import { HelpCircle, ChevronDown, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
+import { useState } from "react";
+import MainLayout from "@/components/layout/MainLayout";
+import { HelpCircle, ChevronDown, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export const FAQ_ITEMS = [
-  { q: 'Как работает платформа?', a: 'Вы выбираете учреждение из проверенного реестра, видите конкретные нужды (продукты, вещи, лекарства) и нажимаете «Я привезу». Учреждение получает уведомление и ждёт вашу помощь.' },
-  { q: 'Можно ли помогать анонимно?', a: 'Да, вы можете помогать без регистрации. Однако аккаунт позволяет отслеживать историю помощи и получать благодарности от учреждений.' },
-  { q: 'Как попасть в реестр учреждений?', a: 'Государственные учреждения (детские дома и дома престарелых) могут подать заявку через раздел «Контакты». Мы проверяем документы и добавляем учреждение в реестр.' },
-  { q: 'Кто проверяет учреждения?', a: 'Команда Ҳадаф верифицирует каждое учреждение: проверяет регистрационные документы, связывается с администрацией и при необходимости проводит выездную проверку.' },
-  { q: 'Куда ушла моя помощь?', a: 'В личном кабинете вы видите статус каждого обещания. После доставки учреждение подтверждает получение, и вы получаете уведомление.' },
+  {
+    q: "Как работает платформа?",
+    a: "Вы выбираете учреждение из проверенного реестра, видите конкретные нужды (продукты, вещи, лекарства) и нажимаете «Я привезу». Учреждение получает уведомление и ждёт вашу помощь.",
+  },
+  {
+    q: "Можно ли помогать анонимно?",
+    a: "Да, вы можете помогать без регистрации. Однако аккаунт позволяет отслеживать историю помощи и получать благодарности от учреждений.",
+  },
+  {
+    q: "Как попасть в реестр учреждений?",
+    a: "Государственные учреждения (детские дома и дома престарелых) могут подать заявку через раздел «Контакты». Мы проверяем документы и добавляем учреждение в реестр.",
+  },
+  {
+    q: "Кто проверяет учреждения?",
+    a: "Команда Ҳадаф верифицирует каждое учреждение: проверяет регистрационные документы, связывается с администрацией и при необходимости проводит выездную проверку.",
+  },
+  {
+    q: "Куда ушла моя помощь?",
+    a: "В личном кабинете вы видите статус каждого обещания. После доставки учреждение подтверждает получение, и вы получаете уведомление.",
+  },
 ];
 
 export default function FAQPage() {
@@ -28,28 +46,31 @@ export default function FAQPage() {
             Часто задаваемые вопросы
           </h1>
           <p className="text-white/80 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-            Ответы на самые популярные вопросы о работе платформы адресной помощи «Ҳадаф».
+            Ответы на самые популярные вопросы о работе платформы адресной
+            помощи «Ҳадаф».
           </p>
         </div>
       </div>
-      
+
       <div className="container mx-auto max-w-4xl px-5 sm:px-6 pb-20 lg:pb-24">
-        
-        <Link href="/" className="inline-flex items-center gap-2 text-[#1e3a8a] font-bold hover:translate-x-[-4px] transition-transform mb-8 bg-[#1e3a8a]/5 px-4 py-2 rounded-xl">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-[#1e3a8a] font-bold hover:translate-x-[-4px] transition-transform mb-8 bg-[#1e3a8a]/5 px-4 py-2 rounded-xl"
+        >
           <ArrowLeft size={18} />
           На главную
         </Link>
-        
+
         <div className="flex flex-col gap-4">
           {FAQ_ITEMS.map((item, idx) => {
             const isOpen = openFaq === idx;
             return (
-              <div 
-                key={idx} 
+              <div
+                key={idx}
                 className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
-                  isOpen 
-                    ? 'bg-white shadow-lg shadow-[#1e3a8a]/5 border-[#1e3a8a]/20' 
-                    : 'bg-white/60 border-gray-200 hover:bg-white hover:border-[#1e3a8a]/30'
+                  isOpen
+                    ? "bg-white shadow-lg shadow-[#1e3a8a]/5 border-[#1e3a8a]/20"
+                    : "bg-white/60 border-gray-200 hover:bg-white hover:border-[#1e3a8a]/30"
                 }`}
               >
                 <button
@@ -64,15 +85,17 @@ export default function FAQPage() {
                       {item.q}
                     </span>
                   </span>
-                  <ChevronDown 
-                    size={24} 
-                    className={`flex-shrink-0 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#1e3a8a]' : ''}`} 
+                  <ChevronDown
+                    size={24}
+                    className={`flex-shrink-0 text-gray-400 transition-transform duration-300 ${isOpen ? "rotate-180 text-[#1e3a8a]" : ""}`}
                   />
                 </button>
-                
-                <div 
+
+                <div
                   className={`grid transition-all duration-300 ease-in-out ${
-                    isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                    isOpen
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0"
                   }`}
                 >
                   <div className="overflow-hidden">

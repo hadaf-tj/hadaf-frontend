@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
 import type { Metadata } from "next";
 import { absoluteUrl } from "@/lib/seo.server";
 import { createPageMetadata } from "@/lib/metadata";
@@ -39,9 +42,7 @@ export async function generateMetadata({
           description = `Информация об учреждении (${where}) и актуальные нужды.`;
       }
     }
-  } catch {
-    // ignore
-  }
+  } catch {}
 
   const canonical = `/institutions/${encodeURIComponent(id)}`;
 

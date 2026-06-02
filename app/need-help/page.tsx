@@ -1,7 +1,10 @@
-import MainLayout from '@/components/layout/MainLayout';
-import { Clock } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
+import MainLayout from "@/components/layout/MainLayout";
+import { Clock } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 export default function NeedHelpPage() {
   return (
@@ -16,7 +19,9 @@ export default function NeedHelpPage() {
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-[3px] bg-[#ffca63] rounded-full"></div>
-              <span className="text-[#ffca63] font-bold text-sm uppercase tracking-[0.15em]">Запрос поддержки</span>
+              <span className="text-[#ffca63] font-bold text-sm uppercase tracking-[0.15em]">
+                Запрос поддержки
+              </span>
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-[1.1]">
               Нужна <br />
@@ -37,26 +42,43 @@ export default function NeedHelpPage() {
           <div className="max-w-2xl mx-auto text-center">
             <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-50 border border-gray-100 rounded-[2.5rem] mb-10 shadow-sm relative group overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-[#1e3a8a]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <Clock size={44} className="text-[#1e3a8a] relative z-10" strokeWidth={1.5} />
+              <Clock
+                size={44}
+                className="text-[#1e3a8a] relative z-10"
+                strokeWidth={1.5}
+              />
             </div>
-            
-            <h2 className="text-3xl sm:text-4xl font-black text-[#1e3a8a] mb-6 font-display">Раздел в разработке</h2>
-            
+
+            <h2 className="text-3xl sm:text-4xl font-black text-[#1e3a8a] mb-6 font-display">
+              Раздел в разработке
+            </h2>
+
             <p className="text-gray-600 text-lg sm:text-xl font-medium leading-relaxed mb-12">
-              Мы активно работаем над функционалом для прямой подачи заявок от граждан и социальных учреждений. Совсем скоро здесь появится удобная форма для верифицированных запросов.
+              Мы активно работаем над функционалом для прямой подачи заявок от
+              граждан и социальных учреждений. Совсем скоро здесь появится
+              удобная форма для верифицированных запросов.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-              <Button asChild className="bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-black h-14 px-10 rounded-2xl text-base shadow-xl shadow-[#1e3a8a]/20 w-full sm:w-auto transition-all hover:scale-[1.02]">
+              <Button
+                asChild
+                className="bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-black h-14 px-10 rounded-2xl text-base shadow-xl shadow-[#1e3a8a]/20 w-full sm:w-auto transition-all hover:scale-[1.02]"
+              >
                 <Link href="/">Вернуться на главную</Link>
               </Button>
-              <Button asChild variant="outline" className="border-2 border-[#1e3a8a] text-[#1e3a8a] hover:bg-[#1e3a8a]/5 font-black h-14 px-10 rounded-2xl text-base w-full sm:w-auto">
+              <Button
+                asChild
+                variant="outline"
+                className="border-2 border-[#1e3a8a] text-[#1e3a8a] hover:bg-[#1e3a8a]/5 font-black h-14 px-10 rounded-2xl text-base w-full sm:w-auto"
+              >
                 <Link href="/contacts">Связаться с нами</Link>
               </Button>
             </div>
 
             <div className="mt-16 pt-10 border-t border-gray-100">
-              <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Ҳадаф — Прозрачная помощь</p>
+              <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">
+                Ҳадаф — Прозрачная помощь
+              </p>
             </div>
           </div>
         </div>

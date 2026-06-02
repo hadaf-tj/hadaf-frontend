@@ -1,6 +1,6 @@
-// Главное хранилище типов для всего проекта
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
-// Тип для отдельной нужды учреждения
 export type Need = {
   id: string;
   name: string;
@@ -11,13 +11,12 @@ export type Need = {
   urgency: string;
 };
 
-// Тип для учреждения (детский дом, дом престарелых)
 export type Institution = {
   id: string;
   name: string;
   city: string;
   address: string;
-  type: 'Children' | 'Elderly';
+  type: "Children" | "Elderly";
   contactPhone: string;
   contactEmail: string;
   needsCount: number;
@@ -29,11 +28,10 @@ export type Institution = {
   longitude?: number;
 };
 
-// Тип для пользователя/сотрудника (используется для авторизации)
 export type User = {
   id: string;
   email: string;
-  role: 'employee' | 'super_admin' | 'volunteer';
-  institutionId?: string; // Привязка к учреждению, если не SuperAdmin
+  role: "employee" | "super_admin" | "volunteer";
+  institutionId?: string;
   is_approved?: boolean;
 };

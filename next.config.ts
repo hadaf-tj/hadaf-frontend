@@ -3,10 +3,25 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   images: {
-    unoptimized: true, // Статика не нуждается в оптимизации
+    // =========================================================================
+    // 🚨 CRITICAL ARCHITECTURE RULE: DO NOT ENABLE IMAGE OPTIMIZATION 🚨
+    // =========================================================================
+    // This is set to 'true' intentionally based on past security incidents.
+    // Enabling Next.js native image optimization allows attackers to perform 
+    // CPU/RAM exhaustion attacks by spamming the /_next/image endpoint with 
+    // randomized width/quality parameters for local files. It has also been 
+    // historically exploited as an SSRF proxy to DDoS other networks.
+    //
+    // All image caching and optimization MUST be handled strictly at the 
+    // infrastructure layer (Nginx / CDN), NEVER at the Node.js level.
+    //
+    // PR REVIEWERS: REJECT ANY PR THAT CHANGES THIS VALUE.
+    // =========================================================================
+
+    unoptimized: true, 
   },
 
-  // Умные rewrites: работают ТОЛЬКО на твоем ноутбуке
+  // Smart rewrites: work ONLY on dev machine
   async rewrites() {
     if (process.env.NODE_ENV === "development") {
       return [
@@ -16,7 +31,7 @@ const nextConfig: NextConfig = {
         },
       ];
     }
-    // На проде Next.js не делает проксирование, всё берет на себя Nginx
+    // In production Next.js does not proxy, Nginx handles everything
     return [];
   },
 
@@ -36,12 +51,12 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            // Для MVP это отличный базовый уровень защиты
+            // Excellent baseline security for MVP
             value: [
               "default-src 'self'",
-              // УБРАЛИ 'unsafe-eval' и глобальный unpkg.com
+              // REMOVED 'unsafe-eval' and global unpkg.com
               "script-src 'self' 'unsafe-inline'",
-              "style-src 'self' 'unsafe-inline' fonts.googleapis.com unpkg.com", // Для CSS unpkg менее опасен
+              "style-src 'self' 'unsafe-inline' fonts.googleapis.com unpkg.com", // unpkg is less risky for CSS
               "img-src 'self' data: https: blob:",
               "font-src 'self' fonts.gstatic.com",
               "connect-src 'self' *.tile.openstreetmap.org",

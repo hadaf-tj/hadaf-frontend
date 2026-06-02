@@ -1,7 +1,17 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { getProfile } from '@/lib/api';
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
+
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
+import { getProfile } from "@/lib/api";
 
 interface AuthUser {
   id: number;
@@ -38,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const profile = await getProfile();
       setUser(profile);
     } catch {
-      // Cookie invalid/expired or not set
+      // Token absent or invalid
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -46,17 +56,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    // Clear httpOnly cookie via backend logout endpoint
+    // Backend request to clear httpOnly auth cookies
     try {
-      await fetch('/api/v1/logout', { method: 'POST', credentials: 'include' });
+      await fetch("/api/v1/logout", { method: "POST", credentials: "include" });
     } catch {
-      // Ignore network errors
+      // Suppress network errors
     }
     setUser(null);
-    window.location.href = '/';
+    window.location.href = "/";
   }, []);
 
-  // Check auth on mount
+  // Verify authentication context on mount
   useEffect(() => {
     refreshUser();
   }, [refreshUser]);

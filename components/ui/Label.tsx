@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import * as LabelPrimitive from '@radix-ui/react-label'; // Используем проверенную основу от Radix
-import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@/lib/utils';
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
-// Установим зависимость
-// npm install @radix-ui/react-label
+import * as React from "react";
+import * as LabelPrimitive from "@radix-ui/react-label";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 
 const labelVariants = cva(
-  'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
 );
 
 const Label = React.forwardRef<
