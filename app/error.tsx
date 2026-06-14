@@ -5,6 +5,8 @@
 
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
+import Link from "next/link";
+import { Home } from "lucide-react";
 
 export default function GlobalError({
   error: _error,
@@ -30,14 +32,23 @@ export default function GlobalError({
         </p>
 
         {/* Кнопка "reset" пытается перезагрузить страницу */}
-        <Button
-          size="lg"
-          className="mt-8 bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/90 shadow-md"
-          onClick={() => reset()}
-        >
-          Попробовать снова
-        </Button>
-      </div>
+        <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <Button
+            size="lg"
+            className="bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/90 shadow-md"
+            onClick={() => reset()}
+          >
+            Попробовать снова
+          </Button>
+
+          <Button size="lg" variant="outline" asChild>
+            <Link href="/">
+              <Home size={20} className="mr-2" />
+              Вернуться домой
+            </Link>
+          </Button>
+        </div>
+        </div>
       <div className="flex-shrink-0 mb-8 lg:mb-0">
         <Image
           src="/500.webp"
