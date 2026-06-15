@@ -18,6 +18,56 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { fetchVacancyById, Vacancy } from "@/lib/api";
 
+// Known section header patterns in vacancy descriptions
+const SECTION_HEADERS = [
+  "О проекте:",
+  "Твоя роль:",
+  "Стек и требования:",
+  "Цель:",
+  "Что мы предлагаем:",
+  "Обязанности:",
+  "Требования:",
+  "Условия:",
+];
+
+function formatDescription(text: string) {
+  // Split on newlines, filter empty lines
+  const lines = text.split("\n").filter((line) => line.trim().length > 0);
+
+  return lines.map((line, index) => {
+    const trimmed = line.trim();
+
+    // Check if the line starts with a known section header
+    for (const header of SECTION_HEADERS) {
+      if (trimmed.startsWith(header)) {
+        const rest = trimmed.slice(header.length).trim();
+        return (
+          <div key={index} className={index > 0 ? "mt-6" : ""}>
+            <h4 className="text-base font-black text-gray-900 mb-1.5">
+              {header}
+            </h4>
+            {rest && (
+              <p className="text-gray-600 leading-relaxed font-medium">
+                {rest}
+              </p>
+            )}
+          </div>
+        );
+      }
+    }
+
+    // Regular paragraph
+    return (
+      <p
+        key={index}
+        className="text-gray-600 leading-relaxed font-medium mt-3 first:mt-0"
+      >
+        {trimmed}
+      </p>
+    );
+  });
+}
+
 export default function VacancyDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -110,8 +160,8 @@ export default function VacancyDetailPage() {
                     <h3 className="text-xl font-black text-gray-900 mb-4">
                       Описание
                     </h3>
-                    <div className="text-gray-600 leading-relaxed font-medium whitespace-pre-line">
-                      {vacancy.description}
+                    <div className="space-y-0">
+                      {formatDescription(vacancy.description)}
                     </div>
                   </div>
 
