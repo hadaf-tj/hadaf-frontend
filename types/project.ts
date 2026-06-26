@@ -26,6 +26,8 @@ export type Institution = {
   activityHours?: string;
   latitude?: number;
   longitude?: number;
+  prohibitedItems?: string;
+  recommendedItems?: string;
 };
 
 export type User = {

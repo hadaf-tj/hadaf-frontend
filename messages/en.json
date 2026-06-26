@@ -40,7 +40,7 @@
     "authorize": "Sign in"
   },
   "footer": {
-    "description": "A charity platform for targeted aid to social institutions of Tajikistan. We help honestly, transparently and directly.",
+    "description": "A digital platform for targeted social aid to institutions and families with disabilities in Tajikistan.",
     "navigation": "Navigation",
     "contacts": "Contacts",
     "copyright": "© {year} The Hadaf Project. All rights reserved.",
@@ -129,7 +129,7 @@
     "root": {
       "title": "Hadaf: Targeted Aid",
       "titleTemplate": "%s — Hadaf",
-      "description": "A platform for transparent, targeted aid to social institutions of Tajikistan."
+      "description": "A digital platform for targeted social aid to institutions and families with disabilities in Tajikistan."
     },
     "login": {
       "title": "Sign in",
@@ -558,10 +558,10 @@
   },
   "home": {
     "heroTitle1": "From good intentions<br></br><highlight>To real help</highlight>",
-    "heroSubtitle1": "We show the exact needs of children's homes and care homes for the elderly, so you immediately understand whom to help and how to do it directly.",
+    "heroSubtitle1": "We show the exact needs of institutions and families with disabilities, so you immediately understand whom to help and how to do it directly.",
     "heroCta1": "I want to help",
     "heroTitle2": "Help without guesswork<br></br><highlight>Only what's needed</highlight>",
-    "heroSubtitle2": "Every institution is verified. You see specific requests and help with exactly what's needed — directly.",
+    "heroSubtitle2": "Every institution and family is verified. You see specific requests and help with exactly what's needed — directly.",
     "heroCta2": "All institutions",
     "heroTitle3": "We'll do more<br></br><highlight>If we're together</highlight>",
     "heroSubtitle3": "Create events, join other volunteers and help together.",
@@ -726,7 +726,10 @@
     "remaining": "Remaining: {remaining} {unit}",
     "received": "Received: {received}",
     "inTransit": "· In transit: {booked}",
-    "total": "Total: {total}"
+    "total": "Total: {total}",
+    "prohibitedTitle": "Prohibited items",
+    "recommendedTitle": "Recommended items",
+    "noInfoAvailable": "Information not available"
   },
   "privacy": {
     "eyebrow": "Privacy",
