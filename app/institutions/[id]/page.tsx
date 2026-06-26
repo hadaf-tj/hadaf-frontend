@@ -4,6 +4,7 @@
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -34,20 +35,23 @@ import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
 import { Institution, Need } from "@/types/project";
 
-const STATUS_OPTIONS = [
-  { id: "all", label: "Все" },
-  { id: "open", label: "Открытые" },
-  { id: "closed", label: "Закрытые" },
-];
+const STATUS_OPTION_IDS = ["all", "open", "closed"] as const;
 
-const SORT_OPTIONS = [
-  { id: "default", label: "По дате (новые)" },
-  { id: "date_asc", label: "По дате (старые)" },
-  { id: "urgency", label: "По срочности" },
-];
+const SORT_OPTION_IDS = ["default", "date_asc", "urgency"] as const;
 
 export default function InstitutionDetailPage() {
+  const t = useTranslations("institutionDetail");
   const params = useParams();
+
+  const STATUS_OPTIONS = STATUS_OPTION_IDS.map((id) => ({
+    id,
+    label: t(`statusOptions.${id}`),
+  }));
+
+  const SORT_OPTIONS = SORT_OPTION_IDS.map((id) => ({
+    id,
+    label: t(`sortOptions.${id}`),
+  }));
 
   const [data, setData] = useState<Institution | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -96,7 +100,7 @@ export default function InstitutionDetailPage() {
         const result = await fetchInstitutionById(id);
 
         if (!result) {
-          setError("Учреждение не найдено");
+          setError(t("notFound"));
         } else {
           setData(result);
 
@@ -104,7 +108,7 @@ export default function InstitutionDetailPage() {
         }
       } catch (err) {
         console.error(err);
-        setError("Ошибка при загрузке данных");
+        setError(t("loadError"));
       } finally {
         setIsLoading(false);
       }
@@ -164,11 +168,14 @@ export default function InstitutionDetailPage() {
           <span
             className={isFullyCovered ? "text-green-600" : "text-[#1e3a8a]"}
           >
-            {isFullyCovered ? "Сбор покрыт" : `Осталось: ${remaining} ${unit}`}
+            {isFullyCovered
+              ? t("collectionCovered")
+              : t("remaining", { remaining, unit })}
           </span>
           <span className="text-gray-400">
-            Получено: {received} {booked > 0 ? `· В пути: ${booked}` : ""} ·
-            Всего: {total}
+            {t("received", { received })}{" "}
+            {booked > 0 ? t("inTransit", { booked }) : ""} ·{" "}
+            {t("total", { total })}
           </span>
         </div>
         <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden flex">
@@ -192,7 +199,7 @@ export default function InstitutionDetailPage() {
       <MainLayout>
         <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8fafc] text-[#1e3a8a]">
           <Loader2 size={48} className="animate-spin mb-4" />
-          <p className="font-bold">Загрузка профиля...</p>
+          <p className="font-bold">{t("loadingProfile")}</p>
         </div>
       </MainLayout>
     );
@@ -202,12 +209,12 @@ export default function InstitutionDetailPage() {
     return (
       <MainLayout>
         <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8fafc]">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Упс!</h1>
-          <p className="text-gray-500 mb-6">
-            {error || "Учреждение не найдено"}
-          </p>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+            {t("oops")}
+          </h1>
+          <p className="text-gray-500 mb-6">{error || t("notFound")}</p>
           <Button asChild>
-            <Link href="/institutions">Вернуться к списку</Link>
+            <Link href="/institutions">{t("backToList")}</Link>
           </Button>
         </div>
       </MainLayout>
@@ -233,7 +240,7 @@ export default function InstitutionDetailPage() {
               className="inline-flex items-center text-white hover:text-white transition-colors font-bold text-sm bg-black/20 backdrop-blur-md px-4 py-2 rounded-full hover:bg-black/30"
             >
               <ChevronLeft size={16} className="mr-1" />
-              Назад к списку
+              {t("backToListShort")}
             </Link>
           </div>
         </div>
@@ -251,7 +258,7 @@ export default function InstitutionDetailPage() {
                   {/* Verified пока хардкодим true, или добавим поле в БД */}
                   <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-1">
                     <CheckCircle2 size={14} />
-                    Проверено
+                    {t("verified")}
                   </div>
                 </div>
 
@@ -268,7 +275,7 @@ export default function InstitutionDetailPage() {
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   <div className="bg-gray-50 flex flex-col justify-center p-4 rounded-2xl w-full">
                     <div className="text-xs text-gray-500 font-bold uppercase mb-1">
-                      Подопечных
+                      {t("wardsLabel")}
                     </div>
                     <div className="text-xl font-black text-[#1e3a8a]">
                       {data.wardsCount || 0}
@@ -276,7 +283,7 @@ export default function InstitutionDetailPage() {
                   </div>
                   <div className="bg-gray-50 flex flex-col justify-center p-4 rounded-2xl w-full">
                     <div className="text-xs text-gray-500 font-bold uppercase mb-1">
-                      Открытых нужд
+                      {t("openNeedsLabel")}
                     </div>
                     <div className="text-xl font-black text-[#1e3a8a]">
                       {data.needsCount}
@@ -289,10 +296,10 @@ export default function InstitutionDetailPage() {
                     <Phone size={18} className="text-gray-400" />
                     <div>
                       <p className="text-xs text-gray-400 font-bold uppercase">
-                        Контакты
+                        {t("contactsLabel")}
                       </p>
                       <p className="font-bold text-gray-800">
-                        {data.contactPhone || "Не указан"}
+                        {data.contactPhone || t("notProvided")}
                       </p>
                     </div>
                   </div>
@@ -303,7 +310,7 @@ export default function InstitutionDetailPage() {
                         Email
                       </p>
                       <p className="font-bold text-gray-800">
-                        {data.contactEmail || "Не указан"}
+                        {data.contactEmail || t("notProvided")}
                       </p>
                     </div>
                   </div>
@@ -315,7 +322,7 @@ export default function InstitutionDetailPage() {
                 className="w-full h-14 rounded-2xl border-2 border-gray-200 text-gray-500 font-bold hover:border-[#1e3a8a] hover:text-[#1e3a8a] bg-transparent"
               >
                 <Share2 size={18} className="mr-2" />
-                Поделиться профилем
+                {t("shareProfile")}
               </Button>
             </div>
 
@@ -325,21 +332,25 @@ export default function InstitutionDetailPage() {
               <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 flex flex-col lg:flex-row gap-8 justify-between items-start">
                 <div className="flex-1">
                   <h3 className="text-xl font-black text-gray-900 mb-4">
-                    О нас
+                    {t("aboutHeading")}
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-lg">
-                    {`Учреждение "${data.name}" находится в городе ${data.city}.`}
+                    {t("aboutDescription", {
+                      name: data.name,
+                      city: data.city,
+                    })}
                   </p>
                 </div>
 
                 <div className="w-full lg:w-[350px] bg-[#f8fafc] border border-gray-200 rounded-2xl p-6 flex-shrink-0">
                   <div className="text-xs text-gray-500 font-bold uppercase mb-2 flex items-center gap-2">
-                    <Clock size={16} className="text-[#1e3a8a]" /> Часы приема
+                    <Clock size={16} className="text-[#1e3a8a]" />{" "}
+                    {t("officeHours")}
                   </div>
                   <div className="text-sm font-bold text-[#1e3a8a] leading-relaxed break-words">
                     {data.activityHours && data.activityHours.trim() !== ""
                       ? data.activityHours
-                      : "Не указаны"}
+                      : t("notProvidedPlural")}
                   </div>
                 </div>
               </div>
@@ -347,15 +358,14 @@ export default function InstitutionDetailPage() {
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl md:text-3xl font-black text-[#1e3a8a]">
-                    Актуальные нужды
+                    {t("currentNeeds")}
                   </h2>
                   <span className="bg-[#ffca63] text-[#1e3a8a] px-3 py-1 rounded-lg text-sm font-bold">
-                    {
-                      needs.filter(
+                    {t("openCount", {
+                      count: needs.filter(
                         (n) => n.receivedQuantity < n.requiredQuantity,
-                      ).length
-                    }{" "}
-                    открыто
+                      ).length,
+                    })}
                   </span>
                 </div>
 
@@ -370,7 +380,7 @@ export default function InstitutionDetailPage() {
                       />
                       <input
                         type="text"
-                        placeholder="Найти нужду..."
+                        placeholder={t("searchNeedPlaceholder")}
                         value={needsSearch}
                         onChange={(e) => setNeedsSearch(e.target.value)}
                         className="w-full h-11 pl-10 pr-4 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 font-medium text-sm"
@@ -429,8 +439,8 @@ export default function InstitutionDetailPage() {
                   <div className="text-center py-10 bg-white rounded-3xl border border-gray-100">
                     <p className="text-gray-500">
                       {needsSearch || needsStatus !== "all"
-                        ? "Нужды не найдены по заданным фильтрам"
-                        : "В данный момент нужд нет."}
+                        ? t("needsEmptyFiltered")
+                        : t("needsEmpty")}
                     </p>
                     {(needsSearch || needsStatus !== "all") && (
                       <button
@@ -440,7 +450,7 @@ export default function InstitutionDetailPage() {
                         }}
                         className="mt-3 text-[#1e3a8a] font-bold hover:underline"
                       >
-                        Сбросить фильтры
+                        {t("resetFilters")}
                       </button>
                     )}
                   </div>
@@ -479,7 +489,7 @@ export default function InstitutionDetailPage() {
                                   <div>
                                     <div className="flex items-center gap-2 mb-1">
                                       <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
-                                        Потребность
+                                        {t("needLabel")}
                                       </span>
                                     </div>
                                     <h4
@@ -503,21 +513,21 @@ export default function InstitutionDetailPage() {
                               <div className="flex-shrink-0 w-full md:w-auto mt-4 md:mt-0">
                                 {isDone ? (
                                   <span className="text-green-600 font-bold text-sm">
-                                    ✓ Закрыто
+                                    {t("needClosed")}
                                   </span>
                                 ) : isFullyCovered ? (
                                   <Button
                                     disabled
                                     className="w-full bg-gray-200 text-gray-500 font-bold h-12 rounded-xl px-6 cursor-not-allowed"
                                   >
-                                    Покрыто (в пути)
+                                    {t("needCovered")}
                                   </Button>
                                 ) : (
                                   <Button
                                     onClick={() => handlePledgeClick(need)}
                                     className="w-full bg-[#1e3a8a] hover:bg-[#2c4db5] text-white font-bold h-12 rounded-xl px-6"
                                   >
-                                    Я привезу
+                                    {t("pledgeButton")}
                                   </Button>
                                 )}
                               </div>
@@ -536,12 +546,10 @@ export default function InstitutionDetailPage() {
                   />
                   <div>
                     <h4 className="font-bold text-[#966d1f] mb-1">
-                      Важно знать
+                      {t("importantTitle")}
                     </h4>
                     <p className="text-[#b38632] text-sm leading-relaxed">
-                      Пожалуйста, перед поездкой нажмите кнопку «Я привезу»,
-                      чтобы забронировать нужное количество. Это поможет
-                      избежать дублирования помощи.
+                      {t("importantText")}
                     </p>
                   </div>
                 </div>

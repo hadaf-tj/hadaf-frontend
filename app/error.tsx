@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import Image from "next/image";
 import Link from "next/link";
 import { Home } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function GlobalError({
   error: _error,
@@ -15,6 +16,8 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations("errorPage");
+
   return (
     <div className="flex flex-col lg:flex-row items-center justify-center min-h-[70vh] text-center lg:text-left px-4 lg:gap-12 max-w-5xl mx-auto">
       {/* ЛЕВАЯ ЧАСТЬ: Изображение 500 */}
@@ -23,12 +26,11 @@ export default function GlobalError({
       <div className="flex flex-col items-center lg:items-start">
         {/* Лаконичный текст */}
         <h1 className="mt-4 lg:mt-0 text-4xl font-extrabold text-[#1e3a8a]">
-          Ой... Что-то пошло не так
+          {t("title")}
         </h1>
 
         <p className="mt-4 text-lg text-gray-700 max-w-md">
-          Это не вы, это мы. На нашей стороне произошла техническая неполадка.
-          Мы уже знаем о проблеме и работаем над её устранением.
+          {t("description")}
         </p>
 
         {/* Кнопка "reset" пытается перезагрузить страницу */}
@@ -38,13 +40,13 @@ export default function GlobalError({
             className="bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/90 shadow-md"
             onClick={() => reset()}
           >
-            Попробовать снова
+            {t("retry")}
           </Button>
 
           <Button size="lg" variant="outline" asChild>
             <Link href="/">
               <Home size={20} className="mr-2" />
-              Вернуться домой
+              {t("goHome")}
             </Link>
           </Button>
         </div>
@@ -52,7 +54,7 @@ export default function GlobalError({
       <div className="flex-shrink-0 mb-8 lg:mb-0">
         <Image
           src="/500.webp"
-          alt="Ошибка на сервере"
+          alt={t("imageAlt")}
           width={375}
           height={375}
         />

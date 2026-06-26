@@ -9,13 +9,19 @@ import { ArrowLeft, Home } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "Страница не найдена",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("notFound");
+  return {
+    title: t("metaTitle"),
+    robots: { index: false, follow: false },
+  };
+}
 
-export default function NotFound() {
+export default async function NotFound() {
+  const t = await getTranslations("notFound");
+
   return (
     <div className="flex flex-col min-h-screen font-sans bg-white text-[#1e3a8a]">
       {/* Подключаем Хедер, чтобы человек мог уйти через меню */}
@@ -29,7 +35,7 @@ export default function NotFound() {
 
           <Image
             src="/404.webp"
-            alt="Заблудившийся волонтер"
+            alt={t("imageAlt")}
             fill
             className="object-contain"
             priority
@@ -39,19 +45,18 @@ export default function NotFound() {
         {/* ПРАВАЯ ЧАСТЬ: Текст и кнопка */}
         <div className="flex flex-col items-center lg:items-start text-center lg:text-left max-w-lg">
           <div className="inline-block px-3 py-1 bg-red-50 text-red-500 rounded-full text-xs font-black uppercase tracking-wider mb-4">
-            Ошибка 404
+            {t("badge")}
           </div>
 
           <h1 className="text-4xl md:text-6xl font-black text-[#1e3a8a] mb-6 leading-tight">
-            Роҳгум задем? <br />
+            {t("headline")} <br />
             <span className="text-gray-300 text-2xl md:text-4xl">
-              (Заблудились?)
+              {t("headlineSub")}
             </span>
           </h1>
 
           <p className="text-lg text-gray-600 font-medium leading-relaxed mb-8">
-            Похоже, мы свернули не на ту улицу. Такой страницы не существует,
-            или она переехала в другой район.
+            {t("description")}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -61,7 +66,7 @@ export default function NotFound() {
             >
               <Link href="/">
                 <Home size={20} className="mr-2" />
-                На главную
+                {t("goHome")}
               </Link>
             </Button>
 
@@ -72,7 +77,7 @@ export default function NotFound() {
             >
               <Link href="/institutions">
                 <ArrowLeft size={20} className="mr-2" />
-                Вернуться назад
+                {t("back")}
               </Link>
             </Button>
           </div>

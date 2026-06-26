@@ -4,35 +4,17 @@
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import MainLayout from "@/components/layout/MainLayout";
 import { HelpCircle, ChevronDown, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export const FAQ_ITEMS = [
-  {
-    q: "Как работает платформа?",
-    a: "Вы выбираете учреждение из проверенного реестра, видите конкретные нужды (продукты, вещи, лекарства) и нажимаете «Я привезу». Учреждение получает уведомление и ждёт вашу помощь.",
-  },
-  {
-    q: "Можно ли помогать анонимно?",
-    a: "Да, вы можете помогать без регистрации. Однако аккаунт позволяет отслеживать историю помощи и получать благодарности от учреждений.",
-  },
-  {
-    q: "Как попасть в реестр учреждений?",
-    a: "Государственные учреждения (детские дома и дома престарелых) могут подать заявку через раздел «Контакты». Мы проверяем документы и добавляем учреждение в реестр.",
-  },
-  {
-    q: "Кто проверяет учреждения?",
-    a: "Команда Ҳадаф верифицирует каждое учреждение: проверяет регистрационные документы, связывается с администрацией и при необходимости проводит выездную проверку.",
-  },
-  {
-    q: "Куда ушла моя помощь?",
-    a: "В личном кабинете вы видите статус каждого обещания. После доставки учреждение подтверждает получение, и вы получаете уведомление.",
-  },
-];
-
 export default function FAQPage() {
+  const t = useTranslations("faq");
+  const tc = useTranslations("common");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const FAQ_ITEMS = t.raw("items") as { q: string; a: string }[];
 
   return (
     <MainLayout>
@@ -43,11 +25,10 @@ export default function FAQPage() {
             <HelpCircle size={32} />
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight mb-4 md:mb-6">
-            Часто задаваемые вопросы
+            {t("heroTitle")}
           </h1>
           <p className="text-white/80 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-            Ответы на самые популярные вопросы о работе платформы адресной
-            помощи «Ҳадаф».
+            {t("heroSubtitle")}
           </p>
         </div>
       </div>
@@ -58,7 +39,7 @@ export default function FAQPage() {
           className="inline-flex items-center gap-2 text-[#1e3a8a] font-bold hover:translate-x-[-4px] transition-transform mb-8 bg-[#1e3a8a]/5 px-4 py-2 rounded-xl"
         >
           <ArrowLeft size={18} />
-          На главную
+          {tc("goHome")}
         </Link>
 
         <div className="flex flex-col gap-4">

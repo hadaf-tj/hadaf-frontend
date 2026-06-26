@@ -7,8 +7,10 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { getProfile, fetchInstitutionById } from "@/lib/api";
 import { User, Mail, Phone, Building } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function SettingsPage() {
+  const t = useTranslations("dashboardSettings");
   const [user, setUser] = useState<{
     full_name: string;
     role: string;
@@ -40,7 +42,7 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="p-8 text-[#1e3a8a] font-bold">Загрузка настроек...</div>
+      <div className="p-8 text-[#1e3a8a] font-bold">{t("loading")}</div>
     );
   }
 
@@ -48,10 +50,10 @@ export default function SettingsPage() {
     <div className="space-y-5 sm:space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-[#1e3a8a]">
-          Настройки профиля
+          {t("title")}
         </h1>
         <p className="text-gray-500 font-medium text-sm sm:text-base">
-          Просмотр личной информации.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -68,8 +70,8 @@ export default function SettingsPage() {
               </h3>
               <p className="text-sm text-gray-500">
                 {user?.role === "employee"
-                  ? "Сотрудник учреждения"
-                  : "Волонтер"}
+                  ? t("roleEmployee")
+                  : t("roleVolunteer")}
               </p>
             </div>
           </div>
@@ -77,7 +79,7 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                <User size={14} /> ФИО
+                <User size={14} /> {t("fullNameLabel")}
               </label>
               <input
                 type="text"
@@ -89,7 +91,7 @@ export default function SettingsPage() {
 
             <div className="space-y-2">
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                <Mail size={14} /> Email
+                <Mail size={14} /> {t("emailLabel")}
               </label>
               <input
                 type="email"
@@ -101,11 +103,11 @@ export default function SettingsPage() {
 
             <div className="space-y-2">
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                <Phone size={14} /> Телефон
+                <Phone size={14} /> {t("phoneLabel")}
               </label>
               <input
                 type="text"
-                value={user?.phone || "Не указан"}
+                value={user?.phone || t("phoneNotProvided")}
                 disabled
                 className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 font-medium cursor-not-allowed"
               />
@@ -113,13 +115,15 @@ export default function SettingsPage() {
 
             <div className="space-y-2">
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                <Building size={14} /> Организация
+                <Building size={14} /> {t("organizationLabel")}
               </label>
               <input
                 type="text"
                 value={
                   institutionName ||
-                  (user?.institution_id ? "Загрузка..." : "Не привязан")
+                  (user?.institution_id
+                    ? t("organizationLoading")
+                    : t("organizationNotLinked"))
                 }
                 disabled
                 className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 font-medium cursor-not-allowed"
@@ -132,7 +136,7 @@ export default function SettingsPage() {
               disabled
               className="opacity-50 cursor-not-allowed bg-[#1e3a8a] text-white"
             >
-              Сохранить изменения (Скоро)
+              {t("saveChangesSoon")}
             </Button>
           </div>
         </form>

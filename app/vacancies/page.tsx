@@ -4,6 +4,7 @@
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import MainLayout from "@/components/layout/MainLayout";
 import {
   Briefcase,
@@ -16,6 +17,7 @@ import Link from "next/link";
 import { fetchVacancies, Vacancy } from "@/lib/api";
 
 export default function VacanciesPage() {
+  const t = useTranslations("vacancies");
   const [vacancies, setVacancies] = useState<Vacancy[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,11 +34,10 @@ export default function VacanciesPage() {
         <section className="bg-[#1e3a8a] pt-24 sm:pt-32 pb-16 sm:pb-24 rounded-b-[2rem] sm:rounded-b-[3rem]">
           <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28">
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-2 sm:mb-3">
-              Присоединяйтесь к команде
+              {t("heroTitle")}
             </h1>
             <p className="text-white/80 text-base sm:text-lg max-w-2xl">
-              Станьте частью проекта «Ҳадаф» и помогайте нам развивать
-              социальные инициативы в Таджикистане.
+              {t("heroSubtitle")}
             </p>
           </div>
         </section>
@@ -46,23 +47,25 @@ export default function VacanciesPage() {
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 text-[#1e3a8a]">
                 <Loader2 size={48} className="animate-spin mb-4" />
-                <p className="font-bold text-lg">Загрузка вакансий...</p>
+                <p className="font-bold text-lg">{t("loading")}</p>
               </div>
             ) : vacancies.length === 0 ? (
               <div className="text-center py-20">
                 <Briefcase size={64} className="mx-auto text-gray-300 mb-6" />
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Пока нет открытых вакансий
+                  {t("emptyTitle")}
                 </h3>
                 <p className="text-gray-500 max-w-md mx-auto font-medium">
-                  Мы всегда рады талантам. Вы можете отправить резюме в наш
-                  Telegram:{" "}
-                  <Link
-                    href="https:////t.me/hadaf_tajikistan"
-                    className="text-blue-500 hover:underline"
-                  >
-                    @hadaf_tajikistan
-                  </Link>
+                  {t.rich("emptyDescription", {
+                    link: (chunks) => (
+                      <Link
+                        href="https:////t.me/hadaf_tajikistan"
+                        className="text-blue-500 hover:underline"
+                      >
+                        {chunks}
+                      </Link>
+                    ),
+                  })}
                 </p>
               </div>
             ) : (
@@ -85,7 +88,7 @@ export default function VacanciesPage() {
                           size={16}
                           className="text-[#229ED9] flex-shrink-0"
                         />{" "}
-                        Удалённо
+                        {t("remote")}
                       </div>
                       <div className="flex items-center gap-2.5 text-gray-600 font-bold">
                         <Clock
@@ -103,7 +106,7 @@ export default function VacanciesPage() {
                       </div>
                     </div>
                     <div className="mt-auto flex items-center gap-2 text-[#1e3a8a] font-bold text-sm group-hover:gap-3 transition-all">
-                      Подробнее
+                      {t("more")}
                       <ArrowRight
                         size={16}
                         className="group-hover:translate-x-1 transition-transform"

@@ -9,8 +9,10 @@ import { NeedForm } from "@/components/specific/NeedForm";
 import { Need } from "@/types/project";
 import { fetchNeedById, updateNeed } from "@/lib/api";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const EditNeedPage = ({ params }: { params: Promise<{ id: string }> }) => {
+  const t = useTranslations("dashboardNeeds");
   const resolvedParams = use(params);
   const router = useRouter();
 
@@ -25,13 +27,13 @@ const EditNeedPage = ({ params }: { params: Promise<{ id: string }> }) => {
       try {
         const data = await fetchNeedById(resolvedParams.id);
         if (!data) {
-          setError("Нужда не найдена");
+          setError(t("notFound"));
         } else {
           setNeedData(data);
         }
       } catch (err) {
         console.error(err);
-        setError("Ошибка загрузки данных");
+        setError(t("loadError"));
       } finally {
         setIsLoading(false);
       }
@@ -56,7 +58,7 @@ const EditNeedPage = ({ params }: { params: Promise<{ id: string }> }) => {
       router.push("/dashboard/needs");
     } catch (err) {
       console.error(err);
-      alert("Ошибка при обновлении нужды");
+      alert(t("updateError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -73,9 +75,7 @@ const EditNeedPage = ({ params }: { params: Promise<{ id: string }> }) => {
   if (error || !needData) {
     return (
       <div className="max-w-2xl mx-auto text-center py-20">
-        <p className="text-red-500 font-medium">
-          {error || "Нужда не найдена"}
-        </p>
+        <p className="text-red-500 font-medium">{error || t("notFound")}</p>
       </div>
     );
   }

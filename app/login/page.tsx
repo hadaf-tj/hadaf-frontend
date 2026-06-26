@@ -6,13 +6,17 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { ArrowLeft, HeartHandshake, Loader2, Clock } from "lucide-react";
 import { login } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
-import { getLocalizedError } from "@/lib/errorMessages";
+import { useErrorTranslator } from "@/lib/errorMessages";
 
 function LoginForm() {
+  const t = useTranslations("login");
+  const tCommon = useTranslations("common");
+  const translateError = useErrorTranslator();
   const router = useRouter();
   const { refreshUser } = useAuth();
   const searchParams = useSearchParams();
@@ -35,8 +39,8 @@ function LoginForm() {
     } catch (err: unknown) {
       const message =
         err instanceof Error
-          ? getLocalizedError(err.message)
-          : getLocalizedError("");
+          ? translateError(err.message)
+          : translateError("");
       console.error(err);
       setError(message);
     } finally {
@@ -52,7 +56,7 @@ function LoginForm() {
         className="absolute top-8 left-8 text-gray-400 hover:text-[#1e3a8a] flex items-center gap-2 font-bold transition-colors"
       >
         <ArrowLeft size={20} />
-        На главную
+        {tCommon("goHome")}
       </Link>
 
       {/* Логотип и заголовок */}
@@ -61,7 +65,7 @@ function LoginForm() {
           <HeartHandshake size={28} />
         </div>
         <h1 className="text-2xl font-black text-gray-900">
-          С возвращением в Hadaf
+          {t("title")}
         </h1>
       </div>
 
@@ -72,11 +76,10 @@ function LoginForm() {
             <Clock className="text-amber-500 mt-0.5 shrink-0" size={20} />
             <div>
               <p className="text-amber-800 font-bold text-sm">
-                Аккаунт на рассмотрении
+                {t("pendingTitle")}
               </p>
               <p className="text-amber-700 text-xs mt-0.5">
-                Ваш аккаунт сотрудника ожидает подтверждения администратором.
-                Как только вы получите доступ — войдите здесь.
+                {t("pendingText")}
               </p>
             </div>
           </div>
@@ -91,7 +94,7 @@ function LoginForm() {
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-500 ml-1 uppercase tracking-wider">
-              Почта
+              {t("emailLabel")}
             </label>
             <input
               type="email"
@@ -106,13 +109,13 @@ function LoginForm() {
           <div className="space-y-1.5">
             <div className="flex justify-between items-center ml-1">
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                Пароль
+                {t("passwordLabel")}
               </label>
               <span
                 className="text-xs font-bold text-gray-400 cursor-not-allowed"
-                title="Скоро"
+                title={t("comingSoon")}
               >
-                Забыли? (скоро)
+                {t("forgotPassword")}
               </span>
             </div>
             <input
@@ -129,7 +132,7 @@ function LoginForm() {
             disabled={loading}
             className="w-full h-12 bg-[#1e3a8a] hover:bg-[#2a4ec2] text-white font-bold text-base rounded-xl mt-2 shadow-lg shadow-[#1e3a8a]/20 disabled:opacity-70"
           >
-            {loading ? <Loader2 className="animate-spin" /> : "Войти"}
+            {loading ? <Loader2 className="animate-spin" /> : t("submitButton")}
           </Button>
         </form>
 
@@ -139,7 +142,7 @@ function LoginForm() {
               <span className="w-full border-t border-gray-100"></span>
             </div>
             <span className="relative bg-white px-3 text-xs font-bold text-gray-400 uppercase">
-              Или
+              {t("or")}
             </span>
           </div>
 
@@ -166,19 +169,22 @@ function LoginForm() {
                 fill="#EA4335"
               />
             </svg>
-            Войти через Google (скоро)
+            {t("googleButton")}
           </button>
         </div>
 
         <div className="mt-8 text-center pt-6 border-t border-gray-100">
           <p className="text-gray-500 text-sm font-medium">
-            Нет аккаунта?{" "}
-            <Link
-              href="/register"
-              className="text-[#1e3a8a] font-black hover:underline"
-            >
-              Зарегистрироваться
-            </Link>
+            {t.rich("noAccount", {
+              link: (chunks) => (
+                <Link
+                  href="/register"
+                  className="text-[#1e3a8a] font-black hover:underline"
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
           </p>
         </div>
       </div>

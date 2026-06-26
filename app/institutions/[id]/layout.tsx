@@ -2,8 +2,9 @@
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
 import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
 import { absoluteUrl } from "@/lib/seo.server";
-import { createPageMetadata } from "@/lib/metadata";
+import type { Locale } from "@/i18n/config";
 
 type ApiResponse<T> = { message?: string; data: T };
 
@@ -23,9 +24,11 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
+  const t = await getTranslations("metadata.institutionDetail");
+  const locale = (await getLocale()) as Locale;
 
-  let title = "Учреждение — Ҳадаф";
-  let description = "Информация об учреждении и актуальные нужды.";
+  let title = t("title");
+  let description = t("description");
 
   try {
     const res = await fetch(await absoluteUrl(`/api/v1/institutions/${id}`), {
@@ -38,22 +41,41 @@ export async function generateMetadata({
       if (inst?.description) description = inst.description;
       else if (inst?.city || inst?.region) {
         const where = [inst.city, inst.region].filter(Boolean).join(", ");
-        if (where)
-          description = `Информация об учреждении (${where}) и актуальные нужды.`;
+        if (where) description = t("descriptionWithLocation", { where });
       }
     }
   } catch {}
 
   const canonical = `/institutions/${encodeURIComponent(id)}`;
+  const image = "/institution_id_hero.webp";
 
-  const metadata = createPageMetadata({
+  return {
     title,
     description,
-    canonical,
-    image: "/institution_id_hero.webp",
-  });
-
-  return metadata;
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: "website",
+      siteName: "Ҳадаф",
+      locale: locale === "tg" ? "tg_TJ" : "ru_RU",
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
+  };
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {

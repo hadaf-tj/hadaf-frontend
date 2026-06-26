@@ -6,6 +6,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import {
   User,
@@ -20,9 +21,12 @@ import {
 import { register, fetchInstitutions, confirmOTP } from "@/lib/api";
 import { Institution } from "@/types/project";
 import { useAuth } from "@/lib/AuthContext";
-import { getLocalizedError } from "@/lib/errorMessages";
+import { useErrorTranslator } from "@/lib/errorMessages";
 
 export default function RegisterPage() {
+  const t = useTranslations("register");
+  const tCommon = useTranslations("common");
+  const translateError = useErrorTranslator();
   const router = useRouter();
   const { refreshUser } = useAuth();
 
@@ -66,7 +70,8 @@ export default function RegisterPage() {
       const fullName = `${firstName} ${lastName}`.trim();
       let instId: number | null = null;
       if (role === "employee") {
-        if (!selectedInstitutionId) throw new Error("Выберите учреждение");
+        if (!selectedInstitutionId)
+          throw new Error(t("selectInstitutionError"));
         instId = parseInt(selectedInstitutionId);
       }
 
@@ -77,8 +82,8 @@ export default function RegisterPage() {
     } catch (err: unknown) {
       const message =
         err instanceof Error
-          ? getLocalizedError(err.message)
-          : getLocalizedError("");
+          ? translateError(err.message)
+          : translateError("");
       setError(message);
     } finally {
       setIsLoading(false);
@@ -97,8 +102,8 @@ export default function RegisterPage() {
     } catch (err: unknown) {
       const message =
         err instanceof Error
-          ? getLocalizedError(err.message, "Неверный код")
-          : getLocalizedError("", "Неверный код");
+          ? translateError(err.message, t("invalidCodeFallback"))
+          : translateError("", t("invalidCodeFallback"));
 
       // Intercept pending approval state
       if (
@@ -138,7 +143,7 @@ export default function RegisterPage() {
       });
       startResendCooldown();
     } catch {
-      setError("Не удалось отправить код повторно");
+      setError(t("resendError"));
     }
   };
 
@@ -150,10 +155,13 @@ export default function RegisterPage() {
             <Mail size={32} />
           </div>
           <h2 className="text-2xl font-black text-gray-900 mb-2">
-            Проверьте почту
+            {t("otpTitle")}
           </h2>
           <p className="text-gray-500 mb-8">
-            Мы отправили код подтверждения на <b>{email}</b>
+            {t.rich("otpSubtitle", {
+              email,
+              b: (chunks) => <b>{chunks}</b>,
+            })}
           </p>
 
           <form onSubmit={handleVerify} className="space-y-6">
@@ -178,7 +186,11 @@ export default function RegisterPage() {
               disabled={isLoading || otpCode.length !== 6}
               className="w-full h-14 bg-[#1e3a8a] text-white font-bold rounded-xl text-lg disabled:opacity-50"
             >
-              {isLoading ? <Loader2 className="animate-spin" /> : "Подтвердить"}
+              {isLoading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                t("confirmButton")
+              )}
             </Button>
           </form>
 
@@ -189,8 +201,8 @@ export default function RegisterPage() {
           >
             <RefreshCw size={14} />
             {resendCooldown > 0
-              ? `Повторно через ${resendCooldown}с`
-              : "Отправить код повторно"}
+              ? t("resendCooldown", { seconds: resendCooldown })
+              : t("resendButton")}
           </button>
         </div>
       </div>
@@ -203,14 +215,14 @@ export default function RegisterPage() {
         href="/"
         className="absolute top-8 left-8 text-gray-400 hover:text-[#1e3a8a] flex items-center gap-2 font-bold transition-colors"
       >
-        <ArrowLeft size={20} /> На главную
+        <ArrowLeft size={20} /> {tCommon("goHome")}
       </Link>
 
       <div className="mb-8 flex flex-col items-center">
         <div className="w-12 h-12 bg-[#1e3a8a] rounded-xl flex items-center justify-center text-white mb-3 shadow-lg shadow-blue-900/20">
           <HeartHandshake size={28} />
         </div>
-        <h1 className="text-2xl font-black text-gray-900">Создание аккаунта</h1>
+        <h1 className="text-2xl font-black text-gray-900">{t("title")}</h1>
       </div>
 
       <div className="w-full max-w-[500px] bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-8 md:p-10 border border-gray-100">
@@ -233,7 +245,7 @@ export default function RegisterPage() {
             <span
               className={`text-sm font-bold ${role === "volunteer" ? "text-[#1e3a8a]" : "text-gray-600"}`}
             >
-              Я волонтер
+              {t("roleVolunteer")}
             </span>
           </button>
           <button
@@ -253,7 +265,7 @@ export default function RegisterPage() {
             <span
               className={`text-sm font-bold ${role === "employee" ? "text-[#1e3a8a]" : "text-gray-600"}`}
             >
-              Сотрудник
+              {t("roleEmployee")}
             </span>
           </button>
         </div>
@@ -268,7 +280,7 @@ export default function RegisterPage() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-gray-500 ml-1 uppercase">
-                Имя
+                {t("firstNameLabel")}
               </label>
               <input
                 type="text"
@@ -280,7 +292,7 @@ export default function RegisterPage() {
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-gray-500 ml-1 uppercase">
-                Фамилия
+                {t("lastNameLabel")}
               </label>
               <input
                 type="text"
@@ -296,7 +308,7 @@ export default function RegisterPage() {
           {role === "employee" && (
             <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2">
               <label className="text-xs font-bold text-gray-500 ml-1 uppercase">
-                Выберите организацию
+                {t("institutionLabel")}
               </label>
               <div className="relative">
                 <select
@@ -304,7 +316,7 @@ export default function RegisterPage() {
                   onChange={(e) => setSelectedInstitutionId(e.target.value)}
                   className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900 appearance-none cursor-pointer"
                 >
-                  <option value="">-- Выберите из списка --</option>
+                  <option value="">{t("institutionPlaceholder")}</option>
                   {institutions.map((inst) => (
                     <option key={inst.id} value={inst.id}>
                       {inst.name} ({inst.city})
@@ -321,7 +333,7 @@ export default function RegisterPage() {
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-500 ml-1 uppercase">
-              Email
+              {t("emailLabel")}
             </label>
             <input
               type="email"
@@ -335,7 +347,7 @@ export default function RegisterPage() {
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-500 ml-1 uppercase">
-              Телефон
+              {t("phoneLabel")}
             </label>
             <div className="flex gap-2">
               {/* Country Code Selector */}
@@ -374,7 +386,7 @@ export default function RegisterPage() {
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-500 ml-1 uppercase">
-              Пароль
+              {t("passwordLabel")}
             </label>
             <input
               type="password"
@@ -384,7 +396,7 @@ export default function RegisterPage() {
               minLength={8}
               className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900"
             />
-            <p className="text-[10px] text-gray-400 ml-1">Минимум 8 символов</p>
+            <p className="text-[10px] text-gray-400 ml-1">{t("passwordHint")}</p>
           </div>
 
           <Button
@@ -395,30 +407,36 @@ export default function RegisterPage() {
             {isLoading ? (
               <Loader2 className="animate-spin" />
             ) : (
-              "Зарегистрироваться"
+              t("submitButton")
             )}
           </Button>
 
           <p className="mt-4 text-[11px] text-gray-400 text-center leading-relaxed">
-            Регистрируясь на платформе, вы соглашаетесь с{" "}
-            <Link
-              href="/privacy"
-              className="text-[#1e3a8a] font-bold hover:underline"
-            >
-              политикой конфиденциальности
-            </Link>
+            {t.rich("termsAgreement", {
+              link: (chunks) => (
+                <Link
+                  href="/privacy"
+                  className="text-[#1e3a8a] font-bold hover:underline"
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
           </p>
         </form>
 
         <div className="mt-8 text-center pt-6 border-t border-gray-100">
           <p className="text-gray-500 text-sm font-medium">
-            Уже есть аккаунт?{" "}
-            <Link
-              href="/login"
-              className="text-[#1e3a8a] font-black hover:underline"
-            >
-              Войти
-            </Link>
+            {t.rich("haveAccount", {
+              link: (chunks) => (
+                <Link
+                  href="/login"
+                  className="text-[#1e3a8a] font-black hover:underline"
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
           </p>
         </div>
       </div>

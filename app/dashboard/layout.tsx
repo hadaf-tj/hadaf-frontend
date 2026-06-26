@@ -21,28 +21,35 @@ import {
 import { cn } from "@/lib/utils";
 import { getProfile } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
-
-const VOLUNTEER_MENU = [
-  { name: "Обзор", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Мои обещания", href: "/dashboard/promises", icon: HeartHandshake },
-  { name: "Настройки", href: "/dashboard/settings", icon: Settings },
-];
-
-const INSTITUTION_MENU = [
-  { name: "Обзор", href: "/dashboard", icon: LayoutDashboard },
-  {
-    name: "Управление нуждами",
-    href: "/dashboard/institution",
-    icon: Building2,
-  },
-  { name: "Настройки", href: "/dashboard/settings", icon: Settings },
-];
+import { useTranslations } from "next-intl";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const t = useTranslations("dashboard");
+
+  const VOLUNTEER_MENU = [
+    { name: t("menuOverview"), href: "/dashboard", icon: LayoutDashboard },
+    {
+      name: t("menuMyPromises"),
+      href: "/dashboard/promises",
+      icon: HeartHandshake,
+    },
+    { name: t("menuSettings"), href: "/dashboard/settings", icon: Settings },
+  ];
+
+  const INSTITUTION_MENU = [
+    { name: t("menuOverview"), href: "/dashboard", icon: LayoutDashboard },
+    {
+      name: t("menuNeedsManagement"),
+      href: "/dashboard/institution",
+      icon: Building2,
+    },
+    { name: t("menuSettings"), href: "/dashboard/settings", icon: Settings },
+  ];
+
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const pathname = usePathname();
@@ -155,14 +162,14 @@ export default function DashboardLayout({
         >
           <button
             onClick={handleLogout}
-            title={isSidebarCollapsed ? "Выйти" : undefined}
+            title={isSidebarCollapsed ? t("logout") : undefined}
             className={cn(
               "flex items-center gap-3 w-full text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-all font-semibold text-sm",
               isSidebarCollapsed ? "px-0 py-3 justify-center" : "px-3 py-2.5",
             )}
           >
             <LogOut size={20} className="flex-shrink-0" />
-            {!isSidebarCollapsed && "Выйти"}
+            {!isSidebarCollapsed && t("logout")}
           </button>
 
           <button
@@ -177,7 +184,9 @@ export default function DashboardLayout({
             ) : (
               <ChevronLeft size={18} />
             )}
-            {!isSidebarCollapsed && <span className="text-xs">Свернуть</span>}
+            {!isSidebarCollapsed && (
+              <span className="text-xs">{t("collapse")}</span>
+            )}
           </button>
         </div>
       </aside>
@@ -234,7 +243,7 @@ export default function DashboardLayout({
             className="flex items-center gap-3 px-3 py-2.5 w-full text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-all font-semibold text-sm"
           >
             <LogOut size={20} />
-            Выйти
+            {t("logout")}
           </button>
         </div>
       </aside>
@@ -256,7 +265,7 @@ export default function DashboardLayout({
           </button>
 
           <h2 className="hidden lg:block text-lg font-bold text-gray-800">
-            Личный кабинет
+            {t("personalCabinet")}
           </h2>
 
           <div className="flex items-center gap-3 ml-auto">
@@ -277,8 +286,8 @@ export default function DashboardLayout({
                 <div className="text-[11px] text-gray-400 font-medium capitalize">
                   {user
                     ? user.role === "employee"
-                      ? "Сотрудник"
-                      : "Волонтер"
+                      ? t("roleEmployee")
+                      : t("roleVolunteer")
                     : ""}
                 </div>
               </div>

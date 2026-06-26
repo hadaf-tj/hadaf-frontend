@@ -13,8 +13,23 @@ import {
   Github,
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+
+const NAV_ITEMS = [
+  { key: "about", href: "/about" },
+  { key: "institutions", href: "/institutions" },
+  { key: "events", href: "/events" },
+  { key: "vacancies", href: "/vacancies" },
+  { key: "faq", href: "/faq" },
+  { key: "contacts", href: "/contacts" },
+] as const;
 
 const Footer: React.FC = () => {
+  const t = useTranslations("footer");
+  const tNav = useTranslations("nav");
+  const year = new Date().getFullYear();
+
   return (
     <footer className="relative bg-[#1e3a8a] text-white overflow-hidden">
       {/* Анимированный фон (можно добавить svg или градиенты, если нужно) */}
@@ -44,11 +59,12 @@ const Footer: React.FC = () => {
             </Link>
 
             <p className="text-base text-white/80 leading-relaxed">
-              Благотворительная платформа адресной помощи социальным учреждениям
-              Таджикистана. Помогаем честно, прозрачно и напрямую.
+              {t("description")}
             </p>
 
-            {/* Статистика в футере */}
+            <div className="pt-2">
+              <LanguageSwitcher variant="footer" />
+            </div>
           </div>
 
           {/* Навигация + Контакты: рядом на мобильном */}
@@ -57,18 +73,11 @@ const Footer: React.FC = () => {
               {/* Навигация */}
               <div>
                 <h3 className="font-black text-lg sm:text-xl mb-4 sm:mb-8 text-white/95">
-                  Навигация
+                  {t("navigation")}
                 </h3>
                 <ul className="space-y-3 sm:space-y-4 text-sm sm:text-base">
-                  {[
-                    { name: "О нас", href: "/about" },
-                    { name: "Учреждения", href: "/institutions" },
-                    { name: "События", href: "/events" },
-                    { name: "Вакансии", href: "/vacancies" },
-                    { name: "FAQ", href: "/faq" },
-                    { name: "Контакты", href: "/contacts" },
-                  ].map((item) => (
-                    <li key={item.name}>
+                  {NAV_ITEMS.map((item) => (
+                    <li key={item.key}>
                       <Link
                         href={item.href}
                         className="text-white/70 hover:text-white transition-all flex items-center gap-2 group font-medium"
@@ -77,7 +86,7 @@ const Footer: React.FC = () => {
                           size={16}
                           className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#ffca63]"
                         />
-                        {item.name}
+                        {tNav(item.key)}
                       </Link>
                     </li>
                   ))}
@@ -87,7 +96,7 @@ const Footer: React.FC = () => {
               {/* Контакты */}
               <div>
                 <h3 className="font-black text-lg sm:text-xl mb-4 sm:mb-8 text-white/95">
-                  Контакты
+                  {t("contacts")}
                 </h3>
                 <div className="space-y-4 sm:space-y-6 text-sm sm:text-base">
                   <a
@@ -145,16 +154,17 @@ const Footer: React.FC = () => {
           <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
             <div className="text-center lg:text-left">
               <p className="text-white/60 text-sm font-medium mb-2">
-                &copy; {new Date().getFullYear()} Проект "Ҳадаф". Все права
-                защищены.
+                {t("copyright", { year })}
               </p>
               <p className="text-white/40 text-xs">
-                Создано с{" "}
-                <Heart
-                  size={12}
-                  className="inline text-red-400 animate-pulse"
-                />{" "}
-                к Таджикистану
+                {t.rich("madeWith", {
+                  heart: () => (
+                    <Heart
+                      size={12}
+                      className="inline text-red-400 animate-pulse mx-1"
+                    />
+                  ),
+                })}
               </p>
             </div>
 
@@ -163,21 +173,21 @@ const Footer: React.FC = () => {
                 href="/privacy"
                 className="text-white/60 hover:text-white transition-colors font-medium"
               >
-                Политика конфиденциальности
+                {t("privacy")}
               </Link>
               <span className="text-white/20">•</span>
               <Link
                 href="/terms"
                 className="text-white/60 hover:text-white transition-colors font-medium"
               >
-                Публичная оферта
+                {t("terms")}
               </Link>
               <span className="text-white/20">•</span>
               <Link
                 href="/documents"
                 className="text-white/60 hover:text-white transition-colors font-medium"
               >
-                Документы
+                {t("documents")}
               </Link>
               <span className="text-white/20">•</span>
               <a
@@ -185,10 +195,10 @@ const Footer: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center text-white/60 hover:text-white transition-colors font-medium"
-                title="Исходный код проекта"
+                title={t("sourceCodeTitle")}
               >
                 <Github size={14} className="mr-1.5" />
-                <span>Исходный код</span>
+                <span>{t("sourceCode")}</span>
               </a>
             </div>
           </div>

@@ -4,6 +4,7 @@
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
 import MainLayout from "@/components/layout/MainLayout";
 import {
@@ -69,6 +70,8 @@ function formatDescription(text: string) {
 }
 
 export default function VacancyDetailPage() {
+  const t = useTranslations("vacancyDetail");
+  const tCommon = useTranslations("common");
   const params = useParams();
   const router = useRouter();
   const [vacancy, setVacancy] = useState<Vacancy | null>(null);
@@ -93,10 +96,10 @@ export default function VacancyDetailPage() {
               className="inline-flex items-center gap-2 text-white/70 hover:text-white font-bold text-sm mb-6 transition-colors"
             >
               <ArrowLeft size={18} />
-              Все вакансии
+              {t("allVacancies")}
             </button>
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-white">
-              {vacancy?.title || "Вакансия"}
+              {vacancy?.title || t("fallbackTitle")}
             </h1>
           </div>
         </div>
@@ -106,18 +109,18 @@ export default function VacancyDetailPage() {
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 text-[#1e3a8a]">
                 <Loader2 size={48} className="animate-spin mb-4" />
-                <p className="font-bold text-lg">Загрузка...</p>
+                <p className="font-bold text-lg">{tCommon("loading")}</p>
               </div>
             ) : !vacancy ? (
               <div className="text-center py-20">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Вакансия не найдена
+                  {t("notFound")}
                 </h3>
                 <button
                   onClick={() => router.push("/vacancies")}
                   className="text-[#1e3a8a] font-bold hover:underline mt-4"
                 >
-                  Вернуться к вакансиям
+                  {t("backToVacancies")}
                 </button>
               </div>
             ) : (
@@ -137,7 +140,7 @@ export default function VacancyDetailPage() {
                         size={20}
                         className="text-[#229ED9] flex-shrink-0"
                       />{" "}
-                      Удалённо
+                      {t("remote")}
                     </div>
                     <div className="flex items-center gap-3 text-gray-700 font-bold">
                       <Clock
@@ -158,7 +161,7 @@ export default function VacancyDetailPage() {
                   {/* Description */}
                   <div className="prose prose-lg max-w-none">
                     <h3 className="text-xl font-black text-gray-900 mb-4">
-                      Описание
+                      {t("descriptionTitle")}
                     </h3>
                     <div className="space-y-0">
                       {formatDescription(vacancy.description)}
@@ -176,7 +179,7 @@ export default function VacancyDetailPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        Откликнуться в Telegram
+                        {t("applyTelegram")}
                         <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                       </Link>
                     </Button>

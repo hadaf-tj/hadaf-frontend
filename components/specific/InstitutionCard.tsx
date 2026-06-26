@@ -5,6 +5,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Institution } from "@/types/project";
 import { MapPin, ArrowRight, Building2, Users, Baby } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -14,15 +15,17 @@ interface InstitutionCardProps {
 }
 
 const InstitutionCard: React.FC<InstitutionCardProps> = ({ institution }) => {
+  const t = useTranslations("institutionCard");
+
   const typeMap = {
     Children: {
-      text: "Детский дом",
+      text: t("typeChildren"),
       icon: <Baby size={16} />,
       bg: "bg-orange-50",
       textCol: "text-orange-600",
     },
     Elderly: {
-      text: "Дом престарелых",
+      text: t("typeElderly"),
       icon: <Users size={16} />,
       bg: "bg-blue-50",
       textCol: "text-[#1e3a8a]",
@@ -30,7 +33,7 @@ const InstitutionCard: React.FC<InstitutionCardProps> = ({ institution }) => {
   };
 
   const typeInfo = typeMap[institution.type as keyof typeof typeMap] || {
-    text: "Учреждение",
+    text: t("typeDefault"),
     icon: <Building2 size={16} />,
     bg: "bg-gray-50",
     textCol: "text-gray-600",
@@ -77,13 +80,15 @@ const InstitutionCard: React.FC<InstitutionCardProps> = ({ institution }) => {
         <div className="mt-auto pt-5 border-t border-gray-100 flex justify-between items-center">
           <div className="flex flex-col">
             <span className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-0.5">
-              Открытые сборы
+              {t("openCollections")}
             </span>
             <div className="flex items-baseline gap-1">
               <span className="text-2xl font-black text-[#1e3a8a]">
                 {institution.needsCount}
               </span>
-              <span className="text-sm text-gray-400 font-medium">нужд</span>
+              <span className="text-sm text-gray-400 font-medium">
+                {t("needsLabel")}
+              </span>
             </div>
           </div>
 

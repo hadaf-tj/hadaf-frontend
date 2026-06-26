@@ -2,11 +2,12 @@
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
 import { getSiteBaseUrl } from "@/lib/site-url";
+import { getTranslations } from "next-intl/server";
 
-export default function Head() {
-  const title = "Личный кабинет — Ҳадаф";
-  const description =
-    "Личный кабинет волонтёра или сотрудника учреждения: управление нуждами, обещаниями и настройками.";
+export default async function Head() {
+  const t = await getTranslations("metadata.dashboard");
+  const title = t("title");
+  const description = t("description");
   const baseUrl = getSiteBaseUrl();
   const url = `${baseUrl}/dashboard`;
   const image = `${baseUrl}/logo_thumbnail.webp`;

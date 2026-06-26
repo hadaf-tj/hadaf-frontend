@@ -63,7 +63,7 @@ export async function refreshTokens(): Promise<void> {
     credentials: "include",
   });
   if (!res.ok) {
-    throw new Error("Session expired");
+    throw new Error("ERR_SESSION_EXPIRED");
   }
 }
 
@@ -118,7 +118,7 @@ async function fetchWithAuth(
           if (typeof window !== "undefined") {
             window.dispatchEvent(
               new CustomEvent("api-error", {
-                detail: errData.message || "Системная ошибка",
+                detail: errData.message || "ERR_SYSTEM",
               }),
             );
           }
@@ -182,7 +182,7 @@ export async function login(email: string, password: string): Promise<void> {
 
   if (!res.ok) {
     const errorData = await res.json();
-    throw new Error(errorData.message || "Login error");
+    throw new Error(errorData.message || "ERR_LOGIN_FAILED");
   }
   // Auth tokens handled via backend Set-Cookie
 }
@@ -209,7 +209,7 @@ export async function register(
 
   if (!res.ok) {
     const errorData = await res.json();
-    throw new Error(errorData.message || "Register error");
+    throw new Error(errorData.message || "ERR_REGISTER_FAILED");
   }
   // Awaits OTP verification
 }
@@ -225,7 +225,7 @@ export async function confirmOTP(
 
   if (!res.ok) {
     const errorData = await res.json();
-    throw new Error(errorData.message || "Неверный код");
+    throw new Error(errorData.message || "ERR_OTP_INVALID");
   }
 
   const json: ApiResponse<TokenResponse> = await res.json();
@@ -257,7 +257,7 @@ export async function fetchInstitutions(filters?: {
         cache: "no-store",
       },
     );
-    if (!res.ok) throw new Error("Ошибка загрузки");
+    if (!res.ok) throw new Error("ERR_LOAD_FAILED");
     const json: ListApiResponse<BackendInstitution> = await res.json();
     return extractItems(json).map(mapInstitution);
   } catch (error) {
@@ -289,7 +289,7 @@ export async function fetchNeedsByInstitution(
       `${API_BASE_URL}/institutions/${institutionId}/needs?${params.toString()}`,
       { cache: "no-store" },
     );
-    if (!res.ok) throw new Error("Ошибка загрузки нужд");
+    if (!res.ok) throw new Error("ERR_LOAD_NEEDS");
     const json: ListApiResponse<BackendNeed> = await res.json();
     return extractItems(json).map(mapNeed);
   } catch (error) {
@@ -334,7 +334,7 @@ export async function createNeed(data: Record<string, unknown>) {
     method: "POST",
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Ошибка создания нужды");
+  if (!res.ok) throw new Error("ERR_CREATE_NEED");
   return res.json();
 }
 
@@ -342,7 +342,7 @@ export async function deleteNeed(id: string) {
   const res = await fetchWithAuth(`${API_BASE_URL}/needs/${id}`, {
     method: "DELETE",
   });
-  if (!res.ok) throw new Error("Ошибка удаления");
+  if (!res.ok) throw new Error("ERR_DELETE_FAILED");
   return res.json();
 }
 
@@ -359,7 +359,7 @@ export async function getProfile(): Promise<{
   });
 
   if (!res.ok) {
-    throw new Error("Не удалось загрузить профиль");
+    throw new Error("ERR_LOAD_PROFILE");
   }
 
   const json: ApiResponse<{
@@ -369,7 +369,7 @@ export async function getProfile(): Promise<{
     role: string;
     institution_id?: number;
   }> = await res.json();
-  if (!json.data) throw new Error("Не удалось загрузить профиль");
+  if (!json.data) throw new Error("ERR_LOAD_PROFILE");
   return json.data;
 }
 
@@ -402,7 +402,7 @@ export async function updateNeed(
     method: "PUT",
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Ошибка обновления нужды");
+  if (!res.ok) throw new Error("ERR_UPDATE_NEED");
   return res.json();
 }
 
@@ -423,8 +423,8 @@ export async function createBooking(
   if (!res.ok) {
     const errorData = await res
       .json()
-      .catch(() => ({ message: "Ошибка бронирования" }));
-    throw new Error(errorData.message || "Ошибка бронирования");
+      .catch(() => ({ message: "ERR_BOOKING_FAILED" }));
+    throw new Error(errorData.message || "ERR_BOOKING_FAILED");
   }
 
   const json: ApiResponse<{ id: number }> = await res.json();
@@ -445,7 +445,7 @@ export interface BookingItem {
 
 export async function fetchMyBookings(): Promise<BookingItem[]> {
   const res = await fetchWithAuth(`${API_BASE_URL}/bookings/my`);
-  if (!res.ok) throw new Error("Ошибка загрузки обещаний");
+  if (!res.ok) throw new Error("ERR_LOAD_PROMISES");
   const json: ListApiResponse<BookingItem> = await res.json();
   return extractItems(json);
 }
@@ -460,8 +460,8 @@ export async function cancelMyBooking(bookingId: number): Promise<void> {
   if (!res.ok) {
     const errorData = await res
       .json()
-      .catch(() => ({ message: "Ошибка отмены" }));
-    throw new Error(errorData.message || "Ошибка отмены");
+      .catch(() => ({ message: "ERR_CANCEL_FAILED" }));
+    throw new Error(errorData.message || "ERR_CANCEL_FAILED");
   }
 }
 
@@ -476,8 +476,8 @@ export async function updateMyBooking(
   if (!res.ok) {
     const errorData = await res
       .json()
-      .catch(() => ({ message: "Ошибка обновления" }));
-    throw new Error(errorData.message || "Ошибка обновления");
+      .catch(() => ({ message: "ERR_UPDATE_FAILED" }));
+    throw new Error(errorData.message || "ERR_UPDATE_FAILED");
   }
 }
 
@@ -487,7 +487,7 @@ export async function fetchInstitutionBookings(
   const res = await fetchWithAuth(
     `${API_BASE_URL}/institutions/${institutionId}/bookings`,
   );
-  if (!res.ok) throw new Error("Ошибка загрузки бронирований");
+  if (!res.ok) throw new Error("ERR_LOAD_BOOKINGS");
   const json: ListApiResponse<BookingItem> = await res.json();
   return extractItems(json);
 }
@@ -499,7 +499,7 @@ export async function approveBooking(bookingId: number): Promise<void> {
       method: "PUT",
     },
   );
-  if (!res.ok) throw new Error("Ошибка подтверждения");
+  if (!res.ok) throw new Error("ERR_APPROVE_FAILED");
 }
 
 export async function rejectBooking(bookingId: number): Promise<void> {
@@ -509,7 +509,7 @@ export async function rejectBooking(bookingId: number): Promise<void> {
       method: "PUT",
     },
   );
-  if (!res.ok) throw new Error("Ошибка отклонения");
+  if (!res.ok) throw new Error("ERR_REJECT_FAILED");
 }
 
 export async function completeBooking(bookingId: number): Promise<void> {
@@ -519,7 +519,7 @@ export async function completeBooking(bookingId: number): Promise<void> {
       method: "PUT",
     },
   );
-  if (!res.ok) throw new Error("Ошибка завершения");
+  if (!res.ok) throw new Error("ERR_COMPLETE_FAILED");
 }
 
 export async function fetchStats(): Promise<{
@@ -528,19 +528,19 @@ export async function fetchStats(): Promise<{
   institutions_count: number;
 }> {
   const res = await fetch(`${API_BASE_URL}/stats`);
-  if (!res.ok) throw new Error("Ошибка загрузки статистики");
+  if (!res.ok) throw new Error("ERR_LOAD_STATS");
   const json: ApiResponse<{
     closed_needs: number;
     people_helped: number;
     institutions_count: number;
   }> = await res.json();
-  if (!json.data) throw new Error("Ошибка загрузки статистики");
+  if (!json.data) throw new Error("ERR_LOAD_STATS");
   return json.data;
 }
 
 export async function fetchEvents(): Promise<EventItem[]> {
   const res = await fetchWithAuth(`${API_BASE_URL}/events`);
-  if (!res.ok) throw new Error("Ошибка загрузки событий");
+  if (!res.ok) throw new Error("ERR_LOAD_EVENTS");
   const json: ListApiResponse<EventItem> = await res.json();
   return extractItems(json);
 }
@@ -555,9 +555,9 @@ export async function createEvent(data: {
     method: "POST",
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Ошибка создания события");
+  if (!res.ok) throw new Error("ERR_CREATE_EVENT");
   const json: ApiResponse<{ id: number }> = await res.json();
-  if (!json.data) throw new Error("Ошибка создания события");
+  if (!json.data) throw new Error("ERR_CREATE_EVENT");
   return json.data;
 }
 
@@ -565,14 +565,14 @@ export async function joinEvent(eventId: number): Promise<void> {
   const res = await fetchWithAuth(`${API_BASE_URL}/events/${eventId}/join`, {
     method: "POST",
   });
-  if (!res.ok) throw new Error("Ошибка записи на событие");
+  if (!res.ok) throw new Error("ERR_EVENT_JOIN");
 }
 
 export async function leaveEvent(eventId: number): Promise<void> {
   const res = await fetchWithAuth(`${API_BASE_URL}/events/${eventId}/leave`, {
     method: "DELETE",
   });
-  if (!res.ok) throw new Error("Ошибка отмены записи");
+  if (!res.ok) throw new Error("ERR_EVENT_LEAVE");
 }
 
 export interface EventItem {
@@ -605,7 +605,7 @@ export async function fetchVacancies(): Promise<Vacancy[]> {
   const res = await fetch(`${API_BASE_URL}/vacancies`, {
     next: { revalidate: 60 },
   });
-  if (!res.ok) throw new Error("Fetch vacancies error");
+  if (!res.ok) throw new Error("ERR_LOAD_VACANCIES");
   const json: ListApiResponse<Vacancy> = await res.json();
   return extractItems(json);
 }
@@ -626,21 +626,21 @@ export async function fetchTeamMembers(): Promise<TeamMember[]> {
   const res = await fetch(`${API_BASE_URL}/team`, {
     next: { revalidate: 60 },
   });
-  if (!res.ok) throw new Error("Fetch team members error");
+  if (!res.ok) throw new Error("ERR_LOAD_TEAM");
   const json: ListApiResponse<TeamMember> = await res.json();
   return extractItems(json);
 }
 
 export async function fetchTeamMemberById(id: number): Promise<TeamMember> {
   const res = await fetch(`${API_BASE_URL}/team/${id}`);
-  if (!res.ok) throw new Error("Fetch team member error");
+  if (!res.ok) throw new Error("ERR_LOAD_TEAM");
   const json: ApiResponse<TeamMember> = await res.json();
   return json.data;
 }
 
 export async function fetchVacancyById(id: number): Promise<Vacancy> {
   const res = await fetch(`${API_BASE_URL}/vacancies/${id}`);
-  if (!res.ok) throw new Error("Fetch vacancy error");
+  if (!res.ok) throw new Error("ERR_LOAD_VACANCY");
   const json: ApiResponse<Vacancy> = await res.json();
   return json.data;
 }
@@ -656,7 +656,7 @@ export async function fetchInstitutionEvents(
   );
   if (!res.ok) {
     const errorStr = await res.text();
-    throw new Error(errorStr || "Fetch institution events error");
+    throw new Error(errorStr || "ERR_LOAD_EVENTS");
   }
   const json: ListApiResponse<EventItem> = await res.json();
   return extractItems(json);
@@ -666,12 +666,12 @@ export async function approveEvent(id: number | string): Promise<void> {
   const res = await fetchWithAuth(`${API_BASE_URL}/events/${id}/approve`, {
     method: "PUT",
   });
-  if (!res.ok) throw new Error("Approve event error");
+  if (!res.ok) throw new Error("ERR_APPROVE_FAILED");
 }
 
 export async function rejectEvent(id: number | string): Promise<void> {
   const res = await fetchWithAuth(`${API_BASE_URL}/events/${id}/reject`, {
     method: "PUT",
   });
-  if (!res.ok) throw new Error("Reject event error");
+  if (!res.ok) throw new Error("ERR_REJECT_FAILED");
 }

@@ -35,6 +35,7 @@ import {
   EventItem,
 } from "@/lib/api";
 import { Need } from "@/types/project";
+import { useTranslations } from "next-intl";
 
 type Tab = "needs" | "bookings" | "events";
 
@@ -47,6 +48,8 @@ interface Booking {
 }
 
 export default function InstitutionDashboard() {
+  const t = useTranslations("dashboardInstitution");
+  const tCommon = useTranslations("common");
   const [activeTab, setActiveTab] = useState<Tab>("needs");
   const [needs, setNeeds] = useState<Need[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -79,7 +82,7 @@ export default function InstitutionDashboard() {
       const user = await getProfile();
 
       if (!user.institution_id) {
-        alert("Вы не привязаны к учреждению!");
+        alert(t("notLinkedAlert"));
         setLoading(false);
         return;
       }
@@ -117,14 +120,14 @@ export default function InstitutionDashboard() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Удалить эту нужду?")) return;
+    if (!confirm(t("deleteNeedConfirm"))) return;
     try {
       await deleteNeed(id);
       setNeeds((prev) => prev.filter((n) => n.id !== id));
-      showFeedback("success", "Нужда удалена");
+      showFeedback("success", t("needDeleted"));
     } catch (e) {
       console.error(e);
-      showFeedback("error", "Не удалось удалить");
+      showFeedback("error", t("deleteFailed"));
     }
   };
 
@@ -148,69 +151,68 @@ export default function InstitutionDashboard() {
         urgency: editForm.urgency,
       });
       setEditingId(null);
-      showFeedback("success", "Нужда обновлена");
+      showFeedback("success", t("needUpdated"));
       loadData();
     } catch (e) {
       console.error(e);
-      showFeedback("error", "Ошибка обновления");
+      showFeedback("error", t("updateFailed"));
     }
   };
 
   const handleApprove = async (id: number) => {
     try {
       await approveBooking(id);
-      showFeedback("success", "Бронирование одобрено");
+      showFeedback("success", t("bookingApproved"));
       loadData();
     } catch (e) {
       console.error(e);
-      showFeedback("error", "Ошибка подтверждения");
+      showFeedback("error", t("approveFailed"));
     }
   };
 
   const handleReject = async (id: number) => {
     try {
       await rejectBooking(id);
-      showFeedback("success", "Бронирование отклонено");
+      showFeedback("success", t("bookingRejected"));
       loadData();
     } catch (e) {
       console.error(e);
-      showFeedback("error", "Ошибка отклонения");
+      showFeedback("error", t("rejectFailed"));
     }
   };
 
   const handleComplete = async (id: number) => {
     try {
       await completeBooking(id);
-      showFeedback("success", "Доставка подтверждена! Количество обновлено.");
+      showFeedback("success", t("deliveryConfirmed"));
       loadData();
     } catch (e) {
       console.error(e);
-      showFeedback("error", "Ошибка завершения");
+      showFeedback("error", t("completeFailed"));
     }
   };
 
   const handleApproveEvent = async (id: number) => {
-    if (!confirm("Одобрить это событие? Оно появится в публичной ленте."))
-      return;
+    if (!confirm(t("approveEventConfirm"))) return;
     try {
       await approveEvent(id);
-      showFeedback("success", "Событие одобрено");
+      showFeedback("success", t("eventApproved"));
       loadData();
     } catch (e) {
       console.error(e);
-      showFeedback("error", "Ошибка одобрения события");
+      showFeedback("error", t("approveEventFailed"));
     }
   };
 
   const handleRejectEvent = async (id: number) => {
-    if (!confirm("Отклонить это событие?")) return;
+    if (!confirm(t("rejectEventConfirm"))) return;
     try {
       await rejectEvent(id);
-      showFeedback("success", "Событие отклонено");
+      showFeedback("success", t("eventRejected"));
       loadData();
     } catch (e) {
       console.error(e);
-      showFeedback("error", "Ошибка отклонения события");
+      showFeedback("error", t("rejectEventFailed"));
     }
   };
 
@@ -233,13 +235,16 @@ export default function InstitutionDashboard() {
   const statusLabel = (s: string) => {
     switch (s) {
       case "pending":
-        return { text: "Ожидает", cls: "bg-yellow-50 text-yellow-700" };
+        return { text: t("statusPending"), cls: "bg-yellow-50 text-yellow-700" };
       case "approved":
-        return { text: "Одобрено", cls: "bg-blue-50 text-blue-700" };
+        return { text: t("statusApproved"), cls: "bg-blue-50 text-blue-700" };
       case "rejected":
-        return { text: "Отклонено", cls: "bg-red-50 text-red-700" };
+        return { text: t("statusRejected"), cls: "bg-red-50 text-red-700" };
       case "completed":
-        return { text: "Доставлено", cls: "bg-green-50 text-green-700" };
+        return {
+          text: t("statusDelivered"),
+          cls: "bg-green-50 text-green-700",
+        };
       default:
         return { text: s, cls: "bg-gray-50 text-gray-700" };
     }
@@ -263,12 +268,8 @@ export default function InstitutionDashboard() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-[#1e3a8a]">
-            Управление нуждами
-          </h1>
-          <p className="text-gray-500 font-medium">
-            Публикуйте то, что действительно необходимо вашим подопечным.
-          </p>
+          <h1 className="text-3xl font-black text-[#1e3a8a]">{t("title")}</h1>
+          <p className="text-gray-500 font-medium">{t("subtitle")}</p>
         </div>
         {activeTab === "needs" && (
           <Button
@@ -276,7 +277,7 @@ export default function InstitutionDashboard() {
             className="bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-bold h-12 px-6 rounded-xl shadow-lg shadow-[#1e3a8a]/20 flex items-center gap-2"
           >
             <Plus size={20} />
-            Добавить нужду
+            {t("addNeed")}
           </Button>
         )}
       </div>
@@ -289,7 +290,7 @@ export default function InstitutionDashboard() {
               {activeCount}
             </div>
             <div className="text-xs font-bold text-gray-400 uppercase">
-              Активных сборов
+              {t("statActiveCollections")}
             </div>
           </div>
           <div className="w-12 h-12 bg-blue-50 text-[#1e3a8a] rounded-xl flex items-center justify-center">
@@ -302,7 +303,7 @@ export default function InstitutionDashboard() {
               {completedCount}
             </div>
             <div className="text-xs font-bold text-gray-400 uppercase">
-              Завершено
+              {t("statCompleted")}
             </div>
           </div>
           <div className="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center">
@@ -315,7 +316,7 @@ export default function InstitutionDashboard() {
               {pendingBookings + pendingEvents}
             </div>
             <div className="text-xs font-bold text-gray-400 uppercase">
-              Ожидают решения
+              {t("statAwaitingDecision")}
             </div>
           </div>
           <div className="w-12 h-12 bg-yellow-50 text-yellow-600 rounded-xl flex items-center justify-center">
@@ -335,7 +336,7 @@ export default function InstitutionDashboard() {
           }`}
         >
           <Package size={16} className="inline mr-2 -mt-0.5" />
-          Нужды ({needs.length})
+          {t("tabNeeds", { count: needs.length })}
         </button>
         <button
           onClick={() => setActiveTab("bookings")}
@@ -346,7 +347,7 @@ export default function InstitutionDashboard() {
           }`}
         >
           <ClipboardList size={16} className="inline mr-2 -mt-0.5" />
-          Бронирования ({bookings.length})
+          {t("tabBookings", { count: bookings.length })}
           {pendingBookings > 0 && (
             <span className="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-black bg-red-500 text-white rounded-full">
               {pendingBookings}
@@ -362,7 +363,7 @@ export default function InstitutionDashboard() {
           }`}
         >
           <Clock size={16} className="inline mr-2 -mt-0.5" />
-          События ({events.length})
+          {t("tabEvents", { count: events.length })}
           {pendingEvents > 0 && (
             <span className="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-black bg-red-500 text-white rounded-full">
               {pendingEvents}
@@ -379,16 +380,16 @@ export default function InstitutionDashboard() {
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider">
-                    Наименование
+                    {t("colName")}
                   </th>
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider text-center">
-                    Прогресс
+                    {t("colProgress")}
                   </th>
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider text-center">
-                    Статус
+                    {t("colStatus")}
                   </th>
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider text-right">
-                    Действия
+                    {t("colActions")}
                   </th>
                 </tr>
               </thead>
@@ -396,7 +397,7 @@ export default function InstitutionDashboard() {
                 {needs.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="p-8 text-center text-gray-500">
-                      Список пуст
+                      {t("emptyList")}
                     </td>
                   </tr>
                 ) : (
@@ -468,7 +469,7 @@ export default function InstitutionDashboard() {
                                     "коробка",
                                   ].map((u) => (
                                     <option key={u} value={u}>
-                                      {u}
+                                      {t(`unitOptions.${u}`)}
                                     </option>
                                   ))}
                                 </select>
@@ -482,9 +483,15 @@ export default function InstitutionDashboard() {
                                   }
                                   className="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20"
                                 >
-                                  <option value="low">Низкий</option>
-                                  <option value="medium">Средний</option>
-                                  <option value="high">Высокий</option>
+                                  <option value="low">
+                                    {t("urgencyLow")}
+                                  </option>
+                                  <option value="medium">
+                                    {t("urgencyMedium")}
+                                  </option>
+                                  <option value="high">
+                                    {t("urgencyHigh")}
+                                  </option>
                                 </select>
                               </div>
                             </div>
@@ -508,7 +515,7 @@ export default function InstitutionDashboard() {
                                   {item.urgency === "high" && (
                                     <span className="ml-2 inline-flex items-center gap-0.5 text-red-500">
                                       <AlertTriangle size={10} />
-                                      Срочно
+                                      {t("urgent")}
                                     </span>
                                   )}
                                 </div>
@@ -521,7 +528,10 @@ export default function InstitutionDashboard() {
                         <td className="py-5 px-6 w-1/4">
                           <div className="flex justify-between text-xs font-bold mb-1.5">
                             <span className="text-gray-500">
-                              {item.receivedQuantity} из {item.requiredQuantity}
+                              {t("progressOf", {
+                                received: item.receivedQuantity,
+                                required: item.requiredQuantity,
+                              })}
                             </span>
                             <span className="text-[#1e3a8a]">{percent}%</span>
                           </div>
@@ -539,7 +549,10 @@ export default function InstitutionDashboard() {
                           </div>
                           {(item.bookedQuantity || 0) > 0 && (
                             <div className="text-xs text-gray-400 mt-1">
-                              В пути: {item.bookedQuantity} {item.unit}
+                              {t("inTransit", {
+                                quantity: item.bookedQuantity,
+                                unit: item.unit,
+                              })}
                             </div>
                           )}
                         </td>
@@ -548,11 +561,11 @@ export default function InstitutionDashboard() {
                         <td className="py-5 px-6 text-center">
                           {isDone ? (
                             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-black uppercase">
-                              <CheckCircle2 size={12} /> Закрыт
+                              <CheckCircle2 size={12} /> {t("statusClosed")}
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-black uppercase">
-                              Активен
+                              {t("statusActiveNeed")}
                             </span>
                           )}
                         </td>
@@ -565,14 +578,14 @@ export default function InstitutionDashboard() {
                                 <button
                                   onClick={saveEdit}
                                   className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                                  title="Сохранить"
+                                  title={tCommon("save")}
                                 >
                                   <Check size={18} />
                                 </button>
                                 <button
                                   onClick={() => setEditingId(null)}
                                   className="p-2 text-gray-400 hover:bg-gray-100 rounded-lg transition-colors"
-                                  title="Отмена"
+                                  title={tCommon("cancel")}
                                 >
                                   <X size={18} />
                                 </button>
@@ -582,14 +595,14 @@ export default function InstitutionDashboard() {
                                 <button
                                   onClick={() => startEdit(item)}
                                   className="p-2 text-gray-400 hover:text-[#1e3a8a] hover:bg-blue-50 rounded-lg transition-colors"
-                                  title="Редактировать"
+                                  title={t("editTitle")}
                                 >
                                   <Edit2 size={18} />
                                 </button>
                                 <button
                                   onClick={() => handleDelete(item.id)}
                                   className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                  title="Удалить"
+                                  title={t("deleteTitle")}
                                 >
                                   <Trash2 size={18} />
                                 </button>
@@ -615,22 +628,22 @@ export default function InstitutionDashboard() {
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider">
-                    ID
+                    {t("colId")}
                   </th>
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider">
-                    Нужда
+                    {t("colNeed")}
                   </th>
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider text-center">
-                    Количество
+                    {t("colQuantity")}
                   </th>
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider">
-                    Заметка
+                    {t("colNote")}
                   </th>
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider text-center">
-                    Статус
+                    {t("colStatus")}
                   </th>
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider text-right">
-                    Действия
+                    {t("colActions")}
                   </th>
                 </tr>
               </thead>
@@ -638,14 +651,14 @@ export default function InstitutionDashboard() {
                 {bookings.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="p-8 text-center text-gray-500">
-                      Нет бронирований
+                      {t("noBookings")}
                     </td>
                   </tr>
                 ) : (
                   bookings.map((booking) => {
                     const needName =
                       needs.find((n) => n.id === String(booking.need_id))
-                        ?.name || `Нужда #${booking.need_id}`;
+                        ?.name || t("needFallback", { id: booking.need_id });
                     const st = statusLabel(booking.status);
 
                     return (
@@ -679,14 +692,14 @@ export default function InstitutionDashboard() {
                                 <button
                                   onClick={() => handleApprove(booking.id)}
                                   className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                                  title="Одобрить"
+                                  title={t("approveTitle")}
                                 >
                                   <Check size={18} />
                                 </button>
                                 <button
                                   onClick={() => handleReject(booking.id)}
                                   className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                  title="Отклонить"
+                                  title={t("rejectTitle")}
                                 >
                                   <X size={18} />
                                 </button>
@@ -697,7 +710,7 @@ export default function InstitutionDashboard() {
                               <button
                                 onClick={() => handleComplete(booking.id)}
                                 className="p-2 text-[#1e3a8a] hover:bg-blue-50 rounded-lg transition-colors"
-                                title="Доставлено"
+                                title={t("deliveredTitle")}
                               >
                                 <PackageCheck size={18} />
                               </button>
@@ -722,19 +735,19 @@ export default function InstitutionDashboard() {
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider">
-                    ID
+                    {t("colId")}
                   </th>
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider">
-                    Событие
+                    {t("colEvent")}
                   </th>
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider">
-                    Дата
+                    {t("colDate")}
                   </th>
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider text-center">
-                    Статус
+                    {t("colStatus")}
                   </th>
                   <th className="py-5 px-6 text-xs font-black text-gray-500 uppercase tracking-wider text-right">
-                    Действия
+                    {t("colActions")}
                   </th>
                 </tr>
               </thead>
@@ -742,7 +755,7 @@ export default function InstitutionDashboard() {
                 {events.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="p-8 text-center text-gray-500">
-                      Нет событий для модерации
+                      {t("noEvents")}
                     </td>
                   </tr>
                 ) : (
@@ -765,7 +778,7 @@ export default function InstitutionDashboard() {
                             {ev.description}
                           </div>
                           <div className="text-xs text-gray-400 mt-1">
-                            Организатор: {ev.creator_name}
+                            {t("organizer", { name: ev.creator_name })}
                           </div>
                         </td>
                         <td className="py-5 px-6 font-medium text-gray-700">
@@ -785,14 +798,14 @@ export default function InstitutionDashboard() {
                                 <button
                                   onClick={() => handleApproveEvent(ev.id)}
                                   className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                                  title="Одобрить"
+                                  title={t("approveTitle")}
                                 >
                                   <Check size={18} />
                                 </button>
                                 <button
                                   onClick={() => handleRejectEvent(ev.id)}
                                   className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                  title="Отклонить"
+                                  title={t("rejectTitle")}
                                 >
                                   <X size={18} />
                                 </button>

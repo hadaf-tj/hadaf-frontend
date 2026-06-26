@@ -9,7 +9,8 @@ import Link from "next/link";
 import { HeartHandshake, Loader2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { fetchMyBookings, cancelMyBooking, updateMyBooking } from "@/lib/api";
-import { getLocalizedError } from "@/lib/errorMessages";
+import { useErrorTranslator } from "@/lib/errorMessages";
+import { useTranslations } from "next-intl";
 
 interface Booking {
   id: number;
@@ -23,6 +24,9 @@ interface Booking {
 }
 
 export default function PromisesPage() {
+  const t = useTranslations("dashboardPromises");
+  const tCommon = useTranslations("common");
+  const translateError = useErrorTranslator();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -46,7 +50,7 @@ export default function PromisesPage() {
   }, []);
 
   const handleCancel = async (id: number) => {
-    if (!confirm("Вы уверены, что хотите отменить это обещание?")) return;
+    if (!confirm(t("cancelConfirm"))) return;
     try {
       setIsProcessing(id);
       await cancelMyBooking(id);
@@ -55,9 +59,7 @@ export default function PromisesPage() {
       );
     } catch (err: any) {
       alert(
-        err instanceof Error
-          ? getLocalizedError(err.message)
-          : getLocalizedError(""),
+        err instanceof Error ? translateError(err.message) : translateError(""),
       );
     } finally {
       setIsProcessing(null);
@@ -66,7 +68,7 @@ export default function PromisesPage() {
 
   const handleSaveEdit = async (id: number) => {
     if (editQty <= 0) {
-      alert("Количество должно быть больше 0");
+      alert(t("quantityMin"));
       return;
     }
     try {
@@ -78,9 +80,7 @@ export default function PromisesPage() {
       setEditingId(null);
     } catch (err: any) {
       alert(
-        err instanceof Error
-          ? getLocalizedError(err.message)
-          : getLocalizedError(""),
+        err instanceof Error ? translateError(err.message) : translateError(""),
       );
     } finally {
       setIsProcessing(null);
@@ -91,10 +91,10 @@ export default function PromisesPage() {
     <div className="space-y-5 sm:space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-[#1e3a8a]">
-          Мои обещания
+          {t("title")}
         </h1>
         <p className="text-gray-500 font-medium text-sm sm:text-base">
-          Список вещей, которые вы планируете передать учреждениям.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -109,9 +109,7 @@ export default function PromisesPage() {
       {!isLoading && error && (
         <div className="text-center py-16">
           <p className="text-red-500 font-bold mb-4">{error}</p>
-          <Button onClick={() => window.location.reload()}>
-            Попробовать снова
-          </Button>
+          <Button onClick={() => window.location.reload()}>{tCommon("retry")}</Button>
         </div>
       )}
 
@@ -122,16 +120,15 @@ export default function PromisesPage() {
             <HeartHandshake size={40} className="text-[#1e3a8a]" />
           </div>
           <h3 className="text-xl font-bold text-gray-900 mb-2">
-            У вас пока нет обещаний
+            {t("emptyTitle")}
           </h3>
           <p className="text-gray-500 mb-6 max-w-md mx-auto">
-            Перейдите к списку учреждений, чтобы найти тех, кому нужна помощь, и
-            начните помогать.
+            {t("emptyDescription")}
           </p>
           <Link href="/institutions">
             <Button className="bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-bold px-8">
               <ExternalLink size={16} className="mr-2" />
-              Найти учреждения
+              {t("findInstitutions")}
             </Button>
           </Link>
         </div>
@@ -148,7 +145,7 @@ export default function PromisesPage() {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">
-                    {b.need_name || "Неизвестная нужда"}
+                    {b.need_name || t("unknownNeed")}
                   </h3>
                   <div className="text-sm text-gray-500 font-medium mt-1 flex items-center gap-1">
                     {b.institution_name ? (
@@ -159,13 +156,15 @@ export default function PromisesPage() {
                         {b.institution_name}
                       </Link>
                     ) : (
-                      "Учреждение"
+                      t("institutionFallback")
                     )}
-                    <span>· {b.quantity} шт.</span>
+                    <span>· {t("quantityUnit", { count: b.quantity })}</span>
                   </div>
                   {(b.planned_date || b.note) && (
                     <p className="text-xs text-gray-400 mt-1">
-                      Плановая дата: {b.planned_date || b.note}
+                      {t("plannedDate", {
+                        date: b.planned_date || b.note || "",
+                      })}
                     </p>
                   )}
                 </div>
@@ -181,12 +180,12 @@ export default function PromisesPage() {
                   }`}
                 >
                   {b.status === "completed"
-                    ? "Выполнено"
+                    ? t("statusCompleted")
                     : b.status === "cancelled"
-                      ? "Отменено"
+                      ? t("statusCancelled")
                       : b.status === "rejected"
-                        ? "Отклонено"
-                        : "Активно"}
+                        ? t("statusRejected")
+                        : t("statusActive")}
                 </span>
               </div>
 
@@ -195,7 +194,7 @@ export default function PromisesPage() {
                 <div className="mt-4 flex items-center gap-3 bg-gray-50 p-3 sm:p-4 rounded-xl border border-gray-100">
                   <div className="flex-1">
                     <label className="text-xs text-gray-500 font-bold mb-1 block uppercase tracking-wider">
-                      Новое количество
+                      {t("newQuantityLabel")}
                     </label>
                     <input
                       type="number"
@@ -216,7 +215,7 @@ export default function PromisesPage() {
                       {isProcessing === b.id ? (
                         <Loader2 className="animate-spin w-4 h-4" />
                       ) : (
-                        "Сохранить"
+                        tCommon("save")
                       )}
                     </Button>
                     <Button
@@ -225,7 +224,7 @@ export default function PromisesPage() {
                       onClick={() => setEditingId(null)}
                       disabled={isProcessing === b.id}
                     >
-                      Отмена
+                      {tCommon("cancel")}
                     </Button>
                   </div>
                 </div>
@@ -242,7 +241,7 @@ export default function PromisesPage() {
                       disabled={isProcessing === b.id}
                       className="text-[#1e3a8a] border-[#1e3a8a]/20 hover:bg-[#1e3a8a]/5"
                     >
-                      Изменить
+                      {t("editButton")}
                     </Button>
                     <Button
                       size="sm"
@@ -254,7 +253,7 @@ export default function PromisesPage() {
                       {isProcessing === b.id && (
                         <Loader2 className="animate-spin w-4 h-4 mr-2" />
                       )}
-                      Отменить
+                      {t("cancelButton")}
                     </Button>
                   </div>
                 )

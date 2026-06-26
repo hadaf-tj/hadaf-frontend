@@ -32,57 +32,39 @@ import Image from "next/image";
 import MainLayout from "@/components/layout/MainLayout";
 import OrnamentDivider from "@/components/ui/OrnamentDivider";
 import { fetchInstitutions, fetchStats } from "@/lib/api";
+import { useTranslations } from "next-intl";
 
 /* ──────────────── Hero slides ──────────────── */
 const HERO_SLIDES = [
   {
     image: "/hero.webp",
-    title: (
-      <>
-        От доброго намерения
-        <br />
-        <span className="text-[#ffca63]">К реальной помощи</span>
-      </>
-    ),
-
-    subtitle:
-      "Мы показываем точные нужды детских домов и домов престарелых, чтобы вы сразу понимали, кому помочь и как сделать это напрямую.",
-    cta: { label: "Хочу помочь", href: "/institutions" },
+    titleKey: "heroTitle1",
+    subtitleKey: "heroSubtitle1",
+    ctaKey: "heroCta1",
+    ctaHref: "/institutions",
   },
   {
     image: "/hero_help.webp",
-    title: (
-      <>
-        Помощь без догадок
-        <br />
-        <span className="text-[#ffca63]">Только нужное</span>
-      </>
-    ),
-    subtitle:
-      "Каждое учреждение проверено. Вы видите конкретные запросы и помогаете именно тем, чем нужно — напрямую.",
-    cta: { label: "Все учреждения", href: "/institutions" },
+    titleKey: "heroTitle2",
+    subtitleKey: "heroSubtitle2",
+    ctaKey: "heroCta2",
+    ctaHref: "/institutions",
   },
   {
     image: "/hero_events.webp",
-    title: (
-      <>
-        Мы сделаем больше
-        <br />
-        <span className="text-[#ffca63]">Если мы вместе</span>
-      </>
-    ),
-    subtitle:
-      "Создавайте события, присоединяйтесь к волонтёрам и помогайте вместе.",
-    cta: { label: "События", href: "/events" },
+    titleKey: "heroTitle3",
+    subtitleKey: "heroSubtitle3",
+    ctaKey: "heroCta3",
+    ctaHref: "/events",
   },
-];
+] as const;
 
 /* ──────────────── How it works ──────────────── */
 const HOW_IT_WORKS = [
   {
     id: 1,
-    title: "Выбираете учреждение",
-    desc: "Найдите в реестре детский дом или дом престарелых, которому хотите помочь. Все учреждения проверены.",
+    titleKey: "step1Title",
+    descKey: "step1Desc",
     icon: (
       <Search
         className="w-20 h-20 sm:w-24 sm:h-24 text-[#ffca63] group-hover:scale-110 transition-transform duration-500"
@@ -92,8 +74,8 @@ const HOW_IT_WORKS = [
   },
   {
     id: 2,
-    title: "Смотрите нужды",
-    desc: "Узнайте, в чём именно нуждается учреждение (вещи, продукты, развитие), и выберите, чем помочь.",
+    titleKey: "step2Title",
+    descKey: "step2Desc",
     icon: (
       <ClipboardList
         className="w-20 h-20 sm:w-24 sm:h-24 text-[#ffca63] group-hover:scale-110 transition-transform duration-500"
@@ -103,8 +85,8 @@ const HOW_IT_WORKS = [
   },
   {
     id: 3,
-    title: "Доставляете помощь",
-    desc: "Привезите вещи лично или организуйте доставку напрямую в учреждение. Прозрачно и от сердца.",
+    titleKey: "step3Title",
+    descKey: "step3Desc",
     icon: (
       <HeartHandshake
         className="w-20 h-20 sm:w-24 sm:h-24 text-[#ffca63] group-hover:scale-110 transition-transform duration-500"
@@ -112,7 +94,7 @@ const HOW_IT_WORKS = [
       />
     ),
   },
-];
+] as const;
 
 /* ──────────────── AnimatedCounter ──────────────── */
 function AnimatedCounter({
@@ -183,6 +165,7 @@ function HorizontalScroller({
   children: React.ReactNode;
   className?: string;
 }) {
+  const t = useTranslations("home");
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -229,7 +212,7 @@ function HorizontalScroller({
         <button
           onClick={() => scroll("left")}
           className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center text-[#1e3a8a] hover:bg-white hover:scale-110 transition-all opacity-0 group-hover/scroller:opacity-100 focus:opacity-100"
-          aria-label="Прокрутить влево"
+          aria-label={t("scrollLeft")}
         >
           <ChevronLeft size={20} />
         </button>
@@ -238,7 +221,7 @@ function HorizontalScroller({
         <button
           onClick={() => scroll("right")}
           className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center text-[#1e3a8a] hover:bg-white hover:scale-110 transition-all opacity-0 group-hover/scroller:opacity-100 focus:opacity-100"
-          aria-label="Прокрутить вправо"
+          aria-label={t("scrollRight")}
         >
           <ChevronRight size={20} />
         </button>
@@ -261,6 +244,7 @@ function HorizontalScroller({
    HOMEPAGE
    ════════════════════════════════════════════════ */
 const HomePage: React.FC = () => {
+  const t = useTranslations("home");
   const [institutions, setInstitutions] = useState<Institution[]>([]);
   const [events, setEvents] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -385,7 +369,7 @@ const HomePage: React.FC = () => {
               resetAutoplay();
             }}
             className="hidden md:flex absolute left-4 xl:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 lg:w-14 lg:h-14 bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/30 rounded-full items-center justify-center transition-all shadow-lg"
-            aria-label="Предыдущий слайд"
+            aria-label={t("prevSlide")}
           >
             <ArrowLeft size={24} />
           </button>
@@ -396,7 +380,7 @@ const HomePage: React.FC = () => {
               resetAutoplay();
             }}
             className="hidden md:flex absolute right-4 xl:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 lg:w-14 lg:h-14 bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/30 rounded-full items-center justify-center transition-all shadow-lg"
-            aria-label="Следующий слайд"
+            aria-label={t("nextSlide")}
           >
             <ArrowRight size={24} className="lg:w-6 lg:h-6" />
           </button>
@@ -433,10 +417,15 @@ const HomePage: React.FC = () => {
                   <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28">
                     <div className="max-w-2xl space-y-4 sm:space-y-6">
                       <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight drop-shadow-lg">
-                        {slide.title}
+                        {t.rich(slide.titleKey, {
+                          br: () => <br />,
+                          highlight: (c) => (
+                            <span className="text-[#ffca63]">{c}</span>
+                          ),
+                        })}
                       </h1>
                       <p className="text-base sm:text-lg md:text-xl text-white/90 font-medium leading-relaxed drop-shadow-md">
-                        {slide.subtitle}
+                        {t(slide.subtitleKey)}
                       </p>
                       <div className="pt-2 sm:pt-4 flex items-center gap-4">
                         <Button
@@ -444,7 +433,7 @@ const HomePage: React.FC = () => {
                           size="lg"
                           className="bg-[#ffca63] text-[#1e3a8a] hover:bg-white hover:text-[#1e3a8a] font-bold h-12 sm:h-14 px-8 sm:px-10 rounded-full shadow-xl transition-all hover:scale-105 text-base"
                         >
-                          <Link href={slide.cta.href}>{slide.cta.label}</Link>
+                          <Link href={slide.ctaHref}>{t(slide.ctaKey)}</Link>
                         </Button>
                       </div>
                     </div>
@@ -477,7 +466,7 @@ const HomePage: React.FC = () => {
             {/* Section label */}
             <div className="text-center mb-10 md:mb-16">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
-                Реальная помощь в цифрах
+                {t("statsHeading")}
               </h2>
             </div>
 
@@ -485,17 +474,17 @@ const HomePage: React.FC = () => {
               {[
                 {
                   value: stats.closed_needs,
-                  label: "Нужд закрыто",
+                  label: t("statsClosedNeeds"),
                   icon: <HeartHandshake size={28} className="text-[#ffca63]" />,
                 },
                 {
                   value: stats.people_helped,
-                  label: "Получили помощь",
+                  label: t("statsPeopleHelped"),
                   icon: <Users size={28} className="text-[#ffca63]" />,
                 },
                 {
                   value: stats.institutions_count,
-                  label: "Учреждений в реестре",
+                  label: t("statsInstitutionsCount"),
                   icon: <ShieldCheck size={28} className="text-[#ffca63]" />,
                 },
               ].map((stat, idx) => (
@@ -545,21 +534,23 @@ const HomePage: React.FC = () => {
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-12 h-[3px] bg-[#ffca63] rounded-full"></div>
                   <span className="text-[#1e3a8a] font-bold text-sm uppercase tracking-[0.15em]">
-                    Учреждения
+                    {t("institutionsLabel")}
                   </span>
                 </div>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-black text-gray-900 leading-[1.1] mb-4 sm:mb-6">
-                  Кому мы{" "}
-                  <span className="relative inline-block">
-                    <span className="relative z-10 text-[#1e3a8a]">
-                      помогаем
-                    </span>
-                    <span className="absolute bottom-1 left-0 right-0 h-3 bg-[#ffca63]/25 -z-0 rounded-full"></span>
-                  </span>
+                  {t.rich("whoWeHelp", {
+                    highlight: (c) => (
+                      <span className="relative inline-block">
+                        <span className="relative z-10 text-[#1e3a8a]">
+                          {c}
+                        </span>
+                        <span className="absolute bottom-1 left-0 right-0 h-3 bg-[#ffca63]/25 -z-0 rounded-full"></span>
+                      </span>
+                    ),
+                  })}
                 </h2>
                 <p className="text-gray-500 text-base sm:text-lg md:text-xl leading-relaxed max-w-2xl">
-                  Каждое учреждение в реестре проверено. Вы видите настоящие
-                  нужды и можете помочь адресно — без посредников и бюрократии.
+                  {t("whoWeHelpDesc")}
                 </p>
               </div>
             </div>
@@ -597,16 +588,16 @@ const HomePage: React.FC = () => {
                       />
                     </div>
                     <span className="text-[#1e3a8a] font-black text-sm tracking-wide">
-                      Смотреть все
+                      {t("viewAll")}
                     </span>
                     <span className="text-gray-400 text-xs mt-1 font-medium">
-                      {institutions.length}+ учреждений
+                      {t("institutionsCount", { count: institutions.length })}
                     </span>
                   </Link>
                 </HorizontalScroller>
               ) : (
                 <div className="text-center py-12 text-gray-500">
-                  Учреждения не найдены
+                  {t("institutionsEmpty")}
                 </div>
               )}
             </div>
@@ -642,7 +633,7 @@ const HomePage: React.FC = () => {
                     <div className="relative h-[400px] sm:h-[500px] lg:h-[520px]">
                       <Image
                         src="/landing_events.webp"
-                        alt="Создать событие"
+                        alt={t("ctaImageAlt")}
                         fill
                         className="object-cover"
                       />
@@ -656,10 +647,10 @@ const HomePage: React.FC = () => {
                       </div>
                       <div>
                         <p className="text-white font-bold text-sm sm:text-base">
-                          Создайте событие
+                          {t("ctaBadgeTitle")}
                         </p>
                         <p className="text-white/60 text-xs sm:text-sm">
-                          Другие волонтёры присоединятся
+                          {t("ctaBadgeSubtitle")}
                         </p>
                       </div>
                     </div>
@@ -670,14 +661,16 @@ const HomePage: React.FC = () => {
               {/* Text side */}
               <div className="flex-1 text-center lg:text-left space-y-6 lg:space-y-8">
                 <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-black text-white leading-[1.08]">
-                  Превратите <br className="hidden lg:block" />
-                  любой праздник в <span className="text-[#ffca63]">добро</span>
+                  {t.rich("ctaTitle", {
+                    br: () => <br className="hidden lg:block" />,
+                    highlight: (c) => (
+                      <span className="text-[#ffca63]">{c}</span>
+                    ),
+                  })}
                 </h2>
 
                 <p className="text-base sm:text-lg lg:text-xl text-white/70 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                  Любой мастер-класс, концерт или праздник может стать
-                  благотворительным. Создайте событие на платформе — волонтёры
-                  увидят его и присоединятся. Вместе мы можем больше.
+                  {t("ctaDesc")}
                 </p>
 
                 <div className="pt-2 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -690,7 +683,7 @@ const HomePage: React.FC = () => {
                       href="/events"
                       className="flex items-center justify-center gap-3"
                     >
-                      Календарь событий
+                      {t("ctaEventsButton")}
                       <ArrowRight
                         size={20}
                         className="group-hover:translate-x-1 transition-transform"
@@ -707,7 +700,7 @@ const HomePage: React.FC = () => {
                       href="/about"
                       className="flex items-center justify-center gap-3"
                     >
-                      Узнать больше
+                      {t("ctaAboutButton")}
                     </Link>
                   </Button>
                 </div>
@@ -737,17 +730,19 @@ const HomePage: React.FC = () => {
               <div className="flex items-center justify-center gap-3 mb-5">
                 <div className="w-12 h-[3px] bg-[#ffca63] rounded-full"></div>
                 <span className="text-[#1e3a8a] font-bold text-sm uppercase tracking-[0.15em]">
-                  Процесс
+                  {t("processLabel")}
                 </span>
                 <div className="w-12 h-[3px] bg-[#ffca63] rounded-full"></div>
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-black text-gray-900 leading-[1.1] mb-4">
-                Три шага к{" "}
-                <span className="text-[#1e3a8a]">реальной помощи</span>
+                {t.rich("howItWorksTitle", {
+                  highlight: (c) => (
+                    <span className="text-[#1e3a8a]">{c}</span>
+                  ),
+                })}
               </h2>
               <p className="text-gray-500 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
-                Простой и прозрачный процесс от выбора учреждения до доставки
-                помощи
+                {t("howItWorksDesc")}
               </p>
             </div>
 
@@ -774,10 +769,10 @@ const HomePage: React.FC = () => {
                       </div>
 
                       <h3 className="text-xl font-black text-gray-900 mb-3 text-center group-hover:text-[#1e3a8a] transition-colors">
-                        {step.title}
+                        {t(step.titleKey)}
                       </h3>
                       <p className="text-gray-500 text-sm leading-relaxed text-center">
-                        {step.desc}
+                        {t(step.descKey)}
                       </p>
                     </div>
                   </div>
@@ -822,10 +817,10 @@ const HomePage: React.FC = () => {
                     </div>
 
                     <h3 className="text-xl lg:text-2xl font-black text-gray-900 mb-3 group-hover:text-[#1e3a8a] transition-colors relative z-10">
-                      {step.title}
+                      {t(step.titleKey)}
                     </h3>
                     <p className="text-gray-500 text-sm lg:text-base leading-relaxed max-w-xs mx-auto relative z-10">
-                      {step.desc}
+                      {t(step.descKey)}
                     </p>
                   </div>
                 </div>
