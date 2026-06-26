@@ -207,7 +207,7 @@
     "forgotPassword": "Фаромӯш кардед? (ба зудӣ)",
     "submitButton": "Ворид шудан",
     "or": "Ё",
-    "googleButton": "Тавассути Google ворид шавед (ба зудӣ)",
+    "googleButton": "Тавассути Google ворид шавед",
     "noAccount": "Аккаунт надоред? <link>Бақайдгирӣ</link>"
   },
   "register": {
@@ -232,7 +232,9 @@
     "passwordHint": "Ҳадди ақал 8 аломат",
     "submitButton": "Бақайдгирӣ",
     "termsAgreement": "Бо бақайдгирӣ дар платформа шумо бо <link>сиёсати махфият</link> розӣ мешавед",
-    "haveAccount": "Аллакай аккаунт доред? <link>Ворид шудан</link>"
+    "haveAccount": "Аллакай аккаунт доред? <link>Ворид шудан</link>",
+    "googleButton": "Тавассути Google сабти ном кунед",
+    "or": "Ё"
   },
   "needHelp": {
     "badge": "Дархости дастгирӣ",
