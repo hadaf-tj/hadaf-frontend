@@ -24,6 +24,8 @@ interface BackendInstitution {
   deleted_at?: string | null;
   needs_count?: number;
   wards_count?: number;
+  prohibited_items?: string;
+  recommended_items?: string;
 }
 
 interface BackendNeed {
@@ -153,6 +155,8 @@ const mapInstitution = (item: BackendInstitution): Institution => ({
   activityHours: item.activity_hours,
   latitude: item.latitude,
   longitude: item.longitude,
+  prohibitedItems: item.prohibited_items,
+  recommendedItems: item.recommended_items,
 });
 
 const mapNeed = (item: BackendNeed): Need => ({

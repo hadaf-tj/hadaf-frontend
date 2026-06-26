@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,77 +18,21 @@ import {
   CheckCircle2,
   ChevronLeft,
   Share2,
-  AlertCircle,
-  Gift,
   Loader2,
-  Search,
-  ArrowUpDown,
   Clock,
+  ShieldX,
+  PackageCheck,
 } from "lucide-react";
-import PledgeModal, { NeedItem } from "@/components/specific/PledgeModal";
-import {
-  fetchInstitutionById,
-  fetchNeedsByInstitution,
-  NeedsFilters,
-} from "@/lib/api";
-import { useAuth } from "@/lib/AuthContext";
-import { useRouter } from "next/navigation";
-import { Institution, Need } from "@/types/project";
-
-const STATUS_OPTION_IDS = ["all", "open", "closed"] as const;
-
-const SORT_OPTION_IDS = ["default", "date_asc", "urgency"] as const;
+import { fetchInstitutionById } from "@/lib/api";
+import { Institution } from "@/types/project";
 
 export default function InstitutionDetailPage() {
   const t = useTranslations("institutionDetail");
   const params = useParams();
 
-  const STATUS_OPTIONS = STATUS_OPTION_IDS.map((id) => ({
-    id,
-    label: t(`statusOptions.${id}`),
-  }));
-
-  const SORT_OPTIONS = SORT_OPTION_IDS.map((id) => ({
-    id,
-    label: t(`sortOptions.${id}`),
-  }));
-
   const [data, setData] = useState<Institution | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const [needs, setNeeds] = useState<Need[]>([]);
-  const [needsLoading, setNeedsLoading] = useState(false);
-  const [needsSearch, setNeedsSearch] = useState("");
-  const [needsStatus, setNeedsStatus] = useState("all");
-  const [needsSort, setNeedsSort] = useState("default");
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedNeed, setSelectedNeed] = useState<NeedItem | null>(null);
-
-  const { user } = useAuth();
-  const router = useRouter();
-
-  const loadNeeds = useCallback(
-    async (institutionId: string) => {
-      setNeedsLoading(true);
-      try {
-        const filters: NeedsFilters = {};
-        if (needsSearch) filters.name = needsSearch;
-        if (needsStatus === "open") filters.is_done = false;
-        if (needsStatus === "closed") filters.is_done = true;
-        if (needsSort !== "default") filters.order_by = needsSort;
-
-        const result = await fetchNeedsByInstitution(institutionId, filters);
-        setNeeds(result);
-      } catch (err) {
-        console.error("Error loading needs:", err);
-      } finally {
-        setNeedsLoading(false);
-      }
-    },
-    [needsSearch, needsStatus, needsSort],
-  );
 
   useEffect(() => {
     const loadDetail = async () => {
@@ -103,8 +47,6 @@ export default function InstitutionDetailPage() {
           setError(t("notFound"));
         } else {
           setData(result);
-
-          setNeeds(result.needs);
         }
       } catch (err) {
         console.error(err);
@@ -116,83 +58,6 @@ export default function InstitutionDetailPage() {
 
     loadDetail();
   }, [params.id]);
-
-  useEffect(() => {
-    if (!params.id || isLoading) return;
-
-    const id = Array.isArray(params.id) ? params.id[0] : params.id;
-    const timeoutId = setTimeout(() => {
-      loadNeeds(id);
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [params.id, needsSearch, needsStatus, needsSort, isLoading, loadNeeds]);
-
-  const handlePledgeClick = (need: Need) => {
-    if (!user) {
-      router.push("/login");
-      return;
-    }
-    setSelectedNeed({
-      id: need.id,
-      title: need.name,
-      total: need.requiredQuantity,
-      collected: need.receivedQuantity,
-      measure: need.unit,
-    });
-    setIsModalOpen(true);
-  };
-
-  const ProgressBar = ({
-    received,
-    booked,
-    total,
-    unit,
-  }: {
-    received: number;
-    booked: number;
-    total: number;
-    unit: string;
-  }) => {
-    const receivedPercent = Math.min(100, Math.round((received / total) * 100));
-    const bookedPercent = Math.min(
-      100 - receivedPercent,
-      Math.round((booked / total) * 100),
-    );
-    const remaining = Math.max(0, total - received - booked);
-    const isFullyCovered = remaining <= 0;
-
-    return (
-      <div className="w-full">
-        <div className="flex justify-between text-xs font-bold mb-1">
-          <span
-            className={isFullyCovered ? "text-green-600" : "text-[#1e3a8a]"}
-          >
-            {isFullyCovered
-              ? t("collectionCovered")
-              : t("remaining", { remaining, unit })}
-          </span>
-          <span className="text-gray-400">
-            {t("received", { received })}{" "}
-            {booked > 0 ? t("inTransit", { booked }) : ""} ·{" "}
-            {t("total", { total })}
-          </span>
-        </div>
-        <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden flex">
-          <div
-            className="h-full bg-green-500 transition-all duration-500"
-            style={{ width: `${receivedPercent}%` }}
-          />
-          {bookedPercent > 0 && (
-            <div
-              className="h-full bg-[#ffca63] transition-all duration-500"
-              style={{ width: `${bookedPercent}%` }}
-            />
-          )}
-        </div>
-      </div>
-    );
-  };
 
   if (isLoading) {
     return (
@@ -220,6 +85,13 @@ export default function InstitutionDetailPage() {
       </MainLayout>
     );
   }
+
+  const prohibitedItems = data.prohibitedItems
+    ? data.prohibitedItems.split("\n").filter((item) => item.trim())
+    : [];
+  const recommendedItems = data.recommendedItems
+    ? data.recommendedItems.split("\n").filter((item) => item.trim())
+    : [];
 
   return (
     <MainLayout>
@@ -326,7 +198,7 @@ export default function InstitutionDetailPage() {
               </Button>
             </div>
 
-            {/* ПРАВАЯ КОЛОНКА (Нужды) */}
+            {/* ПРАВАЯ КОЛОНКА */}
             <div className="lg:col-span-8 space-y-8">
               {/* Описание */}
               <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 flex flex-col lg:flex-row gap-8 justify-between items-start">
@@ -355,221 +227,77 @@ export default function InstitutionDetailPage() {
                 </div>
               </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl md:text-3xl font-black text-[#1e3a8a]">
-                    {t("currentNeeds")}
-                  </h2>
-                  <span className="bg-[#ffca63] text-[#1e3a8a] px-3 py-1 rounded-lg text-sm font-bold">
-                    {t("openCount", {
-                      count: needs.filter(
-                        (n) => n.receivedQuantity < n.requiredQuantity,
-                      ).length,
-                    })}
-                  </span>
-                </div>
-
-                {/* Панель фильтров нужд */}
-                <div className="bg-white rounded-2xl p-4 border border-gray-100 mb-6">
-                  <div className="flex flex-col lg:flex-row gap-4">
-                    {/* Поиск по названию */}
-                    <div className="relative flex-1">
-                      <Search
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                        size={18}
-                      />
-                      <input
-                        type="text"
-                        placeholder={t("searchNeedPlaceholder")}
-                        value={needsSearch}
-                        onChange={(e) => setNeedsSearch(e.target.value)}
-                        className="w-full h-11 pl-10 pr-4 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 font-medium text-sm"
-                      />
+              {/* Запрещено приносить */}
+              <div className="bg-white rounded-3xl border border-red-100 shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-red-50 to-red-50/50 px-8 py-6 border-b border-red-100">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0">
+                      <ShieldX size={28} />
                     </div>
-
-                    {/* Фильтр по статусу */}
-                    <div className="flex items-center gap-2">
-                      {STATUS_OPTIONS.map((opt) => (
-                        <button
-                          key={opt.id}
-                          onClick={() => setNeedsStatus(opt.id)}
-                          className={`
-                            px-4 py-2.5 rounded-xl font-bold text-sm transition-all
-                            ${
-                              needsStatus === opt.id
-                                ? "bg-[#1e3a8a] text-white"
-                                : "bg-gray-50 text-gray-600 hover:bg-gray-100"
-                            }
-                          `}
-                        >
-                          {opt.label}
-                        </button>
+                    <div>
+                      <h2 className="text-2xl font-black text-gray-900">
+                        {t("prohibitedTitle")}
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-8">
+                  {prohibitedItems.length > 0 ? (
+                    <ul className="space-y-3">
+                      {prohibitedItems.map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-3">
+                          <span className="w-2 h-2 rounded-full bg-red-400 flex-shrink-0 mt-2"></span>
+                          <span className="text-gray-700 text-base leading-relaxed font-medium">
+                            {item.trim()}
+                          </span>
+                        </li>
                       ))}
-                    </div>
+                    </ul>
+                  ) : (
+                    <p className="text-gray-400 italic">
+                      {t("noInfoAvailable")}
+                    </p>
+                  )}
+                </div>
+              </div>
 
-                    {/* Сортировка */}
-                    <div className="flex items-center gap-2">
-                      <ArrowUpDown size={16} className="text-gray-400" />
-                      <select
-                        value={needsSort}
-                        onChange={(e) => setNeedsSort(e.target.value)}
-                        className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 font-medium text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 cursor-pointer"
-                      >
-                        {SORT_OPTIONS.map((opt) => (
-                          <option key={opt.id} value={opt.id}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
+              {/* Рекомендуется приносить */}
+              <div className="bg-white rounded-3xl border border-green-100 shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-green-50 to-green-50/50 px-8 py-6 border-b border-green-100">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center flex-shrink-0">
+                      <PackageCheck size={28} />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-black text-gray-900">
+                        {t("recommendedTitle")}
+                      </h2>
                     </div>
                   </div>
                 </div>
-
-                {/* Индикатор загрузки нужд */}
-                {needsLoading && (
-                  <div className="flex justify-center py-8">
-                    <Loader2
-                      size={32}
-                      className="animate-spin text-[#1e3a8a]"
-                    />
-                  </div>
-                )}
-
-                {!needsLoading && needs.length === 0 ? (
-                  <div className="text-center py-10 bg-white rounded-3xl border border-gray-100">
-                    <p className="text-gray-500">
-                      {needsSearch || needsStatus !== "all"
-                        ? t("needsEmptyFiltered")
-                        : t("needsEmpty")}
+                <div className="p-8">
+                  {recommendedItems.length > 0 ? (
+                    <ul className="space-y-3">
+                      {recommendedItems.map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-3">
+                          <span className="w-2 h-2 rounded-full bg-green-400 flex-shrink-0 mt-2"></span>
+                          <span className="text-gray-700 text-base leading-relaxed font-medium">
+                            {item.trim()}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-gray-400 italic">
+                      {t("noInfoAvailable")}
                     </p>
-                    {(needsSearch || needsStatus !== "all") && (
-                      <button
-                        onClick={() => {
-                          setNeedsSearch("");
-                          setNeedsStatus("all");
-                        }}
-                        className="mt-3 text-[#1e3a8a] font-bold hover:underline"
-                      >
-                        {t("resetFilters")}
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  !needsLoading && (
-                    <div className="space-y-4">
-                      {needs.map((need) => {
-                        const remaining = Math.max(
-                          0,
-                          need.requiredQuantity -
-                            need.receivedQuantity -
-                            need.bookedQuantity,
-                        );
-                        const isDone =
-                          need.receivedQuantity >= need.requiredQuantity;
-                        const isFullyCovered = remaining <= 0;
-
-                        return (
-                          <div
-                            key={need.id}
-                            className={`bg-white rounded-2xl p-6 transition-all border ${isDone ? "border-green-100 opacity-60" : "border-gray-100 shadow-lg hover:shadow-xl hover:-translate-y-1"}`}
-                          >
-                            <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-                              <div
-                                className={`w-14 h-14 rounded-2xl flex-shrink-0 flex items-center justify-center ${isDone ? "bg-green-100 text-green-600" : "bg-blue-50 text-[#1e3a8a]"}`}
-                              >
-                                {isDone ? (
-                                  <CheckCircle2 size={24} />
-                                ) : (
-                                  <Gift size={24} />
-                                )}
-                              </div>
-
-                              <div className="flex-1 w-full">
-                                <div className="flex justify-between items-start mb-2">
-                                  <div>
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
-                                        {t("needLabel")}
-                                      </span>
-                                    </div>
-                                    <h4
-                                      className={`text-xl font-bold ${isDone ? "text-gray-500 line-through" : "text-gray-900"}`}
-                                    >
-                                      {need.name}
-                                    </h4>
-                                  </div>
-                                </div>
-
-                                <div className="max-w-md">
-                                  <ProgressBar
-                                    received={need.receivedQuantity}
-                                    booked={need.bookedQuantity}
-                                    total={need.requiredQuantity}
-                                    unit={need.unit}
-                                  />
-                                </div>
-                              </div>
-
-                              <div className="flex-shrink-0 w-full md:w-auto mt-4 md:mt-0">
-                                {isDone ? (
-                                  <span className="text-green-600 font-bold text-sm">
-                                    {t("needClosed")}
-                                  </span>
-                                ) : isFullyCovered ? (
-                                  <Button
-                                    disabled
-                                    className="w-full bg-gray-200 text-gray-500 font-bold h-12 rounded-xl px-6 cursor-not-allowed"
-                                  >
-                                    {t("needCovered")}
-                                  </Button>
-                                ) : (
-                                  <Button
-                                    onClick={() => handlePledgeClick(need)}
-                                    className="w-full bg-[#1e3a8a] hover:bg-[#2c4db5] text-white font-bold h-12 rounded-xl px-6"
-                                  >
-                                    {t("pledgeButton")}
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )
-                )}
-
-                <div className="mt-8 bg-[#fff8e6] border border-[#ffca63]/30 rounded-2xl p-6 flex gap-4 items-start">
-                  <AlertCircle
-                    className="text-[#e6b046] flex-shrink-0 mt-1"
-                    size={24}
-                  />
-                  <div>
-                    <h4 className="font-bold text-[#966d1f] mb-1">
-                      {t("importantTitle")}
-                    </h4>
-                    <p className="text-[#b38632] text-sm leading-relaxed">
-                      {t("importantText")}
-                    </p>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      {selectedNeed && (
-        <PledgeModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          need={selectedNeed}
-          institutionName={data.name}
-          onSuccess={() => {
-            const id = Array.isArray(params.id) ? params.id[0] : params.id;
-            if (id) loadNeeds(id);
-          }}
-        />
-      )}
     </MainLayout>
   );
 }
