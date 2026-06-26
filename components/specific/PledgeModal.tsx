@@ -5,10 +5,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { X, Gift, Calendar, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { createBooking } from "@/lib/api";
-import { getLocalizedError } from "@/lib/errorMessages";
+import { useErrorTranslator } from "@/lib/errorMessages";
 
 export interface NeedItem {
   id: string | number;
@@ -33,6 +34,9 @@ export default function PledgeModal({
   institutionName,
   onSuccess,
 }: PledgeModalProps) {
+  const t = useTranslations("pledgeModal");
+  const tc = useTranslations("common");
+  const translateError = useErrorTranslator();
   const [amount, setAmount] = useState<number | "">(1);
   const [date, setDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,7 +50,7 @@ export default function PledgeModal({
     setError("");
 
     if (amount === "" || Number(amount) <= 0 || Number(amount) > remaining) {
-      setError("Неверное количество");
+      setError(t("invalidAmount"));
       return;
     }
 
@@ -55,22 +59,22 @@ export default function PledgeModal({
       const needId =
         typeof need.id === "string" ? parseInt(need.id, 10) : need.id;
       if (isNaN(needId)) {
-        setError("Некорректный ID нужды");
+        setError(t("invalidNeedId"));
         return;
       }
 
       const note = date ? `Планируемая дата визита: ${date}` : "";
       await createBooking(needId, amount, note);
 
-      alert("Спасибо! Ваше бронирование отправлено.");
+      alert(t("successAlert"));
       onSuccess?.();
       onClose();
     } catch (err) {
       console.error("Booking error:", err);
       setError(
         err instanceof Error
-          ? getLocalizedError(err.message)
-          : getLocalizedError(""),
+          ? translateError(err.message)
+          : translateError(""),
       );
     } finally {
       setIsSubmitting(false);
@@ -98,7 +102,7 @@ export default function PledgeModal({
             </div>
             <div>
               <h3 className="font-black text-lg leading-tight">
-                Я привезу помощь
+                {t("title")}
               </h3>
               <p className="text-white/80 text-sm">{institutionName}</p>
             </div>
@@ -113,9 +117,9 @@ export default function PledgeModal({
               {need.title}
             </h4>
             <p className="text-gray-500 font-medium text-sm">
-              Осталось собрать:{" "}
+              {t("remainingLabel")}{" "}
               <span className="text-[#1e3a8a] font-bold">
-                {remaining} {need.measure || "шт."}
+                {remaining} {need.measure || t("unitFallback")}
               </span>
             </p>
           </div>
@@ -130,7 +134,7 @@ export default function PledgeModal({
           {/* Input: Количество */}
           <div className="space-y-2">
             <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">
-              Сколько вы привезете?
+              {t("amountLabel")}
             </label>
             <div className="flex items-center gap-4">
               <input
@@ -163,12 +167,15 @@ export default function PledgeModal({
                 className="w-full h-14 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-black text-2xl text-[#1e3a8a] text-center"
               />
               <span className="text-gray-500 font-bold text-lg shrink-0">
-                из {remaining} {need.measure || "шт."}
+                {t("ofTotal", {
+                  remaining,
+                  unit: need.measure || t("unitFallback"),
+                })}
               </span>
             </div>
             {Number(amount) > remaining && (
               <p className="text-red-500 text-sm font-bold mt-1">
-                Нельзя указать больше, чем требуется.
+                {t("tooMuch")}
               </p>
             )}
           </div>
@@ -176,7 +183,7 @@ export default function PledgeModal({
           {/* Input: Дата */}
           <div className="space-y-2">
             <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">
-              Примерная дата визита
+              {t("dateLabel")}
             </label>
             <div className="relative">
               <Calendar
@@ -193,7 +200,7 @@ export default function PledgeModal({
               />
             </div>
             <p className="text-xs text-gray-400 ml-1">
-              Это поможет учреждению планировать поступления.
+              {t("dateHint")}
             </p>
           </div>
 
@@ -205,7 +212,7 @@ export default function PledgeModal({
               onClick={onClose}
               className="flex-1 h-14 rounded-xl border-2 font-bold border-gray-100 text-gray-500 hover:text-gray-900 hover:bg-gray-50 bg-transparent"
             >
-              Отмена
+              {tc("cancel")}
             </Button>
             <Button
               type="submit"
@@ -221,10 +228,10 @@ export default function PledgeModal({
               {isSubmitting ? (
                 <span className="flex items-center gap-2">
                   <Loader2 size={20} className="animate-spin" />
-                  Отправка...
+                  {t("submitting")}
                 </span>
               ) : (
-                "Подтвердить"
+                t("submit")
               )}
             </Button>
           </div>

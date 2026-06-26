@@ -15,6 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import MainLayout from "@/components/layout/MainLayout";
+import { useTranslations } from "next-intl";
 import { fetchInstitutions } from "@/lib/api";
 
 interface MapLocation {
@@ -28,12 +29,14 @@ interface MapLocation {
 }
 
 const CATEGORIES = [
-  { id: "all", label: "Все" },
-  { id: "Children", label: "Детям" },
-  { id: "Elderly", label: "Пожилым" },
+  { id: "all", labelKey: "categoryAll" },
+  { id: "Children", labelKey: "categoryChildren" },
+  { id: "Elderly", labelKey: "categoryElderly" },
 ];
 
 const MapPage = () => {
+  const t = useTranslations("map");
+  const tc = useTranslations("common");
   const MapView = useMemo(
     () =>
       dynamic(() => import("@/components/specific/MapView"), {
@@ -41,7 +44,7 @@ const MapPage = () => {
         loading: () => (
           <div className="h-full w-full bg-[#f7f9fe] flex flex-col items-center justify-center text-[#869cb9]">
             <Loader2 size={40} className="mb-2 animate-spin text-[#1e3a8a]" />
-            <p className="font-medium animate-pulse">Загрузка карты...</p>
+            <p className="font-medium animate-pulse">{t("mapLoading")}</p>
           </div>
         ),
       }),
@@ -100,10 +103,10 @@ const MapPage = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
               <div>
                 <h1 className="text-3xl md:text-5xl font-black text-white mb-3">
-                  Карта помощи
+                  {t("heroTitle")}
                 </h1>
                 <p className="text-white/80 text-lg">
-                  Найдите ближайшее учреждение и привезите помощь лично
+                  {t("heroSubtitle")}
                 </p>
               </div>
 
@@ -112,12 +115,12 @@ const MapPage = () => {
                 <Link href="/institutions">
                   <button className="px-4 py-2 text-white/80 hover:text-white rounded-lg font-bold text-sm transition-colors flex items-center gap-2">
                     <List size={16} />
-                    Список
+                    {t("viewList")}
                   </button>
                 </Link>
                 <button className="px-4 py-2 bg-white text-[#1e3a8a] rounded-lg font-bold text-sm shadow-sm flex items-center gap-2">
                   <MapIcon size={16} />
-                  На карте
+                  {t("viewMap")}
                 </button>
               </div>
             </div>
@@ -131,7 +134,7 @@ const MapPage = () => {
                 />
                 <input
                   type="text"
-                  placeholder="Найти по названию или городу..."
+                  placeholder={t("searchPlaceholder")}
                   className="w-full h-12 pl-12 pr-4 rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 transition-all font-medium"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -153,7 +156,7 @@ const MapPage = () => {
                       }
                     `}
                   >
-                    {cat.label}
+                    {cat.id === "all" ? tc("all") : t(cat.labelKey)}
                   </button>
                 ))}
 
@@ -171,7 +174,7 @@ const MapPage = () => {
           <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28">
             {/* Счетчик */}
             <div className="mb-4 text-gray-500 font-medium pl-2">
-              Найдено на карте:{" "}
+              {t("foundOnMap")}{" "}
               <span className="text-gray-900 font-bold">
                 {filteredLocations.length}
               </span>
@@ -186,8 +189,7 @@ const MapPage = () => {
 
             {/* Подсказка */}
             <div className="mt-6 text-center text-gray-400 text-sm font-medium">
-              Нажмите на метку, чтобы увидеть подробности и перейти к странице
-              помощи
+              {t("hint")}
             </div>
           </div>
         </section>

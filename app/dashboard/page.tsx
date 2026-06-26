@@ -15,8 +15,10 @@ import {
 import Link from "next/link";
 import { getProfile } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function DashboardPage() {
+  const t = useTranslations("dashboard");
   const router = useRouter();
   const [user, setUser] = useState<{
     full_name: string;
@@ -58,10 +60,10 @@ export default function DashboardPage() {
       {/* Greeting */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-black text-gray-900">
-          Привет, {firstName} 👋
+          {t("greeting", { name: firstName })} 👋
         </h1>
         <p className="text-gray-500 font-medium mt-0.5 text-sm sm:text-base">
-          Добро пожаловать в личный кабинет
+          {t("welcome")}
         </p>
       </div>
 
@@ -77,7 +79,7 @@ export default function DashboardPage() {
             0
           </div>
           <div className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">
-            Закрытых
+            {t("statClosed")}
           </div>
         </div>
 
@@ -91,7 +93,7 @@ export default function DashboardPage() {
             0
           </div>
           <div className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">
-            Активных
+            {t("statActive")}
           </div>
         </div>
 
@@ -105,7 +107,7 @@ export default function DashboardPage() {
             0
           </div>
           <div className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-wider">
-            Вклад
+            {t("statContribution")}
           </div>
         </div>
       </div>
@@ -116,20 +118,19 @@ export default function DashboardPage() {
           <div className="relative z-10">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 rounded-full text-xs font-bold mb-3 backdrop-blur-sm">
               <Sparkles size={12} />
-              Начните сегодня
+              {t("ctaBadge")}
             </div>
             <h3 className="text-xl sm:text-2xl font-black mb-2 sm:mb-3">
-              С чего начать?
+              {t("ctaTitle")}
             </h3>
             <p className="text-white/80 mb-5 text-sm sm:text-base leading-relaxed">
-              Выберите учреждение, найдите актуальную нужду и нажмите «Я
-              привезу». Это просто!
+              {t("ctaText")}
             </p>
             <Link
               href="/institutions"
               className="inline-flex items-center gap-2 bg-[#ffca63] text-[#1e3a8a] px-5 sm:px-7 py-3 rounded-xl font-black hover:bg-white transition-all text-sm sm:text-base shadow-lg"
             >
-              Перейти к нуждам
+              {t("ctaButton")}
               <ArrowRight size={16} />
             </Link>
           </div>

@@ -7,8 +7,10 @@ import { NeedForm } from "@/components/specific/NeedForm";
 import { createNeed } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 const NewNeedPage = () => {
+  const t = useTranslations("dashboardNeeds");
   const router = useRouter();
   const [error, setError] = useState("");
 
@@ -36,14 +38,14 @@ const NewNeedPage = () => {
       router.push("/dashboard/needs");
     } catch (err) {
       console.error(err);
-      setError("Не удалось создать нужду. Проверьте авторизацию.");
+      setError(t("createError"));
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-6 text-[#1e3a8a]">
-        Добавить новую потребность
+        {t("newPageTitle")}
       </h2>
       {error && (
         <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-lg">

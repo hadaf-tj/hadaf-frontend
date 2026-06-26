@@ -4,6 +4,7 @@
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import {
   Calendar,
   MapPin,
@@ -36,6 +37,8 @@ import {
 import { Institution } from "@/types/project";
 
 export default function EventsPage() {
+  const t = useTranslations("events");
+  const tc = useTranslations("common");
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [institutions, setInstitutions] = useState<Institution[]>([]);
@@ -93,29 +96,29 @@ export default function EventsPage() {
   const handleJoin = async (eventId: number) => {
     try {
       await joinEvent(eventId);
-      showMsg("success", "Вы записались на событие!");
+      showMsg("success", t("joinSuccess"));
       loadEvents();
     } catch (e) {
       console.error(e);
-      showMsg("error", "Ошибка записи");
+      showMsg("error", t("joinError"));
     }
   };
 
   const handleLeave = async (eventId: number) => {
     try {
       await leaveEvent(eventId);
-      showMsg("success", "Запись отменена");
+      showMsg("success", t("leaveSuccess"));
       loadEvents();
     } catch (e) {
       console.error(e);
-      showMsg("error", "Ошибка отмены");
+      showMsg("error", t("leaveError"));
     }
   };
 
   const handleCreate = async () => {
     setFormError(null);
     if (!form.title || !form.event_date || !form.institution_id) {
-      setFormError("Пожалуйста, заполните все обязательные поля");
+      setFormError(t("formRequiredError"));
       return;
     }
     setCreating(true);
@@ -126,13 +129,11 @@ export default function EventsPage() {
         event_date: new Date(form.event_date).toISOString(),
         institution_id: form.institution_id,
       });
-      setFormSuccess(
-        "Ваше событие успешно отправлено на модерацию. После одобрения сотрудником учреждения оно появится в ленте событий.",
-      );
+      setFormSuccess(t("formSuccess"));
       loadEvents();
     } catch (e) {
       console.error(e);
-      setFormError("Ошибка создания события. Попробуйте еще раз.");
+      setFormError(t("formCreateError"));
     } finally {
       setCreating(false);
     }
@@ -177,14 +178,13 @@ export default function EventsPage() {
               <div>
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md text-white rounded-full text-xs font-bold uppercase tracking-wider border border-white/10 mb-4">
                   <Sparkles size={14} className="text-[#ffca63]" />
-                  Волонтёрские события
+                  {t("heroBadge")}
                 </div>
                 <h1 className="text-3xl md:text-5xl font-black text-white mb-3">
-                  События и мероприятия
+                  {t("heroTitle")}
                 </h1>
                 <p className="text-white/80 text-lg max-w-xl">
-                  Мастер-классы, субботники, визиты — присоединяйтесь к событиям
-                  или создайте своё!
+                  {t("heroSubtitle")}
                 </p>
               </div>
 
@@ -195,13 +195,13 @@ export default function EventsPage() {
                   className="bg-[#ffca63] text-[#1e3a8a] hover:bg-white font-bold h-12 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                 >
                   <Plus size={20} />
-                  Создать событие
+                  {t("createEvent")}
                 </Button>
                 {!isAuth && (
                   <div className="mt-3 text-center sm:text-right flex flex-col items-center sm:items-end">
                     <Link href="/login">
                       <span className="text-white text-sm font-bold underline decoration-white/50 hover:decoration-white transition-all">
-                        (Нужна авторизация)
+                        {t("authRequired")}
                       </span>
                     </Link>
                   </div>
@@ -222,10 +222,10 @@ export default function EventsPage() {
               <div className="text-center py-20">
                 <Calendar size={64} className="mx-auto text-gray-300 mb-4" />
                 <h3 className="text-xl font-bold text-gray-500 mb-2">
-                  Пока нет событий
+                  {t("emptyTitle")}
                 </h3>
                 <p className="text-gray-400">
-                  Станьте первым — создайте мероприятие!
+                  {t("emptyText")}
                 </p>
               </div>
             ) : (
@@ -235,7 +235,7 @@ export default function EventsPage() {
                   <div>
                     <h2 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-2">
                       <Calendar size={24} className="text-[#1e3a8a]" />
-                      Предстоящие события ({upcomingEvents.length})
+                      {t("upcomingTitle", { count: upcomingEvents.length })}
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {upcomingEvents.map((event) => (
@@ -262,7 +262,7 @@ export default function EventsPage() {
                   <div>
                     <h2 className="text-2xl font-black text-gray-400 mb-6 flex items-center gap-2">
                       <Clock size={24} />
-                      Прошедшие ({pastEvents.length})
+                      {t("pastTitle", { count: pastEvents.length })}
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {pastEvents.map((event) => (
@@ -295,7 +295,7 @@ export default function EventsPage() {
             <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 space-y-6">
               <div className="flex items-center justify-between pb-2 border-b border-gray-100">
                 <h3 className="text-xl font-black text-gray-900">
-                  Новое событие
+                  {t("modalTitle")}
                 </h3>
                 <button
                   onClick={() => {
@@ -336,7 +336,7 @@ export default function EventsPage() {
                   }}
                   className="w-full h-12 bg-[#1e3a8a] text-white font-bold rounded-xl hover:bg-[#2a4ec2] transition-colors"
                 >
-                  Закрыть
+                  {tc("close")}
                 </button>
               )}
 
@@ -344,7 +344,7 @@ export default function EventsPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="text-xs font-bold text-gray-500 ml-1 uppercase">
-                      Название *
+                      {t("labelTitle")}
                     </label>
                     <input
                       type="text"
@@ -352,21 +352,21 @@ export default function EventsPage() {
                       onChange={(e) =>
                         setForm({ ...form, title: e.target.value })
                       }
-                      placeholder="Мастер-класс по рисованию"
+                      placeholder={t("placeholderTitle")}
                       className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900"
                     />
                   </div>
 
                   <div>
                     <label className="text-xs font-bold text-gray-500 ml-1 uppercase">
-                      Описание
+                      {t("labelDescription")}
                     </label>
                     <textarea
                       value={form.description}
                       onChange={(e) =>
                         setForm({ ...form, description: e.target.value })
                       }
-                      placeholder="Расскажите подробнее о событии..."
+                      placeholder={t("placeholderDescription")}
                       rows={3}
                       className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900 resize-none"
                     />
@@ -374,7 +374,7 @@ export default function EventsPage() {
 
                   <div>
                     <label className="text-xs font-bold text-gray-500 ml-1 uppercase">
-                      Дата и время *
+                      {t("labelDate")}
                     </label>
                     <input
                       type="datetime-local"
@@ -389,7 +389,7 @@ export default function EventsPage() {
 
                   <div>
                     <label className="text-xs font-bold text-gray-500 ml-1 uppercase">
-                      Учреждение *
+                      {t("labelInstitution")}
                     </label>
                     <select
                       value={form.institution_id}
@@ -401,7 +401,7 @@ export default function EventsPage() {
                       }
                       className="w-full h-12 px-4 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] transition-all font-medium text-gray-900"
                     >
-                      <option value={0}>Выберите учреждение</option>
+                      <option value={0}>{t("selectInstitution")}</option>
                       {institutions.map((inst) => (
                         <option key={inst.id} value={Number(inst.id)}>
                           {inst.name}
@@ -421,7 +421,7 @@ export default function EventsPage() {
                     }}
                     className="flex-1 bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold h-12 rounded-xl"
                   >
-                    Отмена
+                    {tc("cancel")}
                   </Button>
                   <Button
                     onClick={handleCreate}
@@ -433,7 +433,7 @@ export default function EventsPage() {
                     ) : (
                       <Plus size={18} />
                     )}
-                    Предложить
+                    {t("submitButton")}
                   </Button>
                 </div>
               )}
@@ -465,6 +465,8 @@ function EventCard({
   onLeave,
   formatDate,
 }: EventCardProps) {
+  const t = useTranslations("events");
+  const tc = useTranslations("common");
   return (
     <div
       className={`bg-white rounded-2xl border transition-all duration-300 overflow-hidden hover:shadow-lg ${
@@ -489,7 +491,7 @@ function EventCard({
           </div>
           {event.is_joined && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-50 text-green-700 text-xs font-black uppercase">
-              <Check size={12} /> Вы идёте
+              <Check size={12} /> {t("joinedBadge")}
             </span>
           )}
         </div>
@@ -508,7 +510,7 @@ function EventCard({
         {/* Creator + Participants */}
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-500">
-            <span className="font-medium">Организатор: </span>
+            <span className="font-medium">{t("organizer")} </span>
             <span className="font-bold text-gray-700">
               {event.creator_name}
             </span>
@@ -525,7 +527,7 @@ function EventCard({
             onClick={onToggle}
             className="text-sm font-bold text-[#1e3a8a] hover:underline flex items-center gap-1"
           >
-            {expanded ? "Скрыть" : "Подробнее"}
+            {expanded ? t("collapse") : tc("more")}
             <ArrowRight
               size={14}
               className={`transition-transform ${expanded ? "rotate-90" : ""}`}
@@ -548,14 +550,14 @@ function EventCard({
                 className="w-full h-11 rounded-xl font-bold text-sm border-2 border-red-200 text-red-500 hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
               >
                 <X size={16} />
-                Отменить запись
+                {t("cancelJoin")}
               </button>
             ) : (
               <button
                 onClick={() => onJoin(event.id)}
                 className="w-full h-11 rounded-xl font-bold text-sm bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] transition-colors flex items-center justify-center gap-2 shadow-md shadow-[#1e3a8a]/20"
               >
-                <UserPlus size={16} />Я иду!
+                <UserPlus size={16} />{t("joinButton")}
               </button>
             )}
           </div>

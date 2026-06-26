@@ -4,10 +4,12 @@
 /* FILE: app/contacts/page.tsx */
 "use client";
 
+import { useTranslations } from "next-intl";
 import MainLayout from "@/components/layout/MainLayout";
 import { Send, MessageCircle, Linkedin, Instagram } from "lucide-react";
 
 export default function ContactsPage() {
+  const t = useTranslations("contacts");
   return (
     <MainLayout>
       <div className="min-h-screen font-sans bg-[#f8fafc]">
@@ -15,10 +17,10 @@ export default function ContactsPage() {
         <div className="bg-[#1e3a8a] pt-24 sm:pt-32 pb-10 sm:pb-16 rounded-b-[2rem] sm:rounded-b-[3rem] text-center relative overflow-hidden">
           <div className="container mx-auto px-5 sm:px-6 relative z-10">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-3 sm:mb-4">
-              Свяжитесь с нами
+              {t("heroTitle")}
             </h1>
             <p className="text-white/80 text-base sm:text-lg max-w-2xl mx-auto">
-              Мы всегда рады ответить на ваши вопросы, предложения и идеи.
+              {t("heroSubtitle")}
             </p>
           </div>
         </div>
@@ -28,14 +30,10 @@ export default function ContactsPage() {
             {/* Объяснение об онлайн-формате */}
             <div className="bg-[#1e3a8a]/5 border border-[#1e3a8a]/10 p-6 sm:p-8 rounded-2xl sm:rounded-3xl text-center">
               <h3 className="text-xl font-bold text-[#1e3a8a] mb-3">
-                Мы работаем полностью онлайн
+                {t("onlineTitle")}
               </h3>
               <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
-                На этапе Beta-тестирования платформы у проекта «Ҳадаф» нет
-                физического офиса или складов для приёма вещей. Платформа
-                призвана напрямую связывать волонтеров с учреждениями. По всем
-                вопросам сотрудничества и технической поддержки пишите нам
-                онлайн — мы на связи!
+                {t("onlineText")}
               </p>
             </div>
 
@@ -56,11 +54,11 @@ export default function ContactsPage() {
                     Instagram
                   </h3>
                   <p className="text-white/85 font-medium text-sm sm:text-base leading-relaxed mb-5">
-                    Посты, истории и публикации о нашей деятельности.
+                    {t("instagramText")}
                   </p>
                   <div className="inline-flex items-center gap-2 bg-white text-[#DD2A7B] px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors shadow-md">
                     <Instagram size={18} />
-                    Подписаться
+                    {t("subscribe")}
                   </div>
                 </div>
               </a>
@@ -83,11 +81,11 @@ export default function ContactsPage() {
                     Telegram
                   </h3>
                   <p className="text-white/85 font-medium text-sm sm:text-base leading-relaxed mb-5">
-                    Главный источник новостей и прямая связь с командой.
+                    {t("telegramText")}
                   </p>
                   <div className="inline-flex items-center gap-2 bg-white text-[#229ED9] px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors shadow-md">
                     <Send size={18} className="relative right-0.5" />
-                    Подписаться
+                    {t("subscribe")}
                   </div>
                 </div>
               </a>
@@ -107,11 +105,11 @@ export default function ContactsPage() {
                     LinkedIn
                   </h3>
                   <p className="text-white/85 font-medium text-sm sm:text-base leading-relaxed mb-5">
-                    Для профессионального сообщества и партнёров.
+                    {t("linkedinText")}
                   </p>
                   <div className="inline-flex items-center gap-2 bg-white text-[#0a66c2] px-6 py-3 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors shadow-md">
                     <Linkedin size={18} />
-                    Подписаться
+                    {t("subscribe")}
                   </div>
                 </div>
               </a>

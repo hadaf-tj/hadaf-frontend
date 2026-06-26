@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
+import { getTranslations } from "next-intl/server";
 import { Need } from "@/types/project";
 import { Button } from "@/components/ui/Button";
 
@@ -8,7 +9,8 @@ interface NeedListItemProps {
   need: Need;
 }
 
-const NeedListItem: React.FC<NeedListItemProps> = ({ need }) => {
+const NeedListItem = async ({ need }: NeedListItemProps) => {
+  const t = await getTranslations("needListItem");
   const progress = Math.min(
     (need.receivedQuantity / need.requiredQuantity) * 100,
     100,
@@ -35,9 +37,11 @@ const NeedListItem: React.FC<NeedListItemProps> = ({ need }) => {
 
         <div className="flex justify-between text-xs mt-2 font-medium">
           <span className="text-[#1e3a8a]">
-            {need.receivedQuantity} собрано
+            {t("collected", { count: need.receivedQuantity })}
           </span>
-          <span className="text-gray-400">из {need.requiredQuantity}</span>
+          <span className="text-gray-400">
+            {t("ofTotal", { total: need.requiredQuantity })}
+          </span>
         </div>
       </div>
 
@@ -46,7 +50,7 @@ const NeedListItem: React.FC<NeedListItemProps> = ({ need }) => {
           disabled={isCompleted}
           className={`w-full sm:w-auto ${isCompleted ? "bg-emerald-500 hover:bg-emerald-600" : "bg-[#1e3a8a] hover:bg-[#1e3a8a]/90"}`}
         >
-          {isCompleted ? "Готово" : "Помочь"}
+          {isCompleted ? t("done") : t("help")}
         </Button>
       </div>
     </div>

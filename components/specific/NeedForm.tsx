@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import {
   Card,
@@ -33,6 +34,8 @@ export const NeedForm: React.FC<NeedFormProps> = ({
   isSaving,
   onSubmit,
 }) => {
+  const t = useTranslations("needForm");
+  const tc = useTranslations("common");
   const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -43,11 +46,7 @@ export const NeedForm: React.FC<NeedFormProps> = ({
 
   const handleDelete = () => {
     // TODO: Implement robust confirmation modal
-    if (
-      window.confirm(
-        "Вы уверены, что хотите удалить эту нужду? Это действие необратимо.",
-      )
-    ) {
+    if (window.confirm(t("deleteConfirm"))) {
       // Invoke DELETE API call
       console.log(`Deleting need ${initialData?.id}`);
       router.push("/dashboard/needs");
@@ -59,23 +58,23 @@ export const NeedForm: React.FC<NeedFormProps> = ({
       <Card>
         <CardHeader>
           <CardTitle>
-            {initialData?.id ? "Редактировать нужду" : "Добавить новую нужду"}
+            {initialData?.id ? t("editTitle") : t("createTitle")}
           </CardTitle>
         </CardHeader>
         {/* ... (CardContent остается без изменений) */}
         <CardContent className="grid gap-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Название нужды</Label>
+            <Label htmlFor="name">{t("nameLabel")}</Label>
             <Input
               id="name"
-              placeholder='Например, "Теплые носки (размер 42)"'
+              placeholder={t("namePlaceholder")}
               defaultValue={initialData?.name}
               required
             />
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="requiredQuantity">Требуемое количество</Label>
+              <Label htmlFor="requiredQuantity">{t("quantityLabel")}</Label>
               <Input
                 id="requiredQuantity"
                 type="number"
@@ -85,10 +84,10 @@ export const NeedForm: React.FC<NeedFormProps> = ({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="unit">Единица измерения</Label>
+              <Label htmlFor="unit">{t("unitLabel")}</Label>
               <Input
                 id="unit"
-                placeholder='Например, "пар", "шт.", "кг"'
+                placeholder={t("unitPlaceholder")}
                 defaultValue={initialData?.unit}
                 required
               />
@@ -108,16 +107,16 @@ export const NeedForm: React.FC<NeedFormProps> = ({
                 className="flex items-center gap-2"
               >
                 <Trash2 className="h-4 w-4" />
-                Удалить
+                {t("delete")}
               </Button>
             )}
           </div>
           <div className="flex gap-2">
             <Button type="button" variant="ghost" onClick={() => router.back()}>
-              Отмена
+              {tc("cancel")}
             </Button>
             <Button type="submit" disabled={isSaving}>
-              {isSaving ? "Сохранение..." : "Сохранить"}
+              {isSaving ? t("saving") : tc("save")}
             </Button>
           </div>
         </CardFooter>

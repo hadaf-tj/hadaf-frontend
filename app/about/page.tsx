@@ -6,6 +6,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import MainLayout from "@/components/layout/MainLayout";
 import { CheckCircle2, Linkedin, Send } from "lucide-react";
 import { fetchTeamMembers, TeamMember } from "@/lib/api";
@@ -32,6 +33,8 @@ function getInitials(name: string) {
 }
 
 export default function AboutPage() {
+  const t = useTranslations("about");
+  const tc = useTranslations("common");
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
@@ -65,14 +68,16 @@ export default function AboutPage() {
             <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28">
               <div className="max-w-3xl space-y-3 sm:space-y-6">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight">
-                  Мы меняем культуру <br className="hidden sm:block" />
-                  <span className="text-[#ffca63]">благотворительности</span>
+                  {t.rich("heroTitle", {
+                    br: () => <br className="hidden sm:block" />,
+                    accent: (c) => (
+                      <span className="text-[#ffca63]">{c}</span>
+                    ),
+                  })}
                 </h1>
 
                 <p className="text-sm sm:text-lg md:text-xl text-white/90 font-medium leading-relaxed max-w-2xl">
-                  Ҳадаф — команда людей, которые делают помощь прозрачной и
-                  адресной. Вы точно знаете, кому помогаете, что нужно и куда
-                  идут ваши усилия.
+                  {t("heroSubtitle")}
                 </p>
               </div>
             </div>
@@ -88,42 +93,38 @@ export default function AboutPage() {
                 <div className="flex items-center gap-3 mb-1">
                   <div className="w-10 h-[3px] bg-[#ffca63] rounded-full"></div>
                   <span className="text-[#1e3a8a] font-bold text-xs sm:text-sm uppercase tracking-[0.15em]">
-                    Наша история
+                    {t("historyEyebrow")}
                   </span>
                 </div>
                 <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-[#1e3a8a] leading-tight">
-                  Почему мы <br className="hidden sm:block" />
-                  появились?
+                  {t.rich("historyTitle", {
+                    br: () => <br className="hidden sm:block" />,
+                  })}
                 </h2>
                 <div className="space-y-3 sm:space-y-4 text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">
                   <p>
-                    В Таджикистане тысячи людей, которые хотят помочь{" "}
-                    <span className="font-bold text-gray-900">
-                      детским домам и домам престарелых
-                    </span>
-                    . Но часто возникают вопросы: «Кому помощь нужнее всего
-                    прямо сейчас?» и «Дойдет ли она до адресата?».
+                    {t.rich("historyParagraph1", {
+                      b: (c) => (
+                        <span className="font-bold text-gray-900">{c}</span>
+                      ),
+                    })}
                   </p>
                   <p>
-                    Чтобы убрать этот барьер, мы создали единый реестр{" "}
-                    <span className="font-bold text-gray-900">
-                      проверенных государственных учреждений
-                    </span>{" "}
-                    с актуальными списками нужд.
+                    {t.rich("historyParagraph2", {
+                      b: (c) => (
+                        <span className="font-bold text-gray-900">{c}</span>
+                      ),
+                    })}
                   </p>
-                  <p>
-                    Больше никаких звонков наугад. Вы видите конкретную нужду —
-                    будь то продукты для интерната или лекарства для дома
-                    престарелых — и закрываете её напрямую.
-                  </p>
+                  <p>{t("historyParagraph3")}</p>
                 </div>
 
                 <div className="pt-2 sm:pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {[
-                    "Проверенные учреждения",
-                    "Помощь домам престарелых",
-                    "Прямая связь",
-                    "100% прозрачности",
+                    t("feature1"),
+                    t("feature2"),
+                    t("feature3"),
+                    t("feature4"),
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-2.5 sm:gap-3">
                       <CheckCircle2
@@ -142,7 +143,7 @@ export default function AboutPage() {
                 <div className="relative h-full w-full rounded-2xl sm:rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white">
                   <Image
                     src="/about_why_do_we_exist.webp"
-                    alt="Волонтеры помогают с заботой и уважением"
+                    alt={t("whyImageAlt")}
                     fill
                     className="object-cover"
                   />
@@ -160,23 +161,22 @@ export default function AboutPage() {
               <div className="flex items-center justify-center gap-3 mb-5">
                 <div className="w-10 h-[3px] bg-[#ffca63] rounded-full"></div>
                 <span className="text-[#1e3a8a] font-bold text-xs sm:text-sm uppercase tracking-[0.15em]">
-                  Люди
+                  {t("teamEyebrow")}
                 </span>
                 <div className="w-10 h-[3px] bg-[#ffca63] rounded-full"></div>
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-[#1e3a8a] mb-3 sm:mb-6">
-                Команда Ҳадаф
+                {t("teamTitle")}
               </h2>
               <p className="text-sm sm:text-base md:text-xl text-gray-600 max-w-2xl mx-auto font-medium leading-relaxed">
-                Люди, которые создали и продолжают развивать эту платформу. Мы
-                объединились ради общей идеи прозрачной благотворительности.
+                {t("teamSubtitle")}
               </p>
             </div>
 
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 text-[#1e3a8a]">
                 <div className="w-14 h-14 rounded-full border-4 border-[#1e3a8a]/10 border-t-[#1e3a8a] animate-spin mb-4"></div>
-                <p className="font-bold text-lg">Загрузка...</p>
+                <p className="font-bold text-lg">{tc("loading")}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
@@ -254,13 +254,13 @@ export default function AboutPage() {
                     👋
                   </div>
                   <h3 className="text-lg sm:text-xl font-black text-[#1e3a8a] mb-1">
-                    Возможно, это вы?
+                    {t("ctaTitle")}
                   </h3>
                   <p className="text-gray-500 text-xs sm:text-sm font-medium leading-relaxed mb-4 sm:mb-5 mt-1 sm:mt-2 max-w-xs">
-                    Присоединяйтесь к команде и меняйте мир к лучшему
+                    {t("ctaSubtitle")}
                   </p>
                   <div className="mt-auto px-5 sm:px-6 py-2 sm:py-2.5 bg-[#ffca63]/20 text-[#1e3a8a] font-bold rounded-full text-sm group-hover:bg-[#ffca63] transition-colors duration-300">
-                    Посмотреть вакансии
+                    {t("ctaButton")}
                   </div>
                 </Link>
               </div>

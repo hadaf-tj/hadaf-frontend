@@ -4,6 +4,7 @@
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { X, PackagePlus, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { createNeed } from "@/lib/api";
@@ -31,6 +32,7 @@ export default function AddNeedModal({
   institutionId,
   onSuccess,
 }: AddNeedModalProps) {
+  const t = useTranslations("addNeedModal");
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [category, setCategory] = useState(CATEGORIES[0]);
@@ -64,7 +66,7 @@ export default function AddNeedModal({
       onClose();
     } catch (err) {
       console.error(err);
-      alert("Ошибка при создании нужды");
+      alert(t("createError"));
     } finally {
       setLoading(false);
     }
@@ -86,7 +88,7 @@ export default function AddNeedModal({
               <PackagePlus size={24} />
             </div>
             <h3 className="font-black text-lg leading-tight">
-              Добавить новую нужду
+              {t("title")}
             </h3>
           </div>
         </div>
@@ -95,11 +97,11 @@ export default function AddNeedModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div className="space-y-1.5">
             <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">
-              Что необходимо?
+              {t("nameLabel")}
             </label>
             <input
               type="text"
-              placeholder="Например: Зимние куртки"
+              placeholder={t("namePlaceholder")}
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -110,7 +112,7 @@ export default function AddNeedModal({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">
-                Категория
+                {t("categoryLabel")}
               </label>
               <select
                 value={category}
@@ -126,7 +128,7 @@ export default function AddNeedModal({
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">
-                Ед. измерения
+                {t("unitLabel")}
               </label>
               <select
                 value={unit}
@@ -144,12 +146,12 @@ export default function AddNeedModal({
 
           <div className="space-y-1.5">
             <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">
-              Количество
+              {t("quantityLabel")}
             </label>
             <input
               type="number"
               min="1"
-              placeholder="Сколько нужно?"
+              placeholder={t("quantityPlaceholder")}
               required
               value={qty}
               onChange={(e) => setQty(e.target.value)}
@@ -170,12 +172,12 @@ export default function AddNeedModal({
               <div
                 className={`font-bold text-lg ${isUrgent ? "text-red-700" : "text-gray-900"}`}
               >
-                Это срочный сбор?
+                {t("urgentTitle")}
               </div>
               <div
                 className={`text-sm font-medium ${isUrgent ? "text-red-600/70" : "text-gray-500"}`}
               >
-                Отметьте, если помощь нужна немедленно
+                {t("urgentHint")}
               </div>
             </div>
             <div
@@ -194,7 +196,7 @@ export default function AddNeedModal({
               {loading ? (
                 <Loader2 className="animate-spin" />
               ) : (
-                "Опубликовать нужду"
+                t("submit")
               )}
             </Button>
           </div>

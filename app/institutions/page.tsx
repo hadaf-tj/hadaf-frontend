@@ -4,6 +4,7 @@
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 import MainLayout from "@/components/layout/MainLayout";
 import InstitutionCard from "@/components/specific/InstitutionCard";
@@ -21,19 +22,23 @@ import { Institution } from "@/types/project";
 import Link from "next/link";
 import { fetchInstitutions } from "@/lib/api";
 
-const CATEGORIES = [
-  { id: "all", label: "Все" },
-  { id: "Children", label: "Детям" },
-  { id: "Elderly", label: "Пожилым" },
-];
+const CATEGORY_IDS = ["all", "Children", "Elderly"] as const;
 
-const SORT_OPTIONS = [
-  { id: "default", label: "По умолчанию" },
-  { id: "needs_desc", label: "По количеству нужд" },
-  { id: "distance", label: "Ближайшие ко мне" },
-];
+const SORT_OPTION_IDS = ["default", "needs_desc", "distance"] as const;
 
 export default function InstitutionsPage() {
+  const t = useTranslations("institutions");
+
+  const CATEGORIES = CATEGORY_IDS.map((id) => ({
+    id,
+    label: t(`categories.${id}`),
+  }));
+
+  const SORT_OPTIONS = SORT_OPTION_IDS.map((id) => ({
+    id,
+    label: t(`sortOptions.${id}`),
+  }));
+
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("default");
@@ -51,7 +56,7 @@ export default function InstitutionsPage() {
 
   const requestGeolocation = () => {
     if (!navigator.geolocation) {
-      setGeoError("Геолокация не поддерживается вашим браузером");
+      setGeoError(t("geoNotSupported"));
       return;
     }
 
@@ -68,7 +73,7 @@ export default function InstitutionsPage() {
         setIsGeoLoading(false);
       },
       (err) => {
-        setGeoError("Не удалось получить местоположение");
+        setGeoError(t("geoFailed"));
         setIsGeoLoading(false);
         console.error(err);
       },
@@ -90,7 +95,7 @@ export default function InstitutionsPage() {
         setInstitutions(data);
       } catch (err) {
         console.error(err);
-        setError("Не удалось загрузить список учреждений");
+        setError(t("loadError"));
       } finally {
         setIsLoading(false);
       }
@@ -124,22 +129,22 @@ export default function InstitutionsPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
               <div>
                 <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-2 sm:mb-3">
-                  Кому помочь?
+                  {t("heroTitle")}
                 </h1>
                 <p className="text-white/80 text-base sm:text-lg">
-                  Выберите учреждение или человека, которому нужна поддержка
+                  {t("heroSubtitle")}
                 </p>
               </div>
 
               {/* Переключатель Карта / Список */}
               <div className="flex bg-white/10 p-1 rounded-xl backdrop-blur-sm border border-white/20">
                 <button className="px-4 py-2 bg-white text-[#1e3a8a] rounded-lg font-bold text-sm shadow-sm">
-                  Список
+                  {t("viewList")}
                 </button>
                 <Link href="/map">
                   <button className="px-4 py-2 text-white/80 hover:text-white rounded-lg font-bold text-sm transition-colors flex items-center gap-2">
                     <Map size={16} />
-                    На карте
+                    {t("viewMap")}
                   </button>
                 </Link>
               </div>
@@ -154,7 +159,7 @@ export default function InstitutionsPage() {
                 />
                 <input
                   type="text"
-                  placeholder="Найти по названию или городу..."
+                  placeholder={t("searchPlaceholder")}
                   className="w-full h-11 sm:h-12 pl-10 sm:pl-12 pr-4 rounded-lg sm:rounded-xl bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 transition-all font-medium text-sm sm:text-base"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -191,7 +196,7 @@ export default function InstitutionsPage() {
                     onChange={(e) => setCityFilter(e.target.value)}
                     className="appearance-none h-11 sm:h-12 pl-9 pr-9 rounded-lg sm:rounded-xl bg-gray-50 text-gray-600 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]/20 cursor-pointer border-none"
                   >
-                    <option value="all">Все города</option>
+                    <option value="all">{t("allCities")}</option>
                     {uniqueCities.map((city) => (
                       <option key={city} value={city}>
                         {city}
@@ -260,7 +265,7 @@ export default function InstitutionsPage() {
                 ) : (
                   <Navigation size={16} />
                 )}
-                {userLocation ? "Местоположение определено" : "Найти ближайшие"}
+                {userLocation ? t("locationDetected") : t("findNearest")}
               </button>
             </div>
 
@@ -280,9 +285,7 @@ export default function InstitutionsPage() {
             {isLoading && (
               <div className="flex flex-col items-center justify-center py-20 text-[#1e3a8a]">
                 <Loader2 size={48} className="animate-spin mb-4" />
-                <p className="font-bold text-lg">
-                  Загружаем список учреждений...
-                </p>
+                <p className="font-bold text-lg">{t("loadingList")}</p>
               </div>
             )}
 
@@ -291,7 +294,7 @@ export default function InstitutionsPage() {
               <div className="text-center py-20">
                 <p className="text-red-500 font-bold text-lg mb-4">{error}</p>
                 <Button onClick={() => window.location.reload()}>
-                  Попробовать снова
+                  {t("retry")}
                 </Button>
               </div>
             )}
@@ -300,7 +303,7 @@ export default function InstitutionsPage() {
             {!isLoading && !error && (
               <>
                 <div className="mb-6 text-gray-500 font-medium">
-                  Найдено учреждений:{" "}
+                  {t("foundCount")}{" "}
                   <span className="text-gray-900 font-bold">
                     {filteredData.length}
                   </span>
@@ -320,11 +323,9 @@ export default function InstitutionsPage() {
                       <Search size={40} className="text-gray-400" />
                     </div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                      Ничего не найдено
+                      {t("emptyTitle")}
                     </h3>
-                    <p className="text-gray-500">
-                      Попробуйте изменить параметры поиска
-                    </p>
+                    <p className="text-gray-500">{t("emptyDescription")}</p>
                     <button
                       onClick={() => {
                         setActiveCategory("all");
@@ -333,7 +334,7 @@ export default function InstitutionsPage() {
                       }}
                       className="mt-6 text-[#1e3a8a] font-bold hover:underline"
                     >
-                      Сбросить фильтры
+                      {t("resetFilters")}
                     </button>
                   </div>
                 )}
@@ -345,7 +346,7 @@ export default function InstitutionsPage() {
                       variant="outline"
                       className="border-2 border-gray-200 text-gray-600 hover:border-[#1e3a8a] hover:text-[#1e3a8a] font-bold h-12 px-8 rounded-full"
                     >
-                      Показать еще
+                      {t("loadMore")}
                     </Button>
                   </div>
                 )}

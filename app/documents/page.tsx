@@ -4,8 +4,11 @@
 import MainLayout from "@/components/layout/MainLayout";
 import { FolderArchive, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
-export default function DocumentsPage() {
+export default async function DocumentsPage() {
+  const t = await getTranslations("documents");
+  const futurePublications = t.raw("futurePublications") as string[];
   return (
     <MainLayout>
       {/* Header section with deep blue and ornaments */}
@@ -19,15 +22,19 @@ export default function DocumentsPage() {
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-[3px] bg-[#ffca63] rounded-full"></div>
               <span className="text-[#ffca63] font-bold text-sm uppercase tracking-[0.15em]">
-                Прозрачность
+                {t("heroBadge")}
               </span>
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-[1.1]">
-              Официальные <br />
-              <span className="text-[#ffca63]">документы</span>
+              {t.rich("heroTitle", {
+                br: () => <br />,
+                accent: (chunks) => (
+                  <span className="text-[#ffca63]">{chunks}</span>
+                ),
+              })}
             </h1>
             <p className="text-white/70 text-base sm:text-lg md:text-xl font-medium max-w-xl">
-              Реестр документов и правовых основ платформы Ҳадаф.
+              {t("heroSubtitle")}
             </p>
           </div>
         </div>
@@ -48,19 +55,16 @@ export default function DocumentsPage() {
                     <FolderArchive size={28} />
                   </div>
                   <h3 className="text-xl font-black text-[#1e3a8a] mb-4">
-                    Статус реестра
+                    {t("registryStatusTitle")}
                   </h3>
                   <div className="space-y-4">
                     <div className="bg-[#1e3a8a]/5 border-l-4 border-[#1e3a8a] p-4 rounded-r-xl">
                       <p className="text-sm text-[#1e3a8a] font-bold leading-relaxed">
-                        Все документы находятся в статусе "Проект" или "В
-                        разработке".
+                        {t("registryStatusNote")}
                       </p>
                     </div>
                     <p className="text-gray-500 text-sm leading-relaxed font-medium">
-                      Официальная регистрация документов произойдет после
-                      завершения этапа тестирования и согласования с
-                      государственными структурами.
+                      {t("registryStatusText")}
                     </p>
                   </div>
                 </div>
@@ -68,7 +72,7 @@ export default function DocumentsPage() {
                 <div className="px-5 py-2 inline-flex items-center gap-3 bg-[#1e3a8a]/5 rounded-full">
                   <div className="w-2 h-2 bg-[#ffca63] rounded-full"></div>
                   <span className="text-[#1e3a8a] font-bold text-xs uppercase tracking-wider">
-                    Обновлено: 24.03.2026
+                    {t("updatedAt", { date: "24.03.2026" })}
                   </span>
                 </div>
               </div>
@@ -78,13 +82,10 @@ export default function DocumentsPage() {
             <div className="lg:col-span-8">
               <div className="prose prose-lg prose-slate max-w-none">
                 <h3 className="text-2xl sm:text-3xl font-black text-[#1e3a8a] mt-0 mb-6 font-display">
-                  Документация MVP
+                  {t("mvpDocsTitle")}
                 </h3>
                 <p className="text-gray-600 leading-relaxed sm:text-lg">
-                  В данный момент платформа «Ҳадаф» проходит стадию
-                  Beta-тестирования инициативной группой. Мы работаем над
-                  созданием полноценной юридической базы, которая будет включать
-                  устав, официальные разрешения и отчеты о деятельности.
+                  {t("mvpDocsText")}
                 </p>
 
                 <div className="h-px bg-gradient-to-r from-gray-200 via-gray-100 to-transparent my-10"></div>
@@ -98,10 +99,10 @@ export default function DocumentsPage() {
                       <ChevronRight size={24} />
                     </div>
                     <h4 className="text-lg font-black text-[#1e3a8a] mb-2">
-                      Политика безопасности
+                      {t("privacyCardTitle")}
                     </h4>
                     <p className="text-sm text-gray-500 leading-relaxed">
-                      Как мы защищаем ваши данные на этапе беты.
+                      {t("privacyCardText")}
                     </p>
                   </Link>
 
@@ -113,25 +114,20 @@ export default function DocumentsPage() {
                       <ChevronRight size={24} />
                     </div>
                     <h4 className="text-lg font-black text-[#1e3a8a] mb-2">
-                      Отказ от ответственности
+                      {t("termsCardTitle")}
                     </h4>
                     <p className="text-sm text-gray-500 leading-relaxed">
-                      Важные правила и ограничения тестового периода.
+                      {t("termsCardText")}
                     </p>
                   </Link>
                 </div>
 
                 <div className="bg-[#1e3a8a]/5 border border-[#1e3a8a]/10 rounded-3xl p-8 sm:p-10">
                   <h4 className="text-xl font-black text-[#1e3a8a] mb-4">
-                    Будущие публикации
+                    {t("futureTitle")}
                   </h4>
                   <ul className="space-y-4 list-none pl-0 font-medium">
-                    {[
-                      "Устав благотворительного фонда",
-                      "Официальные разрешения от регуляторов",
-                      "Шаблоны договоров с учреждениями",
-                      "Ежемесячные финансовые отчеты",
-                    ].map((item, idx) => (
+                    {futurePublications.map((item, idx) => (
                       <li
                         key={idx}
                         className="flex flex-col sm:flex-row sm:items-center gap-3 text-gray-500 text-sm sm:text-base border-b border-gray-50 sm:border-0 pb-4 sm:pb-0 mb-4 sm:mb-0 last:border-0 last:mb-0"
@@ -143,7 +139,7 @@ export default function DocumentsPage() {
                           </span>
                         </div>
                         <span className="text-[10px] uppercase tracking-widest bg-gray-100 sm:bg-gray-200 text-gray-400 sm:text-gray-500 px-3 py-1.5 sm:py-0.5 rounded-lg sm:rounded-full sm:ml-auto w-full sm:w-auto text-center">
-                          В разработке
+                          {t("inDevelopmentBadge")}
                         </span>
                       </li>
                     ))}

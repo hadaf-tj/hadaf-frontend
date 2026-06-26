@@ -18,8 +18,10 @@ import { Need } from "@/types/project";
 import Link from "next/link";
 import { Pencil, Trash2, Loader2, Plus } from "lucide-react";
 import { fetchInstitutionById, deleteNeed } from "@/lib/api";
+import { useTranslations } from "next-intl";
 
 export default function NeedsManagementPage() {
+  const t = useTranslations("dashboardNeeds");
   const [needs, setNeeds] = useState<Need[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,13 +43,13 @@ export default function NeedsManagementPage() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (confirm("Вы уверены, что хотите удалить эту запись?")) {
+    if (confirm(t("deleteConfirm"))) {
       try {
         await deleteNeed(id);
 
         setNeeds((prev) => prev.filter((n) => n.id !== id));
       } catch (_err) {
-        alert("Ошибка при удалении");
+        alert(t("deleteError"));
       }
     }
   };
@@ -57,18 +59,16 @@ export default function NeedsManagementPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-[#304663]">
-            Управление нуждами
+            {t("title")}
           </h1>
-          <p className="text-gray-500">
-            Добавляйте и редактируйте потребности.
-          </p>
+          <p className="text-gray-500">{t("subtitle")}</p>
         </div>
         <Button
           asChild
           className="bg-[#1e3a8a] text-white hover:bg-[#1e3a8a]/90 shadow-lg shadow-[#1e3a8a]/20"
         >
           <Link href="/dashboard/needs/new">
-            <Plus className="mr-2 h-4 w-4" /> Добавить нужду
+            <Plus className="mr-2 h-4 w-4" /> {t("addNeed")}
           </Link>
         </Button>
       </div>
@@ -82,11 +82,11 @@ export default function NeedsManagementPage() {
           <Table>
             <TableHeader className="bg-gray-50/50">
               <TableRow>
-                <TableHead className="w-[40%]">Название</TableHead>
-                <TableHead>Статус</TableHead>
-                <TableHead className="text-right">Прогресс</TableHead>
+                <TableHead className="w-[40%]">{t("colName")}</TableHead>
+                <TableHead>{t("colStatus")}</TableHead>
+                <TableHead className="text-right">{t("colProgress")}</TableHead>
                 <TableHead className="text-center w-[120px]">
-                  Действия
+                  {t("colActions")}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -97,7 +97,7 @@ export default function NeedsManagementPage() {
                     colSpan={4}
                     className="text-center h-24 text-gray-500"
                   >
-                    Список пуст
+                    {t("emptyList")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -111,7 +111,7 @@ export default function NeedsManagementPage() {
                       </TableCell>
                       <TableCell>
                         <Badge variant={isCompleted ? "success" : "secondary"}>
-                          {isCompleted ? "Выполнено" : "Активно"}
+                          {isCompleted ? t("statusDone") : t("statusActive")}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right font-mono text-sm">

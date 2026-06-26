@@ -15,22 +15,26 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/lib/AuthContext";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 const NAV_ITEMS = [
-  { name: "О нас", href: "/about" },
-  { name: "Учреждения", href: "/institutions" },
-  { name: "События", href: "/events" },
-  { name: "Документы", href: "/documents" },
-  { name: "Контакты", href: "/contacts" },
-];
+  { key: "about", href: "/about" },
+  { key: "institutions", href: "/institutions" },
+  { key: "events", href: "/events" },
+  { key: "documents", href: "/documents" },
+  { key: "contacts", href: "/contacts" },
+] as const;
 
 interface HeaderProps {
   variant?: "default" | "colored";
 }
 
 const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
+  const tNav = useTranslations("nav");
+  const t = useTranslations("header");
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { user, isLoading, logout } = useAuth();
@@ -155,7 +159,7 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
         {/* --- НАВИГАЦИЯ (DESKTOP) --- */}
         <nav className="hidden xl:flex items-center gap-6 2xl:gap-10 z-30 h-full transition-colors duration-300">
           {NAV_ITEMS.map((item) => (
-            <div key={item.name} className="relative h-full flex items-center">
+            <div key={item.key} className="relative h-full flex items-center">
               <Link
                 href={item.href}
                 className={cn(
@@ -163,7 +167,7 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
                   textColorClass,
                 )}
               >
-                {item.name}
+                {tNav(item.key)}
               </Link>
             </div>
           ))}
@@ -177,22 +181,23 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
               textColorClass,
             )}
           >
+            <LanguageSwitcher variant="inherit" />
             {!isLoading && user ? (
               <>
                 <Link
                   href="/dashboard"
                   className="hover:opacity-70 transition-opacity flex items-center gap-2"
-                  title="Мой профиль"
+                  title={t("myProfile")}
                 >
                   <User size={22} />
                   <span className="text-sm font-bold hidden xl:inline">
-                    {user.full_name?.split(" ")[0] || "Профиль"}
+                    {user.full_name?.split(" ")[0] || t("profile")}
                   </span>
                 </Link>
                 <button
                   onClick={logout}
                   className="hover:opacity-70 transition-opacity"
-                  title="Выйти"
+                  title={t("logout")}
                 >
                   <LogOut size={20} />
                 </button>
@@ -201,7 +206,7 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
               <Link
                 href="/login"
                 className="hover:opacity-70 transition-opacity flex items-center h-full"
-                title="Войти"
+                title={t("login")}
               >
                 <User size={22} />
               </Link>
@@ -226,7 +231,7 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
                 "transition-colors duration-200",
               )}
             >
-              Помочь
+              {t("help")}
             </Link>
             <div
               className={cn(
@@ -245,7 +250,7 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
                   : "bg-white/90 hover:bg-white backdrop-blur-sm",
               )}
             >
-              Нужна помощь
+              {t("needHelp")}
             </Link>
           </div>
         </div>
@@ -266,7 +271,7 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
             <div className="flex flex-col gap-1 px-6 pb-20">
               {NAV_ITEMS.map((item) => (
                 <div
-                  key={item.name}
+                  key={item.key}
                   className="border-b border-white/10 last:border-0 relative"
                 >
                   <Link
@@ -274,10 +279,14 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
                     className="text-white/90 font-bold text-xl py-4 hover:bg-white/10 px-4 rounded-xl transition-colors flex items-center justify-between group"
                     onClick={() => setIsOpen(false)}
                   >
-                    {item.name}
+                    {tNav(item.key)}
                   </Link>
                 </div>
               ))}
+
+              <div className="pt-6 px-4">
+                <LanguageSwitcher variant="footer" />
+              </div>
             </div>
 
             <div className="mt-auto pb-4 pt-4 flex flex-col gap-2 w-[90%] mx-auto">
@@ -288,7 +297,7 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
                     className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-base sm:text-lg h-12 sm:h-14 rounded-2xl w-full shadow-md border-0 shrink-0"
                   >
                     <Link href="/dashboard" onClick={() => setIsOpen(false)}>
-                      Мой профиль
+                      {t("myProfile")}
                     </Link>
                   </Button>
                   <Button
@@ -298,7 +307,7 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
                     }}
                     className="bg-transparent border-2 border-white/20 text-white hover:bg-white/10 font-bold text-base sm:text-lg h-12 sm:h-14 rounded-2xl w-full shrink-0"
                   >
-                    Выйти
+                    {t("logout")}
                   </Button>
                 </>
               ) : (
@@ -308,7 +317,7 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
                     className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd685] font-bold text-base sm:text-lg h-12 sm:h-14 rounded-2xl w-full shadow-md border-0 shrink-0"
                   >
                     <Link href="/login" onClick={() => setIsOpen(false)}>
-                      Авторизоваться
+                      {t("authorize")}
                     </Link>
                   </Button>
                   <Button
@@ -316,7 +325,7 @@ const Header: React.FC<HeaderProps> = ({ variant = "default" }) => {
                     className="bg-transparent border-2 border-white/20 text-white hover:bg-white/10 font-bold text-base sm:text-lg h-12 sm:h-14 rounded-2xl w-full shrink-0"
                   >
                     <Link href="/institutions" onClick={() => setIsOpen(false)}>
-                      Помочь
+                      {t("help")}
                     </Link>
                   </Button>
                 </>

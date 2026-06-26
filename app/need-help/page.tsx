@@ -4,9 +4,12 @@
 import MainLayout from "@/components/layout/MainLayout";
 import { Clock } from "lucide-react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/Button";
 
-export default function NeedHelpPage() {
+export default async function NeedHelpPage() {
+  const t = await getTranslations("needHelp");
+
   return (
     <MainLayout>
       {/* Header section with deep blue and ornaments */}
@@ -20,15 +23,19 @@ export default function NeedHelpPage() {
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-[3px] bg-[#ffca63] rounded-full"></div>
               <span className="text-[#ffca63] font-bold text-sm uppercase tracking-[0.15em]">
-                Запрос поддержки
+                {t("badge")}
               </span>
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 leading-[1.1]">
-              Нужна <br />
-              <span className="text-[#ffca63]">помощь?</span>
+              {t.rich("heroTitle", {
+                br: () => <br />,
+                highlight: (chunks) => (
+                  <span className="text-[#ffca63]">{chunks}</span>
+                ),
+              })}
             </h1>
             <p className="text-white/70 text-base sm:text-lg md:text-xl font-medium max-w-xl">
-              Мы создаем платформу, чтобы каждый нуждающийся мог быть услышан.
+              {t("heroSubtitle")}
             </p>
           </div>
         </div>
@@ -50,13 +57,11 @@ export default function NeedHelpPage() {
             </div>
 
             <h2 className="text-3xl sm:text-4xl font-black text-[#1e3a8a] mb-6 font-display">
-              Раздел в разработке
+              {t("inDevelopmentTitle")}
             </h2>
 
             <p className="text-gray-600 text-lg sm:text-xl font-medium leading-relaxed mb-12">
-              Мы активно работаем над функционалом для прямой подачи заявок от
-              граждан и социальных учреждений. Совсем скоро здесь появится
-              удобная форма для верифицированных запросов.
+              {t("inDevelopmentText")}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
@@ -64,20 +69,20 @@ export default function NeedHelpPage() {
                 asChild
                 className="bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-black h-14 px-10 rounded-2xl text-base shadow-xl shadow-[#1e3a8a]/20 w-full sm:w-auto transition-all hover:scale-[1.02]"
               >
-                <Link href="/">Вернуться на главную</Link>
+                <Link href="/">{t("backHomeButton")}</Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
                 className="border-2 border-[#1e3a8a] text-[#1e3a8a] hover:bg-[#1e3a8a]/5 font-black h-14 px-10 rounded-2xl text-base w-full sm:w-auto"
               >
-                <Link href="/contacts">Связаться с нами</Link>
+                <Link href="/contacts">{t("contactButton")}</Link>
               </Button>
             </div>
 
             <div className="mt-16 pt-10 border-t border-gray-100">
               <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">
-                Ҳадаф — Прозрачная помощь
+                {t("tagline")}
               </p>
             </div>
           </div>

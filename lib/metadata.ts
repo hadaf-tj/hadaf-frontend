@@ -2,10 +2,15 @@
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
 import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
+import { localeMeta, type Locale } from "@/i18n/config";
 
 type PageMetadataInput = {
-  title: string;
-  description: string;
+  /**
+   * Translation namespace holding `title` and `description` keys,
+   * e.g. "metadata.about".
+   */
+  namespace: string;
   canonical: string;
   image?: string;
   noIndex?: boolean;
@@ -13,13 +18,27 @@ type PageMetadataInput = {
 
 const DEFAULT_IMAGE = "/logo_thumbnail.webp";
 
-export function createPageMetadata({
-  title,
-  description,
+/**
+ * Builds locale-aware page metadata from a translation namespace.
+ *
+ * Usage inside a route `layout.tsx`:
+ *
+ *   export async function generateMetadata(): Promise<Metadata> {
+ *     return createPageMetadata({ namespace: "metadata.about", canonical: "/about" });
+ *   }
+ */
+export async function createPageMetadata({
+  namespace,
   canonical,
   image = DEFAULT_IMAGE,
   noIndex = false,
-}: PageMetadataInput): Metadata {
+}: PageMetadataInput): Promise<Metadata> {
+  const t = await getTranslations(namespace);
+  const locale = (await getLocale()) as Locale;
+
+  const title = t("title");
+  const description = t("description");
+
   return {
     title,
     description,
@@ -31,7 +50,7 @@ export function createPageMetadata({
       url: canonical,
       type: "website",
       siteName: "Ҳадаф",
-      locale: "ru_RU",
+      locale: localeMeta[locale].ogLocale,
       images: [
         {
           url: image,

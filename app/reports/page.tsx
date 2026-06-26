@@ -5,8 +5,10 @@
 
 import MainLayout from "@/components/layout/MainLayout";
 import { FileText, Construction } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function ReportsPage() {
+  const t = useTranslations("reports");
   return (
     <MainLayout>
       <div className="min-h-screen bg-[#f8fafc] font-sans">
@@ -18,10 +20,10 @@ export default function ReportsPage() {
 
           <div className="container mx-auto max-w-[1440px] px-6 md:px-12 xl:px-28 relative z-10 text-center">
             <h1 className="text-3xl md:text-5xl font-black text-white mb-4">
-              Отчеты и показатели
+              {t("heroTitle")}
             </h1>
             <p className="text-white/80 text-lg max-w-2xl mx-auto">
-              Раздел финансовой прозрачности
+              {t("heroSubtitle")}
             </p>
           </div>
         </div>
@@ -34,18 +36,16 @@ export default function ReportsPage() {
             </div>
 
             <h2 className="text-2xl md:text-3xl font-black text-[#1e3a8a] mb-4">
-              Раздел в разработке
+              {t("sectionTitle")}
             </h2>
 
             <p className="text-gray-600 text-lg max-w-xl mx-auto mb-8 leading-relaxed">
-              На данный момент отчётов нет, так как проект находится в стадии
-              активной разработки. Как только платформа начнёт работу, здесь
-              будут публиковаться подробные отчёты.
+              {t("sectionText")}
             </p>
 
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full text-[#1e3a8a] font-medium text-sm">
               <FileText size={16} />
-              Следите за обновлениями
+              {t("stayTuned")}
             </div>
           </div>
         </div>

@@ -14,6 +14,7 @@ import {
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 
 interface MapLocation {
@@ -50,6 +51,7 @@ interface MapViewProps {
 }
 
 const MapView: React.FC<MapViewProps> = ({ locations }) => {
+  const t = useTranslations("mapView");
   return (
     <MapContainer
       center={CENTER_POS}
@@ -74,22 +76,22 @@ const MapView: React.FC<MapViewProps> = ({ locations }) => {
             <div className="p-1 min-w-[200px]">
               <div className="text-xs font-bold text-gray-400 uppercase mb-1">
                 {loc.type === "children"
-                  ? "Детский дом"
+                  ? t("typeChildren")
                   : loc.type === "elderly"
-                    ? "Дом престарелых"
-                    : "Спец. центр"}
+                    ? t("typeElderly")
+                    : t("typeDefault")}
               </div>
               <h3 className="font-bold text-[#1e3a8a] text-lg mb-1">
                 {loc.name}
               </h3>
               <p className="text-sm text-gray-600 mb-3">
-                {loc.needsCount} открытых нужд
+                {t("openNeeds", { count: loc.needsCount })}
               </p>
               <Link
                 href={`/institutions/${loc.id}`}
                 className="flex items-center justify-between text-sm font-bold text-white bg-[#1e3a8a] px-3 py-2 rounded-lg hover:bg-[#2a4ec2] transition-colors"
               >
-                Помочь
+                {t("help")}
                 <ArrowRight size={14} />
               </Link>
             </div>

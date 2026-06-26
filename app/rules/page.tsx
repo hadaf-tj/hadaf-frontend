@@ -6,8 +6,12 @@
 
 import MainLayout from "@/components/layout/MainLayout";
 import { CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function RulesPage() {
+  const t = useTranslations("rules");
+  const allowedRules = t.raw("allowedRules") as string[];
+  const forbiddenRules = t.raw("forbiddenRules") as string[];
   return (
     <MainLayout>
       <div className="min-h-screen bg-[#f8fafc] font-sans pb-20">
@@ -15,11 +19,10 @@ export default function RulesPage() {
         <div className="bg-[#1e3a8a] pt-24 pb-16 rounded-b-[3rem] text-center">
           <div className="container mx-auto px-6">
             <h1 className="text-4xl font-black text-white mb-4">
-              Правила посещения
+              {t("heroTitle")}
             </h1>
             <p className="text-white/80 text-lg max-w-2xl mx-auto">
-              Чтобы помощь приносила только радость, просим соблюдать эти
-              простые правила при визите в учреждения.
+              {t("heroSubtitle")}
             </p>
           </div>
         </div>
@@ -32,16 +35,11 @@ export default function RulesPage() {
                 <CheckCircle2 size={24} />
               </div>
               <h2 className="text-2xl font-black text-gray-900">
-                Приветствуется
+                {t("allowedTitle")}
               </h2>
             </div>
             <ul className="space-y-4">
-              {[
-                'Заранее согласовывать время визита (через кнопку "Я привезу").',
-                "Привозить вещи в чистом и опрятном виде.",
-                "Иметь при себе документ, удостоверяющий личность.",
-                "Быть вежливыми с персоналом и подопечными.",
-              ].map((rule, i) => (
+              {allowedRules.map((rule, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <CheckCircle2
                     className="text-green-500 shrink-0 mt-1"
@@ -59,16 +57,10 @@ export default function RulesPage() {
               <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center">
                 <XCircle size={24} />
               </div>
-              <h2 className="text-2xl font-black text-gray-900">Запрещено</h2>
+              <h2 className="text-2xl font-black text-gray-900">{t("forbiddenTitle")}</h2>
             </div>
             <ul className="space-y-4">
-              {[
-                "Приезжать в состоянии алкогольного опьянения.",
-                "Фотографировать детей без разрешения администрации.",
-                "Дарить детям подарки лично в руки (передавайте через воспитателей).",
-                "Привозить скоропортящиеся продукты без сертификатов.",
-                "Обещать детям, что вы их заберете или приедете снова (если не уверены).",
-              ].map((rule, i) => (
+              {forbiddenRules.map((rule, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <XCircle className="text-red-500 shrink-0 mt-1" size={18} />
                   <span className="text-gray-700 font-medium">{rule}</span>
@@ -84,12 +76,10 @@ export default function RulesPage() {
             <AlertCircle className="text-orange-500 shrink-0 mt-1" size={24} />
             <div>
               <h3 className="font-bold text-orange-800 text-lg mb-1">
-                Важно помнить
+                {t("importantTitle")}
               </h3>
               <p className="text-orange-700/80 leading-relaxed">
-                Администрация учреждения имеет право отказать в посещении при
-                нарушении правил. Помните, что безопасность и спокойствие
-                подопечных — наш главный приоритет.
+                {t("importantText")}
               </p>
             </div>
           </div>
