@@ -232,7 +232,9 @@
     "passwordHint": "Минимум 8 символов",
     "submitButton": "Зарегистрироваться",
     "termsAgreement": "Регистрируясь на платформе, вы соглашаетесь с <link>политикой конфиденциальности</link>",
-    "haveAccount": "Уже есть аккаунт? <link>Войти</link>"
+    "haveAccount": "Уже есть аккаунт? <link>Войти</link>",
+    "googleButton": "Регистрация через Google",
+    "or": "Или"
   },
   "needHelp": {
     "badge": "Запрос поддержки",

@@ -232,7 +232,9 @@
     "passwordHint": "At least 8 characters",
     "submitButton": "Sign up",
     "termsAgreement": "By registering on the platform, you agree to our <link>privacy policy</link>",
-    "haveAccount": "Already have an account? <link>Sign in</link>"
+    "haveAccount": "Already have an account? <link>Sign in</link>",
+    "googleButton": "Register with Google",
+    "or": "Or"
   },
   "needHelp": {
     "badge": "Support request",

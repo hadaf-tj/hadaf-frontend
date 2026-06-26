@@ -148,8 +148,10 @@ function LoginForm() {
 
           <button
             type="button"
-            disabled
-            className="w-full h-12 bg-white border border-gray-200 text-gray-400 font-bold rounded-xl flex items-center justify-center gap-3 cursor-not-allowed opacity-60"
+            onClick={() => {
+              window.location.href = "/api/v1/oauth/google?return_to=/dashboard";
+            }}
+            className="w-full h-12 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold rounded-xl flex items-center justify-center gap-3 transition-colors shadow-sm"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
