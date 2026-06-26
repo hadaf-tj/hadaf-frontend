@@ -207,7 +207,7 @@
     "forgotPassword": "Forgot? (soon)",
     "submitButton": "Sign in",
     "or": "Or",
-    "googleButton": "Sign in with Google (soon)",
+    "googleButton": "Sign in with Google",
     "noAccount": "No account? <link>Sign up</link>"
   },
   "register": {

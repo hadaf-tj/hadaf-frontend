@@ -207,7 +207,7 @@
     "forgotPassword": "Забыли? (скоро)",
     "submitButton": "Войти",
     "or": "Или",
-    "googleButton": "Войти через Google (скоро)",
+    "googleButton": "Войти через Google",
     "noAccount": "Нет аккаунта? <link>Зарегистрироваться</link>"
   },
   "register": {
