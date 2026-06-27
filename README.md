@@ -17,20 +17,13 @@ The most reliable and recommended way to run the frontend locally is **natively 
    git clone https://github.com/hadaf-tj/hadaf-frontend
    cd hadaf-frontend
    ```
-
-2. **Configure Environment Variables:**
-   Create a `.env.local` file in the root directory:
-   ```bash
-   cp .env.example .env.local
-   ```
-   *Make sure `NEXT_PUBLIC_API_URL` points to your running backend (e.g., `http://localhost:8000/api/v1`).*
-
-3. **Install Dependencies:**
+   
+2. **Install Dependencies:**
    ```bash
    npm install
    ```
 
-4. **Start the Development Server:**
+3. **Start the Development Server:**
    ```bash
    npm run dev
    ```
