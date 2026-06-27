@@ -3,7 +3,7 @@
 ## Description
 This repository contains the web interface for the Hadaf platform. Built with Next.js and React, it serves as the user-facing portal allowing interaction with the Hadaf backend systems for managing ad-hoc charitable tasks and data.
 
-## Local Setup Instructions (100% Working Method)
+## Local Setup Instructions
 
 The most reliable and recommended way to run the frontend locally is **natively via Node.js**. While a Docker setup is provided (`docker-compose.dev.yml`), native execution is significantly faster and provides a seamless Hot Module Replacement (HMR) experience during development.
 
