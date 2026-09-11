@@ -16,10 +16,10 @@ import {
   User,
   Bell,
   Building2,
+  ClipboardList,
   Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getProfile } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { useTranslations } from "next-intl";
 
@@ -32,6 +32,11 @@ export default function DashboardLayout({
 
   const VOLUNTEER_MENU = [
     { name: t("menuOverview"), href: "/dashboard", icon: LayoutDashboard },
+    {
+      name: t("menuMyApplications"),
+      href: "/dashboard/applications",
+      icon: ClipboardList,
+    },
     {
       name: t("menuMyPromises"),
       href: "/dashboard/promises",
