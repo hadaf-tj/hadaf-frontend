@@ -123,7 +123,9 @@
     "ERR_EVENT_LEAVE": "Failed to cancel attendance",
     "ERR_LOAD_VACANCIES": "Failed to load vacancies",
     "ERR_LOAD_VACANCY": "Failed to load the vacancy",
-    "ERR_LOAD_TEAM": "Failed to load the team"
+    "ERR_LOAD_TEAM": "Failed to load the team",
+    "ERR_LOAD_APPLICATIONS": "Failed to load applications",
+    "ERR_UPLOAD_FAILED": "Failed to upload the document"
   },
   "metadata": {
     "root": {
@@ -317,6 +319,7 @@
     "ctaText": "Choose an institution, find a current need and click \"I'll bring it\". It's that simple!",
     "ctaButton": "Go to needs",
     "menuOverview": "Overview",
+    "menuMyApplications": "My applications",
     "menuMyPromises": "My pledges",
     "menuSettings": "Settings",
     "menuNeedsManagement": "Needs management",
@@ -432,6 +435,21 @@
     "newQuantityLabel": "New quantity",
     "editButton": "Edit",
     "cancelButton": "Cancel"
+  },
+  "dashboardApplications": {
+    "title": "My applications",
+    "subtitle": "Track the status of help applications and re-upload documents if the administration rejected them.",
+    "emptyTitle": "No applications yet",
+    "emptyDescription": "When you submit an application for help, its status will appear here.",
+    "applyButton": "Submit an application",
+    "submittedAt": "Submitted: {date}",
+    "statusPending": "Under review",
+    "statusVerified": "Approved",
+    "statusActive": "Campaign active",
+    "statusRejected": "Action required",
+    "rejectionTitle": "Rejection reason",
+    "rejectionFallback": "The application was rejected. Please contact support for details.",
+    "reuploadButton": "Upload replacement documents"
   },
   "dashboardSettings": {
     "loading": "Loading settings…",

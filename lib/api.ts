@@ -2,6 +2,10 @@
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
 import { Institution, Need } from "@/types/project";
+import {
+  Beneficiary,
+  BeneficiaryStatus,
+} from "@/types/medical";
 
 const API_BASE_URL = "/api/v1";
 
@@ -69,14 +73,26 @@ export async function refreshTokens(): Promise<void> {
   }
 }
 
+function buildAuthHeaders(options: RequestInit = {}): Headers {
+  const headers = new Headers(options.headers);
+  const isFormData =
+    typeof FormData !== "undefined" && options.body instanceof FormData;
+
+  // Browser must set multipart boundary itself; forcing JSON breaks file uploads.
+  if (isFormData) {
+    headers.delete("Content-Type");
+  } else if (!headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  return headers;
+}
+
 async function fetchWithAuth(
   url: string,
   options: RequestInit = {},
 ): Promise<Response> {
-  const headers = {
-    ...options.headers,
-    "Content-Type": "application/json",
-  };
+  const headers = buildAuthHeaders(options);
 
   let res = await fetch(url, {
     ...options,
@@ -678,4 +694,77 @@ export async function rejectEvent(id: number | string): Promise<void> {
     method: "PUT",
   });
   if (!res.ok) throw new Error("ERR_REJECT_FAILED");
+}
+
+interface BackendBeneficiary {
+  id: number;
+  child_name?: string;
+  full_name?: string;
+  name?: string;
+  diagnosis?: string;
+  status?: string;
+  created_at?: string;
+  submitted_at?: string;
+  rejection_reason?: string | null;
+}
+
+const BENEFICIARY_STATUSES: readonly BeneficiaryStatus[] = [
+  "pending",
+  "verified",
+  "active",
+  "rejected",
+];
+
+function mapBeneficiaryStatus(value: string | undefined): BeneficiaryStatus {
+  if (value && BENEFICIARY_STATUSES.includes(value as BeneficiaryStatus)) {
+    return value as BeneficiaryStatus;
+  }
+  return "pending";
+}
+
+function mapBeneficiary(item: BackendBeneficiary): Beneficiary {
+  const childName =
+    item.child_name || item.full_name || item.name || `#${item.id}`;
+
+  return {
+    id: item.id,
+    childName,
+    diagnosis: item.diagnosis,
+    status: mapBeneficiaryStatus(item.status),
+    submittedAt: item.submitted_at || item.created_at || "",
+    rejectionReason: item.rejection_reason || null,
+  };
+}
+
+export async function getMyBeneficiaries(): Promise<Beneficiary[]> {
+  const res = await fetchWithAuth(`${API_BASE_URL}/beneficiaries/my`, {
+    method: "GET",
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("ERR_LOAD_APPLICATIONS");
+  const json: ListApiResponse<BackendBeneficiary> = await res.json();
+  return extractItems(json).map(mapBeneficiary);
+}
+
+export async function uploadBeneficiaryMedia(
+  beneficiaryId: number,
+  file: File,
+): Promise<void> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetchWithAuth(
+    `${API_BASE_URL}/beneficiaries/${beneficiaryId}/media`,
+    {
+      method: "POST",
+      body: formData,
+    },
+  );
+
+  if (!res.ok) {
+    const errorData = await res
+      .json()
+      .catch(() => ({ message: "ERR_UPLOAD_FAILED" }));
+    throw new Error(errorData.message || "ERR_UPLOAD_FAILED");
+  }
 }

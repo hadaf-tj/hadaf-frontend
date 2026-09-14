@@ -123,7 +123,9 @@
     "ERR_EVENT_LEAVE": "Ошибка отмены записи",
     "ERR_LOAD_VACANCIES": "Ошибка загрузки вакансий",
     "ERR_LOAD_VACANCY": "Ошибка загрузки вакансии",
-    "ERR_LOAD_TEAM": "Ошибка загрузки команды"
+    "ERR_LOAD_TEAM": "Ошибка загрузки команды",
+    "ERR_LOAD_APPLICATIONS": "Не удалось загрузить заявки",
+    "ERR_UPLOAD_FAILED": "Не удалось загрузить документ"
   },
   "metadata": {
     "root": {
@@ -317,6 +319,7 @@
     "ctaText": "Выберите учреждение, найдите актуальную нужду и нажмите «Я привезу». Это просто!",
     "ctaButton": "Перейти к нуждам",
     "menuOverview": "Обзор",
+    "menuMyApplications": "Мои заявки",
     "menuMyPromises": "Мои обещания",
     "menuSettings": "Настройки",
     "menuNeedsManagement": "Управление нуждами",
@@ -432,6 +435,21 @@
     "newQuantityLabel": "Новое количество",
     "editButton": "Изменить",
     "cancelButton": "Отменить"
+  },
+  "dashboardApplications": {
+    "title": "Мои заявки",
+    "subtitle": "Следите за статусом заявок на помощь и исправляйте документы, если администрация их отклонила.",
+    "emptyTitle": "Заявок пока нет",
+    "emptyDescription": "Когда вы отправите заявку на помощь, её статус появится здесь.",
+    "applyButton": "Подать заявку",
+    "submittedAt": "Подана: {date}",
+    "statusPending": "На рассмотрении",
+    "statusVerified": "Одобрено",
+    "statusActive": "Кампания активна",
+    "statusRejected": "Требуется действие",
+    "rejectionTitle": "Причина отклонения",
+    "rejectionFallback": "Заявка отклонена. Уточните детали у поддержки.",
+    "reuploadButton": "Загрузить документы заново"
   },
   "dashboardSettings": {
     "loading": "Загрузка настроек...",
