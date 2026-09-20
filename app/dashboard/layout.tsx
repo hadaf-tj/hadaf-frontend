@@ -9,6 +9,7 @@ import { useRouter, usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   HeartHandshake,
+  HandCoins,
   Settings,
   LogOut,
   ChevronLeft,
@@ -36,6 +37,11 @@ export default function DashboardLayout({
       name: t("menuMyPromises"),
       href: "/dashboard/promises",
       icon: HeartHandshake,
+    },
+    {
+      name: t("menuMyDonations"),
+      href: "/dashboard/my-donations",
+      icon: HandCoins,
     },
     { name: t("menuSettings"), href: "/dashboard/settings", icon: Settings },
   ];

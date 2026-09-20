@@ -318,6 +318,7 @@
     "ctaButton": "Перейти к нуждам",
     "menuOverview": "Обзор",
     "menuMyPromises": "Мои обещания",
+    "menuMyDonations": "Мои пожертвования",
     "menuSettings": "Настройки",
     "menuNeedsManagement": "Управление нуждами",
     "logout": "Выйти",
@@ -432,6 +433,22 @@
     "newQuantityLabel": "Новое количество",
     "editButton": "Изменить",
     "cancelButton": "Отменить"
+  },
+  "dashboardDonations": {
+    "title": "Мои пожертвования",
+    "subtitle": "Отслеживайте свои финансовые взносы и их статус.",
+    "totalImpact": "Общий вклад",
+    "campaignCount": "Кампаний: {count}",
+    "date": "Дата",
+    "campaign": "Кампания",
+    "amount": "Сумма",
+    "status": "Статус",
+    "statusPending": "Ожидает подтверждения",
+    "statusConfirmed": "Подтверждено",
+    "emptyTitle": "Пожертвований пока нет",
+    "emptyDescription": "Ваши финансовые взносы появятся здесь.",
+    "loadError": "Не удалось загрузить пожертвования.",
+    "retry": "Повторить"
   },
   "dashboardSettings": {
     "loading": "Загрузка настроек...",

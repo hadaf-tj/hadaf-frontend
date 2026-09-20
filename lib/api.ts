@@ -454,6 +454,42 @@ export async function fetchMyBookings(): Promise<BookingItem[]> {
   return extractItems(json);
 }
 
+export interface DonationItem {
+  id: number;
+  campaignId: number;
+  campaignTitle: string;
+  amount: number;
+  currency: string;
+  status: "pending" | "confirmed";
+  createdAt: string;
+}
+
+interface BackendDonationItem {
+  id: number;
+  campaign_id?: number;
+  campaign_title?: string;
+  amount: number | string;
+  currency?: string;
+  status?: string;
+  created_at?: string;
+}
+
+export async function getMyDonations(): Promise<DonationItem[]> {
+  const res = await fetchWithAuth(`${API_BASE_URL}/donations/my`);
+  if (!res.ok) throw new Error("ERR_LOAD_DONATIONS");
+
+  const json: ListApiResponse<BackendDonationItem> = await res.json();
+  return extractItems(json).map((item) => ({
+    id: item.id,
+    campaignId: item.campaign_id || 0,
+    campaignTitle: item.campaign_title || "Campaign",
+    amount: Number(item.amount) || 0,
+    currency: item.currency || "TJS",
+    status: item.status === "confirmed" ? "confirmed" : "pending",
+    createdAt: item.created_at || "",
+  }));
+}
+
 export async function cancelMyBooking(bookingId: number): Promise<void> {
   const res = await fetchWithAuth(
     `${API_BASE_URL}/bookings/my/${bookingId}/cancel`,

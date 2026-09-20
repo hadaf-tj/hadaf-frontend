@@ -318,6 +318,7 @@
     "ctaButton": "Ба ниёзҳо гузаштан",
     "menuOverview": "Шарҳи умумӣ",
     "menuMyPromises": "Ваъдаҳои ман",
+    "menuMyDonations": "Хайрияҳои ман",
     "menuSettings": "Танзимот",
     "menuNeedsManagement": "Идоракунии ниёзҳо",
     "logout": "Баромадан",
@@ -432,6 +433,22 @@
     "newQuantityLabel": "Миқдори нав",
     "editButton": "Тағйир додан",
     "cancelButton": "Бекор кардан"
+  },
+  "dashboardDonations": {
+    "title": "Хайрияҳои ман",
+    "subtitle": "Ҳиссагузориҳои молиявӣ ва ҳолати пардохтҳоро пайгирӣ кунед.",
+    "totalImpact": "Ҳиссаи умумӣ",
+    "campaignCount": "Шумораи маъракаҳо: {count}",
+    "date": "Сана",
+    "campaign": "Маърака",
+    "amount": "Маблағ",
+    "status": "Ҳолат",
+    "statusPending": "Дар интизори тасдиқ",
+    "statusConfirmed": "Тасдиқшуда",
+    "emptyTitle": "Ҳоло хайрия нест",
+    "emptyDescription": "Ҳиссагузориҳои молиявии шумо дар ин ҷо нишон дода мешаванд.",
+    "loadError": "Хайрияҳоро бор карда нашуд.",
+    "retry": "Такрор кардан"
   },
   "dashboardSettings": {
     "loading": "Боргузории танзимот...",

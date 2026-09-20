@@ -318,6 +318,7 @@
     "ctaButton": "Go to needs",
     "menuOverview": "Overview",
     "menuMyPromises": "My pledges",
+    "menuMyDonations": "My donations",
     "menuSettings": "Settings",
     "menuNeedsManagement": "Needs management",
     "logout": "Sign out",
@@ -432,6 +433,22 @@
     "newQuantityLabel": "New quantity",
     "editButton": "Edit",
     "cancelButton": "Cancel"
+  },
+  "dashboardDonations": {
+    "title": "My donations",
+    "subtitle": "Track your financial contributions and their payment status.",
+    "totalImpact": "Total impact",
+    "campaignCount": "Across {count} campaigns",
+    "date": "Date",
+    "campaign": "Campaign",
+    "amount": "Amount",
+    "status": "Status",
+    "statusPending": "Pending",
+    "statusConfirmed": "Confirmed",
+    "emptyTitle": "No donations yet",
+    "emptyDescription": "Your financial contributions will appear here.",
+    "loadError": "Unable to load your donations.",
+    "retry": "Retry"
   },
   "dashboardSettings": {
     "loading": "Loading settings…",
