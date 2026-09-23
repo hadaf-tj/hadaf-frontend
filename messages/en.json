@@ -188,6 +188,10 @@
       "description": "Information about the institution and its current needs.",
       "descriptionWithLocation": "Information about the institution ({where}) and its current needs."
     },
+    "apply": {
+      "title": "Apply for Help",
+      "description": "Submit an application for targeted help for a child under 12 with cerebral palsy."
+    },
     "privacy": {
       "title": "Privacy Policy",
       "description": "Information about how personal data is collected and processed on the platform."
@@ -279,13 +283,30 @@
       "submit": "Submit Application",
       "submitting": "Submitting application...",
 
-      "successTitle": "Application Successfully Submitted!",
-      "successText": "Thank you! Your application has been received and submitted to coordinators for review.",
+      "successTitle": "Application Submitted Successfully!",
+      "successText": "Thank you! Your application has been recorded. A foundation coordinator will contact you to confirm the details.",
       "successNextStepsTitle": "What happens next?",
-      "successStep1": "A foundation coordinator will contact you by phone within 1–2 business days.",
-      "successStep2": "We will request copies of medical documents for verification and launch the fundraising campaign.",
+      "successStep1": "A coordinator will review your application and contact you within 1–2 business days.",
+      "successStep2": "We'll ask for copies of medical documents for verification.",
+      "successStep3": "Once confirmed, we'll open a targeted collection for your child.",
+      "successSummaryTitle": "Application details",
+      "successChild": "Child",
+      "successBirthDate": "Birth date",
+      "successAge": "Age",
+      "successCity": "City",
+      "successPhone": "Phone",
+      "successAgeValue": "{age} years old",
+      "successTrustFree": "Free",
+      "successTrustTransparent": "Transparent",
+      "successTrustPrivate": "Confidential",
       "backHome": "Back to Home",
       "submitAnother": "Submit Another Application",
+
+      "guestIntro": "This is where parents submit an application for targeted help for a child under 12 with cerebral palsy. Leave your contact details and a foundation coordinator will reach out to you. To submit an application, please log in or sign up.",
+      "loginRequiredLogin": "Log in",
+      "loginRequiredRegister": "Sign up",
+
+      "checkingAuth": "Checking your authorization status...",
 
       "errors": {
         "fullName": "Please enter the child's full name.",

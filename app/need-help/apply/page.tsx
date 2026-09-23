@@ -104,7 +104,7 @@ export default async function ApplyPage() {
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-[#1e3a8a]/[0.02] rounded-full blur-[140px] pointer-events-none" />
 
         <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28 relative z-10">
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-3xl mx-auto">
             {fetchError ? (
               /* Network or Server Error State */
               <div className="rounded-[2.5rem] border border-amber-200/80 bg-white p-8 sm:p-12 text-center shadow-xl shadow-amber-500/5">
