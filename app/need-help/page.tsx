@@ -47,37 +47,40 @@ export default async function NeedHelpPage() {
 
         <div className="container mx-auto max-w-[1440px] px-5 sm:px-6 md:px-12 xl:px-28 py-20 relative z-10">
           <div className="max-w-2xl mx-auto text-center">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-50 border border-gray-100 rounded-[2.5rem] mb-10 shadow-sm relative group overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#1e3a8a]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <Clock
-                size={44}
-                className="text-[#1e3a8a] relative z-10"
-                strokeWidth={1.5}
-              />
-            </div>
-
             <h2 className="text-3xl sm:text-4xl font-black text-[#1e3a8a] mb-6 font-display">
-              {t("inDevelopmentTitle")}
+              {t("applyTitle")}
             </h2>
 
             <p className="text-gray-600 text-lg sm:text-xl font-medium leading-relaxed mb-12">
-              {t("inDevelopmentText")}
+              {t("applyText")}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+            <div className="flex flex-col gap-4 items-center justify-center">
+              {/* Main action */}
               <Button
                 asChild
-                className="bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-black h-14 px-10 rounded-2xl text-base shadow-xl shadow-[#1e3a8a]/20 w-full sm:w-auto transition-all hover:scale-[1.02]"
+                className="bg-[#ffca63] text-[#1e3a8a] hover:bg-[#ffd98a] font-black h-16 px-14 rounded-2xl text-lg shadow-xl shadow-[#ffca63]/30 w-full sm:w-auto transition-all hover:scale-[1.03]"
               >
-                <Link href="/">{t("backHomeButton")}</Link>
+                <Link href="/need-help/apply">{t("applyButton")}</Link>
               </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="border-2 border-[#1e3a8a] text-[#1e3a8a] hover:bg-[#1e3a8a]/5 font-black h-14 px-10 rounded-2xl text-base w-full sm:w-auto"
-              >
-                <Link href="/contacts">{t("contactButton")}</Link>
-              </Button>
+
+              {/* Secondary actions */}
+              <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full">
+                <Button
+                  asChild
+                  className="bg-[#1e3a8a] text-white hover:bg-[#2a4ec2] font-bold h-14 px-8 rounded-2xl text-base shadow-lg shadow-[#1e3a8a]/15 w-full sm:w-auto transition-all hover:scale-[1.02]"
+                >
+                  <Link href="/">{t("backHomeButton")}</Link>
+                </Button>
+
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-2 border-[#1e3a8a] text-[#1e3a8a] hover:bg-[#1e3a8a]/5 font-bold h-14 px-8 rounded-2xl text-base w-full sm:w-auto"
+                >
+                  <Link href="/contacts">{t("contactButton")}</Link>
+                </Button>
+              </div>
             </div>
 
             <div className="mt-16 pt-10 border-t border-gray-100">

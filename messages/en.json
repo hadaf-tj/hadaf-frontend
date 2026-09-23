@@ -188,6 +188,10 @@
       "description": "Information about the institution and its current needs.",
       "descriptionWithLocation": "Information about the institution ({where}) and its current needs."
     },
+    "apply": {
+      "title": "Apply for Help",
+      "description": "Submit an application for targeted help for a child under 12 with cerebral palsy."
+    },
     "privacy": {
       "title": "Privacy Policy",
       "description": "Information about how personal data is collected and processed on the platform."
@@ -244,7 +248,75 @@
     "inDevelopmentText": "We're actively working on the functionality for direct requests from citizens and social institutions. A convenient form for verified requests will appear here very soon.",
     "backHomeButton": "Go back to home",
     "contactButton": "Contact us",
-    "tagline": "Hadaf — Transparent help"
+    "tagline": "Hadaf — Transparent help",
+    "applyButton": "Apply for Help",
+    "applyTitle": "Help a Child Get the Support They Need",
+    "applyText": "If your child has cerebral palsy and is under 12 years old, you can submit an application for assistance.",
+    "applyBadge": "Application",
+    "applyPageTitle": "Apply for Help",
+    "applyPageSubtitle": "Please provide the information below to submit an application for assistance.",
+    "quotaFullTitle": "Applications are currently closed",
+    "quotaFullMessage": "We have reached our limit for new applications this month. Please try again on the 1st of next month.",
+    "quotaErrorTitle": "Unable to check application availability",
+    "quotaErrorMessage": "An error occurred while checking application quota availability. Please refresh the page or try again later.",
+    "reloadPage": "Refresh Page",
+    "backToNeedHelp": "Back to Help Section",
+    "criteriaNoticeTitle": "Program Criteria",
+    "criteriaNoticeText": "Applications are accepted for children under 12 with confirmed Cerebral Palsy. Assistance is provided transparently and free of charge.",
+    "form": {
+      "fullName": "Child's Full Name",
+      "fullNamePlaceholder": "Enter child's full name",
+
+      "birthDate": "Birth Date",
+      "ageCalculated": "Age: {age} years old",
+
+      "city": "City",
+      "cityPlaceholder": "Enter city of residence",
+
+      "phone": "Contact Phone",
+      "phonePlaceholder": "+992 XX XXX XXXX",
+
+      "diagnosis": "Diagnosis",
+      "diagnosisValue": "Cerebral Palsy (CP)",
+      "diagnosisLocked": "This field is fixed for this program (MVP: support for children with Cerebral Palsy).",
+
+      "submit": "Submit Application",
+      "submitting": "Submitting application...",
+
+      "successTitle": "Application Submitted Successfully!",
+      "successText": "Thank you! Your application has been recorded. A foundation coordinator will contact you to confirm the details.",
+      "successNextStepsTitle": "What happens next?",
+      "successStep1": "A coordinator will review your application and contact you within 1–2 business days.",
+      "successStep2": "We'll ask for copies of medical documents for verification.",
+      "successStep3": "Once confirmed, we'll open a targeted collection for your child.",
+      "successSummaryTitle": "Application details",
+      "successChild": "Child",
+      "successBirthDate": "Birth date",
+      "successAge": "Age",
+      "successCity": "City",
+      "successPhone": "Phone",
+      "successAgeValue": "{age} years old",
+      "successTrustFree": "Free",
+      "successTrustTransparent": "Transparent",
+      "successTrustPrivate": "Confidential",
+      "backHome": "Back to Home",
+      "submitAnother": "Submit Another Application",
+
+      "guestIntro": "This is where parents submit an application for targeted help for a child under 12 with cerebral palsy. Leave your contact details and a foundation coordinator will reach out to you. To submit an application, please log in or sign up.",
+      "loginRequiredLogin": "Log in",
+      "loginRequiredRegister": "Sign up",
+
+      "checkingAuth": "Checking your authorization status...",
+
+      "errors": {
+        "fullName": "Please enter the child's full name.",
+        "birthDate": "Please select the child's birth date.",
+        "futureDate": "Birth date cannot be in the future.",
+        "age": "Currently, we only accept applications for children under 12.",
+        "city": "Please enter the city.",
+        "phone": "Please enter a valid contact phone number."
+      }
+    }
   },
   "addNeedModal": {
     "title": "Add a new need",

@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Siyovush Hamidov and The Hadaf Contributors
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import {
@@ -23,11 +23,33 @@ import { Institution } from "@/types/project";
 import { useAuth } from "@/lib/AuthContext";
 import { useErrorTranslator } from "@/lib/errorMessages";
 
+/**
+ * Validates a `from` redirect target. Only internal absolute paths are
+ * allowed (e.g. "/need-help/apply"); anything else falls back to the
+ * dashboard to prevent open redirects.
+ */
+function safeReturnPath(value: string | null): string {
+  if (value && value.startsWith("/") && !value.startsWith("//")) {
+    return value;
+  }
+  return "/dashboard";
+}
+
 export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
+  );
+}
+
+function RegisterForm() {
   const t = useTranslations("register");
   const tCommon = useTranslations("common");
   const translateError = useErrorTranslator();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = safeReturnPath(searchParams.get("from"));
   const { refreshUser } = useAuth();
 
   const [step, setStep] = useState<"form" | "otp">("form");
@@ -98,7 +120,7 @@ export default function RegisterPage() {
     try {
       await confirmOTP(email, otpCode);
       await refreshUser();
-      router.push("/dashboard");
+      router.push(returnTo);
     } catch (err: unknown) {
       const message =
         err instanceof Error
@@ -110,7 +132,7 @@ export default function RegisterPage() {
         message.includes("подтверждения администратором") ||
         message.includes("ожидает")
       ) {
-        router.push("/login?pending=true");
+        router.push(`/login?pending=true&from=${encodeURIComponent(returnTo)}`);
         return;
       }
 
@@ -469,7 +491,7 @@ export default function RegisterPage() {
             {t.rich("haveAccount", {
               link: (chunks) => (
                 <Link
-                  href="/login"
+                  href={`/login?from=${encodeURIComponent(returnTo)}`}
                   className="text-[#1e3a8a] font-black hover:underline"
                 >
                   {chunks}

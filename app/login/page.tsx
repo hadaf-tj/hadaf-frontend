@@ -13,6 +13,18 @@ import { login } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { useErrorTranslator } from "@/lib/errorMessages";
 
+/**
+ * Validates a `from` redirect target. Only internal absolute paths are
+ * allowed (e.g. "/need-help/apply"); anything else falls back to the
+ * dashboard to prevent open redirects.
+ */
+function safeReturnPath(value: string | null): string {
+  if (value && value.startsWith("/") && !value.startsWith("//")) {
+    return value;
+  }
+  return "/dashboard";
+}
+
 function LoginForm() {
   const t = useTranslations("login");
   const tCommon = useTranslations("common");
@@ -21,6 +33,7 @@ function LoginForm() {
   const { refreshUser } = useAuth();
   const searchParams = useSearchParams();
   const isPending = searchParams.get("pending") === "true";
+  const returnTo = safeReturnPath(searchParams.get("from"));
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +48,7 @@ function LoginForm() {
     try {
       await login(email, password);
       await refreshUser();
-      router.push("/dashboard");
+      router.push(returnTo);
     } catch (err: unknown) {
       const message =
         err instanceof Error
@@ -149,7 +162,7 @@ function LoginForm() {
           <button
             type="button"
             onClick={() => {
-              window.location.href = "/api/v1/oauth/google?return_to=/dashboard";
+              window.location.href = `/api/v1/oauth/google?return_to=${encodeURIComponent(returnTo)}`;
             }}
             className="w-full h-12 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold rounded-xl flex items-center justify-center gap-3 transition-colors shadow-sm"
           >
@@ -180,7 +193,7 @@ function LoginForm() {
             {t.rich("noAccount", {
               link: (chunks) => (
                 <Link
-                  href="/register"
+                  href={`/register?from=${encodeURIComponent(returnTo)}`}
                   className="text-[#1e3a8a] font-black hover:underline"
                 >
                   {chunks}
